@@ -57,7 +57,7 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
         //Note different for autonomous front red --> kpy
-        mecanumCommand.setConstants(0.07, 0.01, 0.0075/2, 0.05, 0.005, 0.0075/2, 2, 0.05, 0.0);
+        mecanumCommand.setConstants(0.07, 0.01, 0.0075/2, 0.06, 0.005, 0.0075/2, 2, 0.05, 0.0);
         intakeCommand = new IntakeCommand(hardwareMap);
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
@@ -73,18 +73,17 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
 
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
+        double propPosition = 0;
+        while(opModeInInit()){
+            propPosition = webcamSubsystem.getXProp();
+        }
         waitForStart();
 
         Executor executor = Executors.newFixedThreadPool(4);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
-        webcamSubsystem.getXProp();
-        double propPosition = 0;
         timer.reset();
-        while(timer.milliseconds() < 2000) {
-            propPosition = webcamSubsystem.getXProp();
-        }
         intakeCommand.raiseIntake();
         mecanumCommand.moveToGlobalPosition(57, 0, 0);
         sleep(1500);
@@ -96,14 +95,13 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
             if (propPosition > 100) {
                 //pos RIGHT
                 position = "right";
-                mecanumCommand.moveToGlobalPosition(54, -24, 0);
+                mecanumCommand.moveToGlobalPosition(47, -28, 0);
                 sleep(1500);
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
                 position = "middle";
-                mecanumCommand.moveToGlobalPosition(67, 3, 0);
+                mecanumCommand.moveToGlobalPosition(66, 3, 0);
                 sleep(1000);
-
             } else {
                 //pos left
                 position = "left";
@@ -116,13 +114,22 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
             intakeCommand.intakeOut(0.3);
         }
         intakeCommand.stopIntake();
-        mecanumCommand.moveToGlobalPosition(67, -40, 0);
-        sleep(1000);
-        mecanumCommand.moveToGlobalPosition(116, -49, 0);
-        sleep(1000);
-        mecanumCommand.moveToGlobalPosition(116, -10, -1.6);
-        sleep(3000);
-        mecanumCommand.moveToGlobalPosition(116, 140, -1.6);
+        if(propPosition <= 100 && propPosition > 0) {
+            mecanumCommand.moveToGlobalPosition(67, -40, 0);
+            sleep(1000);
+            mecanumCommand.moveToGlobalPosition(122, -40, 0);
+            sleep(1000);
+        }
+        else if(propPosition > 100) {
+            mecanumCommand.moveToGlobalPosition(40, 5, 0);
+            sleep(1000);
+            mecanumCommand.moveToGlobalPosition(130, 5, 0);
+        }
+        else{
+            mecanumCommand.moveToGlobalPosition(122, -10, -1.6);
+            sleep(3000);
+        }
+        mecanumCommand.moveToGlobalPosition(130, 140, 0);
         sleep(3000);
 //        timer.reset();
 
@@ -134,11 +141,11 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
             //TODO: tune
             if (propPosition > 100) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(81, 215, -1.6);
+                mecanumCommand.moveToGlobalPosition(78, 215, -1.6);
 
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(62, 215, -1.6);
+                mecanumCommand.moveToGlobalPosition(59, 215, -1.6);
             } else {
                 //pos left
                 mecanumCommand.moveToGlobalPosition(46, 215, -1.6);
