@@ -73,39 +73,39 @@ public class AutonomousFrontRed extends LinearOpMode {
 
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
+
+        double propPosition = 0;
+        while(opModeInInit()){
+            propPosition = webcamSubsystem.getXProp();
+        }
+
         waitForStart();
 
         Executor executor = Executors.newFixedThreadPool(4);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
-        webcamSubsystem.getXProp();
-        double propPosition = 0;
-        timer.reset();
-        while(timer.milliseconds() < 1000) {
-            propPosition = webcamSubsystem.getXProp();
-        }
         intakeCommand.raiseIntake();
 //        sleep(8000);
+        mecanumCommand.moveToGlobalPosition(57, 0, 0);
+        sleep(1500);
         timer.reset();
-        while(timer.milliseconds() < 3500) {
+        while(timer.milliseconds() < 1500) {
 
             //TODO: tune
             if (propPosition > 100) {
                 //pos RIGHT
                 position = "right";
-                mecanumCommand.moveToGlobalPosition(54, -24, 0);
+                mecanumCommand.moveToGlobalPosition(47, -32, 0);
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
                 position = "middle";
-                mecanumCommand.moveToGlobalPosition(67, 3, 0);
+                mecanumCommand.moveToGlobalPosition(66, 3, 0);
                 sleep(1000);
             } else {
                 //pos left
                 position = "left";
-                mecanumCommand.moveToGlobalPosition(57, 0, 0);
-                sleep(1500);
-                mecanumCommand.moveToGlobalPosition(57, 17.5, 0.832);
+                mecanumCommand.moveToGlobalPosition(60, 17.5, 0.832);
             }
         }
         timer.reset();
@@ -122,11 +122,11 @@ public class AutonomousFrontRed extends LinearOpMode {
             //TODO: tune
             if (propPosition > 100) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(46, -78.5, 1.65);
+                mecanumCommand.moveToGlobalPosition(36, -78.5, 1.65);
 
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(61, -80, 1.65);
+                mecanumCommand.moveToGlobalPosition(52, -80, 1.65);
             } else {
                 //pos left
                 mecanumCommand.moveToGlobalPosition(68, -81.5, 1.65);

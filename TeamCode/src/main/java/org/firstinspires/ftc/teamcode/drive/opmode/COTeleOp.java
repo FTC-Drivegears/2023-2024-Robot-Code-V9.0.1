@@ -245,7 +245,7 @@ public class COTeleOp extends LinearOpMode {
     public void sensorUpdate(){
         timerList.resetTimer("sensorLoop");
         while(opModeIsActive()) {
-            if(timerList.checkTimePassed("sensorLoop", 1400) {
+            if(timerList.checkTimePassed("sensorLoop", 1400)) {
                 color1 = colorSensorSubsystem.findColor1();
                 color2 = colorSensorSubsystem.findColor2();
                 timerList.resetTimer("sensorLoop");
