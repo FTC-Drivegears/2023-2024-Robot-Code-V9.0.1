@@ -241,22 +241,16 @@ public class COTeleOp extends LinearOpMode {
     public void lightProcess(){
         while(opModeIsActive()){
             if(timerList.checkTimePassed("colorLoop", 500)){
-                pixelCounter += 1;
                 timerList.resetTimer("colorLoop");
+                pixelCounter += 1;
                 color1 = colorSensorSubsystem.findColor1();
                 color2 = colorSensorSubsystem.findColor2();
-                if(timerList.checkTimePassed("colorLoop",350)){
-                    if(pixelCounter % 3 == 2) {
-                        colorSensorSubsystem.setColor(color2);
-                    }
-                    else{
-                        colorSensorSubsystem.setColor(color1);
-                    }
-                }
-                else{
-                    colorSensorSubsystem.setColor("none");
-                }
-//                colorSensorSubsystem.setColor(color1);
+            }
+            if(colorCounter % 3 == 2) {
+                colorSensorSubsystem.setColor(color2);
+            }
+            else {
+                colorSensorSubsystem.setColor(color1);
             }
         }
     }
