@@ -246,7 +246,7 @@ public class COTeleOp extends LinearOpMode {
                 color1 = colorSensorSubsystem.findColor1();
                 color2 = colorSensorSubsystem.findColor2();
             }
-            if(pixelCounter % 3 == 2) {
+            if(colorCounter % 3 == 2) {
                 colorSensorSubsystem.setColor(color2);
             }
             else {
