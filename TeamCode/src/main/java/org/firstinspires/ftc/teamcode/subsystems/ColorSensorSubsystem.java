@@ -88,7 +88,7 @@ public class ColorSensorSubsystem {
         else if(red < blue && red < green && (red + blue + green) < 5000){
             return "Green";
         }
-        else if(green > blue && green > red && green - blue > 1000){
+        else if(green > blue && green > red && green - blue > 700){
             return "Yellow";
         }
         else{

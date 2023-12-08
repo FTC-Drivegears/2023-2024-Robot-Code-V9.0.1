@@ -615,8 +615,8 @@ public class MecanumCommand {
 
     public void moveToGlobalPosition(double targetX, double targetY, double targetTheta) {
         // stop moving if within 5 ticks or 0.2 radians from the position
-        while (Math.abs(targetX - gyroOdometry.x) > 4.25
-                || Math.abs(targetY - gyroOdometry.y) > 4.25
+        while (Math.abs(targetX - gyroOdometry.x) > 3.5
+                || Math.abs(targetY - gyroOdometry.y) > 3.5
                 || Math.abs(targetTheta - gyroOdometry.theta) > 0.15) {
 
             mecanumSubsystem.fieldOrientedMove(

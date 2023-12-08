@@ -98,9 +98,10 @@ public class COTeleOp extends LinearOpMode {
 
         waitForStart();
 
-//        Executor executor = Executors.newFixedThreadPool(7);
-        CompletableFuture.runAsync(this::odometryProcess);
-        CompletableFuture.runAsync(this::LiftProcess);
+        Executor executor = Executors.newFixedThreadPool(4);
+        CompletableFuture.runAsync(this::odometryProcess, executor);
+        CompletableFuture.runAsync(this::LiftProcess, executor);
+        CompletableFuture.runAsync(this::lightProcess, executor);
 
         while(opModeIsActive()) {
             mecanumSubsystem.fieldOrientedMove(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, imuSubsystem.getTheta());
@@ -255,6 +256,7 @@ public class COTeleOp extends LinearOpMode {
                 else{
                     colorSensorSubsystem.setColor("none");
                 }
+//                colorSensorSubsystem.setColor(color1);
             }
         }
     }
@@ -268,6 +270,8 @@ public class COTeleOp extends LinearOpMode {
         telemetry.addData("pixeltimer time", pixelTimer.milliseconds());
         telemetry.addData("liftTimer time", liftTimer.milliseconds());
         telemetry.addData("lift position", multiMotorSubsystem.getPosition());
+        telemetry.addData("color1", color1);
+        telemetry.addData("color2", color2);
         telemetry.update();
     }
 
