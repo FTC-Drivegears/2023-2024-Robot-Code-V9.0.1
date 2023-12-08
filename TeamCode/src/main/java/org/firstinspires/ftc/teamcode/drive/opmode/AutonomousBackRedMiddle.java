@@ -93,12 +93,12 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
             if (propPosition < 175 && propPosition > 0) {
                 //pos 2
-                mecanumCommand.moveToGlobalPosition(67, -5, 0);
+                mecanumCommand.moveToGlobalPosition(67, -3, 0);
             } else if (propPosition > 175) {
-                mecanumCommand.moveToGlobalPosition(55, -22, -0.832);
+                mecanumCommand.moveToGlobalPosition(55, -17, -0.832);
                 sleep(1000);
             } else {
-                mecanumCommand.moveToGlobalPosition(49, 24, 0);
+                mecanumCommand.moveToGlobalPosition(54, 24, 0);
             }
         }
         timer.reset();
@@ -121,7 +121,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             sleep(1000);
             mecanumCommand.moveToGlobalPosition(130, -9, 0);
         }
-        mecanumCommand.moveToGlobalPosition(130, -140, 0);
+        mecanumCommand.moveToGlobalPosition(145, -140, 0);
         sleep(3000);
 //        timer.reset();
 
@@ -133,14 +133,14 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             //TODO: tune
             if (propPosition > 175) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(46, -222, 1.6);
+                mecanumCommand.moveToGlobalPosition(46, -219, 1.6);
 
             } else if (propPosition <= 175 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(64.5, -222, 1.6);
+                mecanumCommand.moveToGlobalPosition(68, -219, 1.6);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(84, -222, 1.6);
+                mecanumCommand.moveToGlobalPosition(88, -219, 1.6);
             }
         }
         //136, 0, `1.6
@@ -160,7 +160,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         outputCommand.armToIdle();
         sleep(6000);
         level = 0;
-        mecanumCommand.moveToGlobalPosition(0, 222, 1.6);
+        mecanumCommand.moveToGlobalPosition(0, -222, 1.6);
     }
 
     public void updateOdometry() {
