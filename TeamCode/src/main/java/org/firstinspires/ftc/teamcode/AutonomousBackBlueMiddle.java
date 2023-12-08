@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode;
 
 import android.os.Build;
 
@@ -26,8 +26,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Autonomous Back Blue")
-public class AutonomousBackBlue extends LinearOpMode {
+@Autonomous(name="Autonomous Back Blue Middle")
+public class AutonomousBackBlueMiddle extends LinearOpMode {
     private MecanumSubsystem mecanumSubsystem;
     private MecanumCommand mecanumCommand;
     private IMUSubsystem imu;
@@ -114,39 +114,22 @@ public class AutonomousBackBlue extends LinearOpMode {
             intakeCommand.intakeOut(0.3);
         }
         intakeCommand.stopIntake();
-
-        //136, 0, `1.6
-        //126, 140, 1.6
-        //52, 220, 1.5
-        //67, 222, 1.5
-        //81, 222, 1.5
-        //0, 222, 1.5
-
-        mecanumCommand.moveToGlobalPosition(57, 0, 1.6);
-        sleep(2000);
-        mecanumCommand.moveToGlobalPosition(136, 0, 1.6);
-        sleep(2000);
-        mecanumCommand.moveToGlobalPosition(126, 140, 1.6;
-        sleep(2000);
-
-
-
-
         level = 1;
         outputCommand.armToBoard();
- //       outputCommand.tiltToBoard();
+        //       outputCommand.tiltToBoard();
         timer.reset();
         while(timer.milliseconds() < 3500) {
             //TODO: tune
             if (propPosition > 100) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(81, 222, 1.5);
+                mecanumCommand.moveToGlobalPosition(46, 78.5, 1.65);
+
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(67, 222, 1.5);
+                mecanumCommand.moveToGlobalPosition(61, 80, 1.65);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(52, 220, 1.5);
+                mecanumCommand.moveToGlobalPosition(68, 81.5, 1.65);
             }
         }
         timer.reset();
@@ -158,9 +141,7 @@ public class AutonomousBackBlue extends LinearOpMode {
         outputCommand.armToIdle();
         sleep(6000);
         level = 0;
-        mecanumCommand.moveToGlobalPosition(0, 222, 1.5);
-        sleep(2000);
-
+        mecanumCommand.moveToGlobalPosition(0, 84, 1.65);
     }
 
     public void updateOdometry() {
