@@ -26,8 +26,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@Autonomous(name="Autonomous Back Blue")
-public class AutonomousBackBlue extends LinearOpMode {
+@Autonomous(name="Autonomous Back Blue Middle")
+public class AutonomousBackBlueMiddle extends LinearOpMode {
     private MecanumSubsystem mecanumSubsystem;
     private MecanumCommand mecanumCommand;
     private IMUSubsystem imu;
@@ -86,15 +86,18 @@ public class AutonomousBackBlue extends LinearOpMode {
             propPosition = webcamSubsystem.getXProp();
         }
         intakeCommand.raiseIntake();
-//        sleep(8000);
+        mecanumCommand.moveToGlobalPosition(57, 0, 0);
+        sleep(1500);
+
         timer.reset();
-        while(timer.milliseconds() < 3500) {
+        while(timer.milliseconds() < 1500) {
 
             //TODO: tune
             if (propPosition > 100) {
                 //pos RIGHT
                 position = "right";
                 mecanumCommand.moveToGlobalPosition(54, -24, 0);
+                sleep(1500);
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
                 position = "middle";
@@ -103,17 +106,20 @@ public class AutonomousBackBlue extends LinearOpMode {
             } else {
                 //pos left
                 position = "left";
-                mecanumCommand.moveToGlobalPosition(57, 0, 0);
-                sleep(1500);
                 mecanumCommand.moveToGlobalPosition(57, 17.5, 0.832);
+                sleep(1000);
             }
         }
-        timer.reset();
-
         while(timer.milliseconds() < 1000) {
             intakeCommand.intakeOut(0.3);
         }
         intakeCommand.stopIntake();
+        mecanumCommand.moveToGlobalPosition(116, 0, -1.6);
+        sleep(3000);
+        mecanumCommand.moveToGlobalPosition(116, 140, -1.6);
+        sleep(3000);
+        timer.reset();
+
         level = 1;
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
@@ -122,14 +128,14 @@ public class AutonomousBackBlue extends LinearOpMode {
             //TODO: tune
             if (propPosition > 100) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(46, -78.5, 1.65);
+                mecanumCommand.moveToGlobalPosition(81, 219, -1.6);
 
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(61, -80, 1.65);
+                mecanumCommand.moveToGlobalPosition(67, 219, -1.6);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(68, -81.5, 1.65);
+                mecanumCommand.moveToGlobalPosition(48, 219, -1.6);
             }
         }
         //136, 0, `1.6
@@ -138,6 +144,7 @@ public class AutonomousBackBlue extends LinearOpMode {
         //67, 222, 1.5
         //81, 222, 1.5
         //0, 222, 1.5
+
 
         timer.reset();
         while (timer.milliseconds() < 500){
@@ -148,7 +155,7 @@ public class AutonomousBackBlue extends LinearOpMode {
         outputCommand.armToIdle();
         sleep(6000);
         level = 0;
-        mecanumCommand.moveToGlobalPosition(0, -84, 1.65);
+        mecanumCommand.moveToGlobalPosition(0, 222, -1.6);
     }
 
     public void updateOdometry() {
