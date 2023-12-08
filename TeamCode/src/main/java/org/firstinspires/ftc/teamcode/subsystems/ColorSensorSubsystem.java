@@ -36,98 +36,6 @@ public class ColorSensorSubsystem {
                 break;
         }
     }
-    public String setColorPatternBasedOnSensor() {
-        int red = colorSensor1.red();
-        int green = colorSensor1.green();
-        int blue = colorSensor1.blue();
-
-        if (isDominant(blue, red, green)) {
-            setPatternLilacPurple();
-            return "Lilac Purple";
-        } else if (isYellow(red, green, blue)) {
-            setPatternYellow();
-            return "Yellow";
-        } else if (isSignificantlyDominant(green, red, blue)) {
-            setPatternGreen();
-            return "Green";
-        } else if (isWhite(red, green, blue)) {
-            setPatternWhite();
-            return "White";
-        } else if (isBlack(red, green, blue)) {
-            setPatternNothing();
-            return "none";
-        }else {
-            return "error";
-        }
-    }
-
-    public String findColor1(){
-        int red = colorSensor1.red();
-        int green = colorSensor1.green();
-        int blue = colorSensor1.blue();
-        
-        if (isDominant(blue, red, green)) {
-            return "Lilac Purple";
-        } else if (isBlack(red, green, blue)) {
-            return "none";
-        } else if (isYellow(red, green, blue)) {
-            return "Yellow";
-        } else if (isDominant(green, red, blue)) {
-            return "Green";
-        } else if (isSignificantlyDominant(red, blue, green)) {
-            return "Red";
-        } else if (isWhite(red, green, blue)) {
-            return "White";
-        } else {
-            return "error";
-        }
-    }
-
-
-    public String findColor2(){
-        int red = colorSensor2.red();
-        int green = colorSensor2.green();
-        int blue = colorSensor2.blue();
-
-        if (isDominant(blue, red, green)) {
-            return "Lilac Purple";
-        }  else if (isBlack(red, green, blue)) {
-            return "none";
-        } else if (isYellow(red, green, blue)) {
-            return "Yellow";
-        } else if (isGreen(green, red, blue)) {
-            return "Green";
-        } else if (isSignificantlyDominant(red, blue, green)) {
-            return "Red";
-        } else if (isWhite(red, green, blue)) {
-            return "White";
-        } else {
-            return "error";
-        }
-    }
-    private boolean isWhite(int r, int g, int b) {
-        int threshold = 1700; // This threshold may need adjustment
-        return r > threshold && g > threshold && b > threshold;
-    }
-    private  boolean isBlack(int r, int g, int b) {
-        return g < 900 && b < 700 && r < 500;
-    }
-    private boolean isYellow(int r, int g, int b) {
-//        return r > g && g > b && b < 100;
-        return g > r && r < b && b < 1000;
-    }
-    private boolean isGreen(int r, int g, int b) {
-        return g > r && g > b && g > 2000;
-
-    }
-     private boolean isDominant(int a, int b, int c) {
-        return a > b && a > c;
-    }
-
-    private boolean isSignificantlyDominant(int a, int b, int c) {
-        double threshold = 1.5;  // Value can be adjusted based on testing
-        return a > threshold * b && a > threshold * c;
-    }
 
 
     // Set pattern methods
@@ -160,4 +68,57 @@ public class ColorSensorSubsystem {
     public void setPatternWhite(){
         Light.setPattern(RevBlinkinLedDriver.BlinkinPattern.WHITE);
     }
+
+    //ranges front --> purple, yellow, green, white, black
+    //1567, 1871, 894, 2120, 746 // R
+    //2639, 1441, 1286, 3011, 1122 // B
+    //2532, 2923, 1980, 3772, 1408 // G
+
+    public String findColor1(){
+        double red = getRed1();
+        double blue = getBlue1();
+        double green = getGreen1();
+
+        if((red + blue + green) > 8000){
+            return "White";
+        }
+        else if((red + blue + green) < 3500){
+            return "none";
+        }
+        else if(red < blue && red < green && (red + blue + green) < 5000){
+            return "Green";
+        }
+        else if(green > blue && green > red && green - blue > 1000){
+            return "Yellow";
+        }
+        else{
+            return "Lilac Purple";
+        }
+    }
+    public String findColor2(){
+        double red = getRed2();
+        double blue = getBlue2();
+        double green = getGreen2();
+
+        if((red + blue + green) > 8000){
+            return "White";
+        }
+        else if((red + blue + green) < 2000){
+            return "none";
+        }
+        else if(red < blue && red < green && (red + blue + green) < 4000){
+            return "Green";
+        }
+        else if(green > blue && green > red && green - blue > 1000){
+            return "Yellow";
+        }
+        else{
+            return "Lilac Purple";
+        }
+    }
+
+    //ranges back --> purple, yellow, green, white, black
+    //1340, 1705, 647, 3300, 319
+    //2207, 768, 745, 4260, 410
+    //1900, 2367, 1650, 5480, 534
 }

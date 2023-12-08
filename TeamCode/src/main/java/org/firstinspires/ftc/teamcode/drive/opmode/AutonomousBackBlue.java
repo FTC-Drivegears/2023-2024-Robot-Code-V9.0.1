@@ -62,7 +62,7 @@ public class AutonomousBackBlue extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_RED);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
 
         odometrySubsystem.reset();

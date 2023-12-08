@@ -39,8 +39,11 @@ public class COTeleOp extends LinearOpMode {
     private ColorSensorSubsystem colorSensorSubsystem;
     private ElapsedTime pixelTimer, liftTimer;
     private int level = -1;
-    private int pixelCounter;
+    private int pixelCounter = 0;
     private boolean running = true;
+    private String color1 = "none";
+    private String color2 = "none";
+    private int colorCounter = 0;
 
     private enum RUNNING_STATE {
         LIFT_STOP,
@@ -55,6 +58,8 @@ public class COTeleOp extends LinearOpMode {
     @SuppressLint("SuspiciousIndentation")
     @Override
     public void runOpMode() throws InterruptedException {
+        colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
+
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
 
@@ -87,6 +92,7 @@ public class COTeleOp extends LinearOpMode {
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
         pixelCounter = 0;
+        timerList.resetTimer("colorLoop");
 
 //        disableAutoLift = false;
 
@@ -229,6 +235,27 @@ public class COTeleOp extends LinearOpMode {
     public void odometryProcess(){
         while(opModeIsActive()){
             gyroOdometry.odometryProcess();
+        }
+    }
+    public void lightProcess(){
+        while(opModeIsActive()){
+            if(timerList.checkTimePassed("colorLoop", 500)){
+                pixelCounter += 1;
+                timerList.resetTimer("colorLoop");
+                color1 = colorSensorSubsystem.findColor1();
+                color2 = colorSensorSubsystem.findColor2();
+                if(timerList.checkTimePassed("colorLoop",350)){
+                    if(pixelCounter % 3 == 2) {
+                        colorSensorSubsystem.setColor(color2);
+                    }
+                    else{
+                        colorSensorSubsystem.setColor(color1);
+                    }
+                }
+                else{
+                    colorSensorSubsystem.setColor("none");
+                }
+            }
         }
     }
     public void updateTelemetry(){
