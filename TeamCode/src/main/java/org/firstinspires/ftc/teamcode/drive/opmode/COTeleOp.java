@@ -157,7 +157,7 @@ public class COTeleOp extends LinearOpMode {
             }
 
             if(state == RUNNING_STATE.DROP){
-                if(!timerList.checkTimePassed("pixelDrop", 450)) {
+                if(!timerList.checkTimePassed("pixelDrop", 750)) {
                     if (timerList.checkTimePassed("pixelDrop", 250)) {
                         outputCommand.closeGate();
                         outputCommand.outputWheelIn();
@@ -228,13 +228,10 @@ public class COTeleOp extends LinearOpMode {
             }
 
             if(gamepad1.left_bumper){
-                timerList.resetTimer("airplaneTimer");
-                if(timerList.checkTimePassed("airplaneTimer", 750)){
-                    shooterServo.setPosition(0);
-                }
-                else {
-                    shooterServo.setPosition(0.5);
-                }
+                shooterServo.setPosition(0.5);
+            }
+            else{
+                shooterServo.setPosition(0);
             }
 
             //TODO: auto center/change zero
