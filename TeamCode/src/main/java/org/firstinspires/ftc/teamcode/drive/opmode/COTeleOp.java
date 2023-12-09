@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.command.IntakeCommand;
@@ -54,6 +55,7 @@ public class COTeleOp extends LinearOpMode {
     private RUNNING_STATE state = RUNNING_STATE.LIFT_STOP;
 
     private final TimerList timerList = new TimerList();
+    private Servo shooterServo;
 
     @SuppressLint("SuspiciousIndentation")
     @Override
@@ -79,6 +81,9 @@ public class COTeleOp extends LinearOpMode {
         gridAutoCentering = new GridAutoCentering(mecanumSubsystem, gyroOdometry);
 
         colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
+
+        shooterServo = hardwareMap.get(Servo.class, "leftHang");
+        shooterServo.setDirection(Servo.Direction.REVERSE);
 
         pixelTimer = new ElapsedTime();
         liftTimer = new ElapsedTime();
@@ -160,12 +165,7 @@ public class COTeleOp extends LinearOpMode {
                         outputCommand.openGate();
                     }
                 } else { //if pixel is done dropping, reset the state
-                    if(pixelCounter >= 2){ //if both pixels drop, go to retract
-                        timerList.resetTimer("liftTimer");
-                        state = RUNNING_STATE.RETRACT_LIFT;
-                    } else {
-                        state = RUNNING_STATE.RAISE_LIFT;
-                    }
+                    state = RUNNING_STATE.RAISE_LIFT;
                 }
             }
             if(state == RUNNING_STATE.RETRACT_LIFT){
@@ -219,13 +219,20 @@ public class COTeleOp extends LinearOpMode {
 
             //intake
             if(gamepad2.right_trigger > 0.5){
-                intakeCommand.intakeIn(0.9);
+                intakeCommand.intakeIn(0.655);
             }
             else if(gamepad2.left_trigger > 0.5){
-                intakeCommand.intakeOut(0.7);
+                intakeCommand.intakeOut(0.5);
             }
             else{
                 intakeCommand.stopIntake();
+            }
+
+            if(gamepad1.left_bumper){
+                shooterServo.setPosition(0.5);
+            }
+            else if(gamepad1.right_bumper){
+                shooterServo.setPosition(0);
             }
 
             //TODO: auto center/change zero
