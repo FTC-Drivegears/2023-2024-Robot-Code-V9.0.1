@@ -86,19 +86,19 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         timer.reset();
         intakeCommand.raiseIntake();
         mecanumCommand.moveToGlobalPosition(57, 0, 0);
-        sleep(1500);
 
         timer.reset();
         while(timer.milliseconds() < 1500) {
 
             if (propPosition < 175 && propPosition > 0) {
-                //pos 2
+                //middle
                 mecanumCommand.moveToGlobalPosition(67, -3, 0);
             } else if (propPosition > 175) {
+                //left
                 mecanumCommand.moveToGlobalPosition(55, -17, -0.832);
-                sleep(1000);
             } else {
-                mecanumCommand.moveToGlobalPosition(54, 24, 0);
+                //right
+                mecanumCommand.moveToGlobalPosition(54, 28, 0);
             }
         }
         timer.reset();
@@ -106,6 +106,8 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             intakeCommand.intakeOut(0.3);
         }
         intakeCommand.stopIntake();
+
+
         if(propPosition <= 175 && propPosition > 0) {
             mecanumCommand.moveToGlobalPosition(67, 44, 0);
             sleep(1000);
@@ -113,8 +115,10 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             sleep(1000);
         }
         else if(propPosition > 175) {
-            mecanumCommand.moveToGlobalPosition(122, 12, 1.6);
-            sleep(3000);
+            mecanumCommand.moveToGlobalPosition(30, 20, 0);
+            sleep(1000);
+            mecanumCommand.moveToGlobalPosition(122, 12, 0);
+            sleep(1500);
         }
         else{
             mecanumCommand.moveToGlobalPosition(40, -9, 0);
@@ -122,25 +126,25 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             mecanumCommand.moveToGlobalPosition(130, -9, 0);
         }
         mecanumCommand.moveToGlobalPosition(145, -140, 0);
-        sleep(3000);
 //        timer.reset();
 
         level = 1;
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
+        mecanumCommand.moveToGlobalPosition(68, -190, 1.6);
+        sleep(1000);
         timer.reset();
         while(timer.milliseconds() < 3500) {
             //TODO: tune
             if (propPosition > 175) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(46, -219, 1.6);
-
+                mecanumCommand.moveToGlobalPosition(46, -217, 1.6);
             } else if (propPosition <= 175 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(68, -219, 1.6);
+                mecanumCommand.moveToGlobalPosition(68, -218.5, 1.6);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(88, -219, 1.6);
+                mecanumCommand.moveToGlobalPosition(88, -217, 1.6);
             }
         }
         //136, 0, `1.6
@@ -160,7 +164,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         outputCommand.armToIdle();
         sleep(6000);
         level = 0;
-        mecanumCommand.moveToGlobalPosition(0, -222, 1.6);
+        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
     }
 
     public void updateOdometry() {

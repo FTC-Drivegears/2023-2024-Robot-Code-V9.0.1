@@ -98,14 +98,13 @@ public class COTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(4);
+        Executor executor = Executors.newFixedThreadPool(5);
         CompletableFuture.runAsync(this::odometryProcess, executor);
         CompletableFuture.runAsync(this::LiftProcess, executor);
-        CompletableFuture.runAsync(this::lightProcess, executor);
         CompletableFuture.runAsync(this::sensorUpdate, executor);
+        CompletableFuture.runAsync(this::runMovement, executor);
 
         while(opModeIsActive()) {
-            mecanumSubsystem.fieldOrientedMove(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, imuSubsystem.getTheta());
 
             //setting levels for running lift
             if (state == RUNNING_STATE.LIFT_STOP) {
@@ -138,7 +137,7 @@ public class COTeleOp extends LinearOpMode {
                 outputCommand.tiltToBoard();
                 //change state
                 if(gamepad2.right_bumper){
-                    if(pixelCounter != 0 || timerList.checkTimePassed("armTilt", 1500)) {
+                    if(pixelCounter != 0 || timerList.checkTimePassed("armTilt", 1000)) {
                         //drop pixel (one)
                         pixelCounter += 1;
                         timerList.resetTimer("pixelDrop");
@@ -146,7 +145,7 @@ public class COTeleOp extends LinearOpMode {
                         state = RUNNING_STATE.DROP;
                     }
                 }
-                if(gamepad2.b && timerList.checkTimePassed("armTilt", 1500)){
+                if(gamepad2.b && timerList.checkTimePassed("armTilt", 1000)){
                     timerList.resetTimer("liftTimer");
                     state = RUNNING_STATE.RETRACT_LIFT;
                 }
@@ -195,6 +194,11 @@ public class COTeleOp extends LinearOpMode {
             else{
                 running = true;
             }
+
+            if(gamepad1.dpad_left) {
+                imuSubsystem.resetAngle();
+            }
+
             if(gamepad2.x){
                 level = 2;
                 liftTimer.reset();
@@ -226,6 +230,7 @@ public class COTeleOp extends LinearOpMode {
 
             //TODO: auto center/change zero
             updateTelemetry();
+            lightProcess();
         }
 
     }
@@ -240,12 +245,17 @@ public class COTeleOp extends LinearOpMode {
         }
     }
 
+    public void runMovement(){
+        while(opModeIsActive())
+            mecanumSubsystem.fieldOrientedMove(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, imuSubsystem.getTheta());
+    }
+
 
     //i moved sensor update since color sensor read times are so fucking long itll screw up the light color timings
     public void sensorUpdate(){
         timerList.resetTimer("sensorLoop");
         while(opModeIsActive()) {
-            if(timerList.checkTimePassed("sensorLoop", 1400)) {
+            if(timerList.checkTimePassed("sensorLoop", 1500)) {
                 color1 = colorSensorSubsystem.findColor1();
                 color2 = colorSensorSubsystem.findColor2();
                 timerList.resetTimer("sensorLoop");
@@ -253,34 +263,31 @@ public class COTeleOp extends LinearOpMode {
         }
     }
     public void lightProcess(){
-        timerList.resetTimer("colorLoop");
-        while(opModeIsActive()) {
             //light pattern sequence (ORDER OF THE IF-ELSE STATEMENTS MATTER)
-            if(timerList.checkTimePassed("colorLoop", 1425) || color2.equals("none")) {
-                colorSensorSubsystem.setColor(color1);
-                timerList.resetTimer("colorLoop");
-                //color 1 on at end of blink sequence, resets timer (so start from the else statement again and come back up)
-                //or stay on if color 2 is missing
-            }
-            else if(timerList.checkTimePassed("colorLoop", 1350)){
-                colorSensorSubsystem.setColor("none");
-                //off for 75ms
-            } else if(timerList.checkTimePassed("colorLoop", 1250)){
-                colorSensorSubsystem.setColor(color2);
-                //color 2 on for 100ms
-            } else if(timerList.checkTimePassed("colorLoop", 1175)){
-                colorSensorSubsystem.setColor("none");
-                //off for 75ms
-            } else if(timerList.checkTimePassed("colorLoop", 1075)){
-                colorSensorSubsystem.setColor(color2);
-                //color 2 on for 100 ms
-            } else if(timerList.checkTimePassed("colorLoop", 1000)) {
-                colorSensorSubsystem.setColor("none");
-                //off for 75 ms
-            } else {
-                //color 1 on for 1 second
-                colorSensorSubsystem.setColor(color1);
-            }
+        if(timerList.checkTimePassed("colorLoop", 1425) || (color2.equals("none") && timerList.checkTimePassed("colorLoop", 100))){
+            colorSensorSubsystem.setColor(color1);
+            timerList.resetTimer("colorLoop");
+            //color 1 on at end of blink sequence, resets timer (so start from the else statement again and come back up)
+            //or stay on if color 2 is missing
+        }
+        else if(timerList.checkTimePassed("colorLoop", 1350)){
+            colorSensorSubsystem.setColor("none");
+            //off for 75ms
+        } else if(timerList.checkTimePassed("colorLoop", 1250)){
+            colorSensorSubsystem.setColor(color2);
+            //color 2 on for 100ms
+        } else if(timerList.checkTimePassed("colorLoop", 1175)){
+            colorSensorSubsystem.setColor("none");
+            //off for 75ms
+        } else if(timerList.checkTimePassed("colorLoop", 1075)){
+            colorSensorSubsystem.setColor(color2);
+            //color 2 on for 100 ms
+        } else if(timerList.checkTimePassed("colorLoop", 1000)) {
+            colorSensorSubsystem.setColor("none");
+            //off for 75 ms
+        } else {
+            //color 1 on for 1 second
+            colorSensorSubsystem.setColor(color1);
         }
     }
     public void updateTelemetry(){
