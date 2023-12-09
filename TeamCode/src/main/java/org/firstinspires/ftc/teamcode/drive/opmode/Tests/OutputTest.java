@@ -29,10 +29,10 @@ public class OutputTest extends LinearOpMode {
                 intakeCommand.lowerIntake();
             }
             else if(gamepad1.x){
-                outputCommand.armToBoard();
+                outputCommand.closeGate();
             }
             else if(gamepad1.y){
-                outputCommand.armToIdle();
+                outputCommand.openGate();
             }
             else if(gamepad1.dpad_up){
                 outputCommand.tiltToIdle();
@@ -42,6 +42,12 @@ public class OutputTest extends LinearOpMode {
             }
             else if(gamepad1.right_trigger > 0.5){
                 outputCommand.outputWheelOut();
+            }
+            else if(gamepad1.dpad_right){
+                outputCommand.armToIdle();
+            }
+            else if(gamepad1.dpad_left){
+                outputCommand.armToBoard();
             }
             else{
                 outputCommand.outputWheelStop();

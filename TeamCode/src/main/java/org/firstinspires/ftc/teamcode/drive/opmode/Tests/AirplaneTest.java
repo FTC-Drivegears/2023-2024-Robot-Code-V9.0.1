@@ -9,7 +9,7 @@ public class AirplaneTest extends LinearOpMode {
     private Servo shooterServo;
     @Override
     public void runOpMode(){
-        shooterServo = hardwareMap.get(Servo.class, "rightHang");
+        shooterServo = hardwareMap.get(Servo.class, "leftHang");
         shooterServo.setDirection(Servo.Direction.REVERSE);
 
         waitForStart();
