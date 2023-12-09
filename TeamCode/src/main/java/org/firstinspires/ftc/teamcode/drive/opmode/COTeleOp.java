@@ -157,7 +157,7 @@ public class COTeleOp extends LinearOpMode {
             }
 
             if(state == RUNNING_STATE.DROP){
-                if(!timerList.checkTimePassed("pixelDrop", 700)) {
+                if(!timerList.checkTimePassed("pixelDrop", 450)) {
                     if (timerList.checkTimePassed("pixelDrop", 250)) {
                         outputCommand.closeGate();
                         outputCommand.outputWheelIn();
@@ -171,13 +171,9 @@ public class COTeleOp extends LinearOpMode {
             if(state == RUNNING_STATE.RETRACT_LIFT){
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
-                if(timerList.checkTimePassed("liftTimer", 2500)){
+                if(timerList.checkTimePassed("liftTimer", 2000)){
                     level = 0;
                 }
-                else {
-                     level = 1; //not sure about this
-                }
-
                 if(multiMotorSubsystem.getPosition() < 18){
                     pixelCounter = 0;
                     level = /*-1*/0;
@@ -188,8 +184,11 @@ public class COTeleOp extends LinearOpMode {
             if(Math.abs(gamepad2.left_stick_y) > 0.8){
                 running = false;
                 state = RUNNING_STATE.DROP;
-                level = /*-1*/0;
+                level = 0;
                 multiMotorSubsystem.moveLift(-gamepad2.right_stick_y);
+                if(gamepad1.right_bumper){
+                    timerList.resetTimer("pixelDrop");
+                }
             }
             else{
                 running = true;
@@ -201,14 +200,14 @@ public class COTeleOp extends LinearOpMode {
 
             if(gamepad2.x){
                 level = 2;
-                liftTimer.reset();
+                timerList.resetTimer("liftTimer");
                 state = RUNNING_STATE.RETRACT_LIFT;
             }
             else if(gamepad2.y){
                 //reset the lift condition after manually reaching the bottom
                 state = RUNNING_STATE.LIFT_STOP;
                 multiMotorSubsystem.reset();
-                level = /*-1*/0;
+                level = -1;
             }
             if(gamepad2.dpad_up){
                 intakeCommand.raiseIntake();
@@ -219,7 +218,7 @@ public class COTeleOp extends LinearOpMode {
 
             //intake
             if(gamepad2.right_trigger > 0.5){
-                intakeCommand.intakeIn(0.655);
+                intakeCommand.intakeIn(0.55);
             }
             else if(gamepad2.left_trigger > 0.5){
                 intakeCommand.intakeOut(0.5);
@@ -229,14 +228,17 @@ public class COTeleOp extends LinearOpMode {
             }
 
             if(gamepad1.left_bumper){
-                shooterServo.setPosition(0.5);
-            }
-            else if(gamepad1.right_bumper){
-                shooterServo.setPosition(0);
+                timerList.resetTimer("airplaneTimer");
+                if(timerList.checkTimePassed("airplaneTimer", 750)){
+                    shooterServo.setPosition(0);
+                }
+                else {
+                    shooterServo.setPosition(0.5);
+                }
             }
 
             //TODO: auto center/change zero
-            updateTelemetry();
+//            updateTelemetry();
             lightProcess();
         }
 
@@ -297,19 +299,19 @@ public class COTeleOp extends LinearOpMode {
             colorSensorSubsystem.setColor(color1);
         }
     }
-    public void updateTelemetry(){
-        telemetry.addData("x", gyroOdometry.x);
-        telemetry.addData("y", gyroOdometry.y);
-        telemetry.addData("theta", gyroOdometry.theta);
-        telemetry.addData("lift level", level);
-        telemetry.addData("lift state", state);
-        telemetry.addData("pixelnumber", pixelCounter);
-        telemetry.addData("pixeltimer time", pixelTimer.milliseconds());
-        telemetry.addData("liftTimer time", liftTimer.milliseconds());
-        telemetry.addData("lift position", multiMotorSubsystem.getPosition());
-        telemetry.addData("color1", color1);
-        telemetry.addData("color2", color2);
-        telemetry.update();
-    }
+//    public void updateTelemetry(){
+//        telemetry.addData("x", gyroOdometry.x);
+//        telemetry.addData("y", gyroOdometry.y);
+//        telemetry.addData("theta", gyroOdometry.theta);
+//        telemetry.addData("lift level", level);
+//        telemetry.addData("lift state", state);
+//        telemetry.addData("pixelnumber", pixelCounter);
+//        telemetry.addData("pixeltimer time", pixelTimer.milliseconds());
+//        telemetry.addData("liftTimer time", liftTimer.milliseconds());
+//        telemetry.addData("lift position", multiMotorSubsystem.getPosition());
+//        telemetry.addData("color1", color1);
+//        telemetry.addData("color2", color2);
+//        telemetry.update();
+//    }
 
 }
