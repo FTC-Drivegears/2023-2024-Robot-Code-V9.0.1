@@ -49,7 +49,7 @@ public class OutputCommand {
     }
 
     public void openGate(){
-        gate.setPosition(0.245);
+        gate.setPosition(0.21);
     }
     public void closeGate(){
         gate.setPosition(0.3);
@@ -69,19 +69,18 @@ public class OutputCommand {
     }
     public void armToIdle(){
         //TODO: Find value
-        leftArm.setPosition(0.952);
-        rightArm.setPosition(0.952);
+        leftArm.setPosition(0.96);
+        rightArm.setPosition(0.96);
     }
 
     public void armToBoard(){
-        //TODO: Find value
         leftArm.setPosition(0.66);
         rightArm.setPosition(0.66);
     }
 
     public void tiltToIdle(){
-        leftTilt.setPosition(0.48);
-        rightTilt.setPosition(0.48);
+        leftTilt.setPosition(0.475);
+        rightTilt.setPosition(0.475);
     }
     public void tiltToBoard(){
         leftTilt.setPosition(0.06);
