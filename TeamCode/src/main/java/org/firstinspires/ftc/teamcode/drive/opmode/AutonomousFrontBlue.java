@@ -71,6 +71,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
+        double propPosition = 0;
+        while(opModeInInit()){
+            propPosition = webcamSubsystem.getXProp();
+        }
         waitForStart();
 
         Executor executor = Executors.newFixedThreadPool(4);
@@ -78,11 +82,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
 
-        double propPosition = 0;
-        timer.reset();
-        while(timer.milliseconds() < 1000) {
-            propPosition = webcamSubsystem.getXProp();
-        }
 //        sleep(8000);
         timer.reset();
         while(timer.milliseconds() < 3500) {
