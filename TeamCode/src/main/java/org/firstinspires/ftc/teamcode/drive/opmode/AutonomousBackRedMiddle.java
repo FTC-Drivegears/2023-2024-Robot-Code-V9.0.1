@@ -68,7 +68,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         odometrySubsystem.reset();
         imu.resetAngle();
 
-        intakeCommand.lowerIntake();
+        intakeCommand.raiseIntake();
         outputCommand.closeGate();
 
         outputCommand.armToIdle();
@@ -92,13 +92,13 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
             if (propPosition < 175 && propPosition > 0) {
                 //middle
-                mecanumCommand.moveToGlobalPosition(67, -3, 0);
+                mecanumCommand.moveToGlobalPosition(67, -6, 0);
             } else if (propPosition > 175) {
                 //left
                 mecanumCommand.moveToGlobalPosition(55, -17, -0.832);
             } else {
                 //right
-                mecanumCommand.moveToGlobalPosition(54, 28, 0);
+                mecanumCommand.moveToGlobalPosition(50, 25, 0);
             }
         }
         timer.reset();
@@ -144,7 +144,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
                 mecanumCommand.moveToGlobalPosition(68, -218.5, 1.6);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(88, -217, 1.6);
+                mecanumCommand.moveToGlobalPosition(82, -217, 1.6);
             }
         }
         //136, 0, `1.6
