@@ -79,12 +79,12 @@ public class OutputCommand {
     }
 
     public void tiltToIdle(){
-        leftTilt.setPosition(0.475);
-        rightTilt.setPosition(0.475);
+        leftTilt.setPosition(0.55);
+        rightTilt.setPosition(0.55);
     }
     public void tiltToBoard(){
-        leftTilt.setPosition(0.06);
-        rightTilt.setPosition(0.06);
+        leftTilt.setPosition(0.12);
+        rightTilt.setPosition(0.12);
     }
 
     public double getGatePosition(){

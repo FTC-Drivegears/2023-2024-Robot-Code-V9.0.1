@@ -89,7 +89,6 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
         timer.reset();
         while(timer.milliseconds() < 1500) {
-
             if (propPosition < 175 && propPosition > 0) {
                 //middle
                 mecanumCommand.moveToGlobalPosition(67, -6, 0);
@@ -98,7 +97,9 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
                 mecanumCommand.moveToGlobalPosition(55, -17, -0.832);
             } else {
                 //right
-                mecanumCommand.moveToGlobalPosition(50, 25, 0);
+//                mecanumCommand.moveToGlobalPosition(54, 20, 0);
+//                mecanumCommand.moveToGlobalPosition(55, -17, -0.832);
+                mecanumCommand.moveToGlobalPosition(67, -6, 0);
             }
         }
         timer.reset();
@@ -136,15 +137,17 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         timer.reset();
         while(timer.milliseconds() < 3500) {
             //TODO: tune
-            if (propPosition > 175) {
+            if (propPosition > 175 && opModeIsActive()) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(46, -217, 1.6);
-            } else if (propPosition <= 175 && propPosition > 0) {
+                mecanumCommand.moveToGlobalPositionAccurate(46, -214, 1.6);
+            } else if (propPosition <= 175 && propPosition > 0 && opModeIsActive()) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(68, -218.5, 1.6);
+                mecanumCommand.moveToGlobalPositionAccurate(65, -214, 1.6);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(82, -217, 1.6);
+                if(opModeIsActive()) {
+                    mecanumCommand.moveToGlobalPositionAccurate(77, -214, 1.6);
+                }
             }
         }
         //136, 0, `1.6
@@ -156,15 +159,18 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 // 68, 6.3, -0.3
 
         timer.reset();
-        while (timer.milliseconds() < 500){
-            outputCommand.openGate();
+        if(opModeIsActive()) {
+            while (timer.milliseconds() < 500) {
+                outputCommand.openGate();
+            }
+            outputCommand.closeGate();
+            outputCommand.tiltToIdle();
+            outputCommand.armToIdle();
+            sleep(2000);
+            level = 0;
+            sleep(1000);
         }
-        outputCommand.closeGate();
-        outputCommand.tiltToIdle();
-        outputCommand.armToIdle();
-        sleep(6000);
-        level = 0;
-        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
+//        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
     }
 
     public void updateOdometry() {

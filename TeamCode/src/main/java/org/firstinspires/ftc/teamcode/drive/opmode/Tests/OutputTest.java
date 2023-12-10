@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.command.OutputCommand;
 
 @Config
 @TeleOp(name="Output Test")
-public class OutputTest extends LinearOpMode {
+public class  OutputTest extends LinearOpMode {
     private OutputCommand outputCommand;
     private IntakeCommand intakeCommand;
 
