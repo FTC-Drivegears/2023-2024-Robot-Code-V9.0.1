@@ -68,7 +68,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         odometrySubsystem.reset();
         imu.resetAngle();
 
-        intakeCommand.lowerIntake();
+        intakeCommand.raiseIntake();
         outputCommand.closeGate();
 
         outputCommand.armToIdle();
