@@ -56,6 +56,7 @@ public class COTeleOp extends LinearOpMode {
 
     private final TimerList timerList = new TimerList();
     private Servo shooterServo;
+    private Servo rightHang;
 
     @SuppressLint("SuspiciousIndentation")
     @Override
@@ -83,21 +84,26 @@ public class COTeleOp extends LinearOpMode {
         colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
 
         shooterServo = hardwareMap.get(Servo.class, "leftHang");
+        rightHang = hardwareMap.get(Servo.class,"rightHang");
+
+        rightHang.setDirection(Servo.Direction.REVERSE);
         shooterServo.setDirection(Servo.Direction.REVERSE);
 
         pixelTimer = new ElapsedTime();
         liftTimer = new ElapsedTime();
 
-        odometrySubsystem.reset();
-        imuSubsystem.resetAngle();
+        while(opModeInInit()) {
+            odometrySubsystem.reset();
+            imuSubsystem.resetAngle();
 
-        intakeCommand.lowerIntake();
-        outputCommand.closeGate();
+            intakeCommand.lowerIntake();
+            outputCommand.closeGate();
 
-        outputCommand.armToIdle();
-        outputCommand.tiltToIdle();
-        pixelCounter = 0;
-        timerList.resetTimer("colorLoop");
+            outputCommand.armToIdle();
+            outputCommand.tiltToIdle();
+            pixelCounter = 0;
+            timerList.resetTimer("colorLoop");
+        }
 
 //        disableAutoLift = false;
 
@@ -197,8 +203,7 @@ public class COTeleOp extends LinearOpMode {
             if(gamepad1.dpad_left) {
                 imuSubsystem.resetAngle();
             }
-
-            if(gamepad2.x){
+            else if(gamepad2.x){
                 level = 2;
                 timerList.resetTimer("liftTimer");
                 state = RUNNING_STATE.RETRACT_LIFT;
@@ -229,9 +234,12 @@ public class COTeleOp extends LinearOpMode {
 
             if(gamepad1.left_bumper){
                 shooterServo.setPosition(0.5);
+                rightHang.setPosition(0);
+
             }
             else{
                 shooterServo.setPosition(0);
+                rightHang.setPosition(0.28);
             }
 
             //TODO: auto center/change zero

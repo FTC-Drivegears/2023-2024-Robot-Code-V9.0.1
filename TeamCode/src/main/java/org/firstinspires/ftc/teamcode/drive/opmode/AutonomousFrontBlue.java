@@ -85,18 +85,17 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::liftProcess, executor);
 
 //        sleep(8000);
+        mecanumCommand.moveToGlobalPosition(57, 0, 0);
         timer.reset();
-        while(timer.milliseconds() < 3500) {
+        while(timer.milliseconds() < 1500) {
             if (propPosition < 100 && propPosition > 0) {
                 //pos 2
-                mecanumCommand.moveToGlobalPosition(67, -3, 0);
+                mecanumCommand.moveToGlobalPositionAccurate(67, -3, 0);
             } else if (propPosition > 100) {
-                mecanumCommand.moveToGlobalPosition(57, 0, 0);
-                sleep(1500);
-                mecanumCommand.moveToGlobalPosition(55, -17, -0.832);
+                mecanumCommand.moveToGlobalPositionAccurate(55, -17, -0.832);
                 sleep(1000);
             } else {
-                mecanumCommand.moveToGlobalPosition(54, 24, 0);
+                mecanumCommand.moveToGlobalPositionAccurate(54, 20, 0);
             }
         }
         timer.reset();
@@ -110,13 +109,13 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.tiltToBoard();
         timer.reset();
         while(timer.milliseconds() < 3500) {
-            if (propPosition < 100 && propPosition > 0) {
+            if (propPosition < 100 && propPosition > 0 && opModeIsActive()) {
                 //pos 2
-                mecanumCommand.moveToGlobalPosition(53, 81, -1.58);
-            } else if (propPosition >= 100) {
-                mecanumCommand.moveToGlobalPosition(62.5, 81.5, -1.58);
+                mecanumCommand.moveToGlobalPosition(53, 83.5, -1.58);
+            } else if (propPosition >= 100 && opModeIsActive()){
+                mecanumCommand.moveToGlobalPosition(68, 83.5, -1.58);
             } else {
-                mecanumCommand.moveToGlobalPosition(38, 78.5, -1.58);
+                mecanumCommand.moveToGlobalPosition(34, 83.5, -1.58);
             }
         }
         timer.reset();
@@ -126,8 +125,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.closeGate();
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        sleep(6000);
+        sleep(3000);
         level = 0;
+        mecanumCommand.moveToGlobalPosition(30, 65, -1.58);
+        sleep(1000);
         mecanumCommand.moveToGlobalPosition(0, 84, -1.58);
 
 

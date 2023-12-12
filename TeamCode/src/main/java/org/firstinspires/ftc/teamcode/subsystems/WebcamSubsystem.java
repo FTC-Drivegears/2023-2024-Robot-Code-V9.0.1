@@ -56,10 +56,10 @@ public class WebcamSubsystem extends Specifications {
 //            webcam.setPipeline(redIntakePipeline);
 //        }
         if(pipelineName == PipelineName.CONTOUR_BLUE){
-            contourPipeline = new ContourPipeline(125, 240, 255, 91, 149, 28);
+            contourPipeline = new ContourPipeline(138, 255, 255, 102, 167, 92);
         }
         else if(pipelineName == PipelineName.CONTOUR_RED){
-            contourPipeline = new ContourPipeline(22, 255, 255, 0, 160, 76);
+            contourPipeline = new ContourPipeline(180, 255, 255, 155, 142, 195);
         }
         // initiate the needed parameters
         cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());

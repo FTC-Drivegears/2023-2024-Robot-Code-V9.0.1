@@ -76,6 +76,8 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         double propPosition = 0;
         while(opModeInInit()){
             propPosition = webcamSubsystem.getXProp();
+            telemetry.addData("proppos", propPosition);
+            telemetry.update();
         }
         waitForStart();
 
@@ -92,12 +94,12 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         while(timer.milliseconds() < 1500) {
 
             //TODO: tune
-            if (propPosition > 100) {
+            if (propPosition > 75) {
                 //pos RIGHT
                 position = "right";
                 mecanumCommand.moveToGlobalPosition(47, -28, 0);
                 sleep(1500);
-            } else if (propPosition <= 100 && propPosition > 0) {
+            } else if (propPosition <= 75 && propPosition > 0) {
                 //pos middle
                 position = "middle";
                 mecanumCommand.moveToGlobalPosition(66, 3, 0);
@@ -105,7 +107,7 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
             } else {
                 //pos left
                 position = "left";
-                mecanumCommand.moveToGlobalPosition(57, 17.5, 0.832);
+                mecanumCommand.moveToGlobalPositionAccurate(57, 18.5, 0.87);
                 sleep(1000);
             }
         }
@@ -114,6 +116,7 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
             intakeCommand.intakeOut(0.3);
         }
         intakeCommand.stopIntake();
+        mecanumCommand.moveToGlobalPosition(35, 0, 0);
         if(propPosition <= 100 && propPosition > 0) {
             mecanumCommand.moveToGlobalPosition(67, -40, 0);
             sleep(1000);
@@ -126,29 +129,32 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
             mecanumCommand.moveToGlobalPosition(130, 5, 0);
         }
         else{
-            mecanumCommand.moveToGlobalPosition(122, -10, -1.6);
+            mecanumCommand.moveToGlobalPosition(122, -10, 0);
             sleep(3000);
         }
-        mecanumCommand.moveToGlobalPosition(130, 140, 0);
+        mecanumCommand.moveToGlobalPosition(150, 140, 0);
         sleep(3000);
 //        timer.reset();
 
         level = 1;
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
+        sleep(2000);
         timer.reset();
         while(timer.milliseconds() < 3500) {
             //TODO: tune
-            if (propPosition > 100) {
+            if (propPosition > 75 && opModeIsActive()) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(84, 218.5, -1.6);
+                mecanumCommand.moveToGlobalPositionAccurate(67, 219, -1.6);
 
-            } else if (propPosition <= 100 && propPosition > 0) {
+            } else if (propPosition <= 75 && propPosition > 0 && opModeIsActive()) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(59, 218.5, -1.6);
+                mecanumCommand.moveToGlobalPositionAccurate(59, 219, -1.6);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(46, 218.5, -1.6);
+                if(opModeIsActive()) {
+                    mecanumCommand.moveToGlobalPositionAccurate(48, 217, -1.6);
+                }
             }
         }
         //136, 0, `1.6
@@ -166,9 +172,10 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         outputCommand.closeGate();
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        sleep(6000);
+        sleep(5000);
         level = 0;
-        mecanumCommand.moveToGlobalPosition(0, 222, -1.6);
+        sleep(1000);
+//        mecanumCommand.moveToGlobalPosition(0, 222, -1.6);
     }
 
     public void updateOdometry() {
