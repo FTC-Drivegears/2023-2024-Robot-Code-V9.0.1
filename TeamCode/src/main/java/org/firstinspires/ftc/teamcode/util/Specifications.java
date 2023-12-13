@@ -19,7 +19,7 @@ public class Specifications {
 
 
     public static double WHEEL_RADIUS = 4.8;
-    public static final double MAX_RPM = 223;
+    public static final double MAX_RPM = 315;
     public static final double GEAR_RATIO = 19.2;/*30:23 for new provincial robot*/
     public static double MAX_ANGULAR_VEL = MAX_RPM/30*Math.PI;
     public static double MAX_VEL = MAX_ANGULAR_VEL*WHEEL_RADIUS;

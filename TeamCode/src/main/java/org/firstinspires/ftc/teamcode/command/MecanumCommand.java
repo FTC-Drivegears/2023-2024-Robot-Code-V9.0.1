@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 import org.firstinspires.ftc.teamcode.util.PIDCore;
 import org.firstinspires.ftc.teamcode.util.PurePursuit;
+import org.firstinspires.ftc.teamcode.util.Specifications;
 import org.firstinspires.ftc.teamcode.util.VectorCartesian;
 
 @Config
@@ -140,9 +141,9 @@ public class MecanumCommand {
 
     public void movePartial(boolean run, double vertical, double horizontal, double rotational){
         if (run){
-            vertical *= mecanumSubsystem.MAX_ANGULAR_VEL;
-            horizontal *= mecanumSubsystem.MAX_ANGULAR_VEL;
-            rotational *= mecanumSubsystem.MAX_ANGULAR_VEL;
+            vertical *= Specifications.MAX_ANGULAR_VEL;
+            horizontal *= Specifications.MAX_ANGULAR_VEL;
+            rotational *= Specifications.MAX_ANGULAR_VEL;
             mecanumSubsystem.partialMove(true, vertical, horizontal, rotational);
         }
     }
