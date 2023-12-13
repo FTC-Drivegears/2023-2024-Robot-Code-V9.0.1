@@ -145,7 +145,7 @@ public class IMUSubsystem extends Specifications {
         //normalize angle to: 0 < Theta < 2Π
         if (Theta > twoPi){
             Theta -= twoPi;
-        } else if (Theta < -twoPi){
+        } else if (Theta < 0){
             Theta += twoPi;
         }
         return Theta;
