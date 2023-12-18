@@ -26,7 +26,7 @@ public class MecanumCommand {
     public PIDCore globalThetaController;
     private static double kpx = 0.07;
     private static double kdx = 0.01;
-    private static double kix = 0.0075/2;
+    private static double kix = 0.004/2;
     private static double kpy = 0.055;
     private static double kdy = 0.0005;
     private static double kiy = 0.0075/2;

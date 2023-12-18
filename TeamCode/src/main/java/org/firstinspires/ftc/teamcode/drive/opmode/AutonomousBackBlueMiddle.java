@@ -48,6 +48,7 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
     private int level = -1;
     private String position = "initalized";
 
+    //TODO: make enum for diff teams
 
     @Override
     public void runOpMode() throws InterruptedException {

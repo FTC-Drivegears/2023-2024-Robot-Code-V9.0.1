@@ -46,14 +46,18 @@ public class CoordinateTesting extends LinearOpMode {
         waitForStart();
         odometrySubsystem.reset();
 
-        Executor executor = Executors.newFixedThreadPool(4);
+        Executor executor = Executors.newFixedThreadPool(5);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
+        CompletableFuture.runAsync(this::pidProcess, executor);
+        CompletableFuture.runAsync(this::motorProcess, executor);
 
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
-        mecanumCommand.moveToGlobalPosition(0, 0, Math.PI);
-        sleep(4000);
+        while(opModeIsActive()) {
+            mecanumCommand.setFinalPosition(true, 30, 20, 0, 0);
+        }
+//        sleep(4000);
 //        mecanumCommand.moveToGlobalPosition(100, 100, Math.PI);
 //        sleep(4000);
 //        mecanumCommand.moveToGlobalPosition(100, 100, 2*Math.PI);
@@ -62,20 +66,27 @@ public class CoordinateTesting extends LinearOpMode {
 
     public void updateOdometry() {
         while (opModeIsActive()) {
-            gyroOdometry.odometryProcess();
-            telemetry.addData("theta", gyroOdometry.theta);
+            gyroOdometry.combinedProcess();
+        }
+    }
+    public void pidProcess(){
+        while (opModeIsActive()) {
+            mecanumCommand.pidProcess();
+        }
+    }
+
+    public void motorProcess(){
+        while (opModeIsActive()) {
+            mecanumSubsystem.motorProcess();
         }
     }
 
     public void updateTelemetry() {
         while (opModeIsActive()) {
-            packet.put("x", gyroOdometry.x);
-            packet.put("y", gyroOdometry.y);
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
-            packet.put("x", gyroOdometry.x);
-            packet.put("y", gyroOdometry.y);
-            dashboard.sendTelemetryPacket(packet);
+            telemetry.addData("xintegral", mecanumCommand.globalXController.getIntegralSum());
+            telemetry.addData("output", mecanumCommand.globalXController.getOutputPositionalValue());
             telemetry.update();
         }
     }

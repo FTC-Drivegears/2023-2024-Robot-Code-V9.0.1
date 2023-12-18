@@ -102,14 +102,14 @@ public class MecanumSubsystem extends Specifications{
 
         rightForward.setDirection(DcMotorSimple.Direction.REVERSE);
         leftForward.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightBack.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftForward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightForward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        turnOffInternalPID();
+//        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        leftForward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        rightForward.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turnOffInternalPID();
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftForward.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
