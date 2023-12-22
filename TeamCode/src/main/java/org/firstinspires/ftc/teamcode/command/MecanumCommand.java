@@ -392,14 +392,14 @@ public class MecanumCommand {
 
     public void moveToGlobalPosition(double targetX, double targetY, double targetTheta) {
         // stop moving if within 5 ticks or 0.2 radians from the position
-        while (Math.abs(targetX - gyroOdometry.x) > 4.5
-                || Math.abs(targetY - gyroOdometry.y) > 4.5
-                || Math.abs(targetTheta - gyroOdometry.theta) > 0.15) {
+        while (Math.abs(targetX - gyroOdometry.x) > 6
+                || Math.abs(targetY - gyroOdometry.y) > 6
+                || Math.abs(targetTheta - gyroOdometry.theta) > 0.2) {
 
             mecanumSubsystem.fieldOrientedMove(
-                    globalYController.outputPositional(targetY, gyroOdometry.y),
-                   -globalXController.outputPositional(targetX, gyroOdometry.x),
-                    globalThetaController.outputPositional(targetTheta, gyroOdometry.theta),
+                    globalYController.outputPositionalCapped(targetY, gyroOdometry.y, 0),
+                   -globalXController.outputPositionalCapped(targetX, gyroOdometry.x, 0),
+                    globalThetaController.outputPositionalCapped(targetTheta, gyroOdometry.theta, 0),
                     gyroOdometry.theta);
         }
         mecanumSubsystem.stop(true);
@@ -412,9 +412,9 @@ public class MecanumCommand {
                 || Math.abs(targetTheta - gyroOdometry.theta) > 0.1) {
 
             mecanumSubsystem.fieldOrientedMove(
-                    globalYController.outputPositional(targetY, gyroOdometry.y),
-                    -globalXController.outputPositional(targetX, gyroOdometry.x),
-                    globalThetaController.outputPositional(targetTheta, gyroOdometry.theta),
+                    globalYController.outputPositionalCapped(targetY, gyroOdometry.y, 100),
+                    -globalXController.outputPositionalCapped(targetX, gyroOdometry.x, 100),
+                    globalThetaController.outputPositionalCapped(targetTheta, gyroOdometry.theta, 100),
                     gyroOdometry.theta);
         }
         mecanumSubsystem.stop(true);

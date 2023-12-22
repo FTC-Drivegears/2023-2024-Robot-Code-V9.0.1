@@ -96,6 +96,19 @@ public class PIDCore {
 
         return (error * Kp) + (derivative * Kd) + (integralSum * Ki);
     }
+    public double outputPositionalCapped(double setPoint, double feedback, double integralCap){
+        error = setPoint - feedback;
+        derivative = (error - lastError) / timer.time();
+        integralSum += error * timer.seconds();
+        if(Math.abs(integralSum) > integralCap){
+            integralSum = integralCap * Math.signum(integralSum);
+        }
+        lastError = error;
+        timer.reset();
+        outputPositionalValue = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+
+        return (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+    }
 
     public double outputPositional(double error) {
 
@@ -114,33 +127,6 @@ public class PIDCore {
         timer.reset();
 
         return (error * Kp) + (derivative * Kd);
-    }
-
-    public double outputPositionalIntegral(double setPoint, double feedback) {
-
-        error = setPoint - feedback;
-        if(activateIntegral()){
-            integralSum += error * timer.time(TimeUnit.SECONDS);
-            if (integralSum > 15){
-                integralSum = 15;
-            } else if (integralSum < -15) {
-                integralSum = -15;
-            }
-        } else {
-//            if(Math.abs(error-lastError) < 10){
-//                tempIntegralSum += error*timer.time();
-//            }
-//            else {
-//                tempIntegralSum = 0;
-//            }
-            integralTimer.reset();
-            integralReset();
-        }
-        derivative = (error - lastError) / timer.time();
-        lastError = error;
-        timer.reset();
-
-        return (error * Kp) + (derivative * Kd) + (integralSum * Ki);
     }
 
     public boolean activateIntegral(){
