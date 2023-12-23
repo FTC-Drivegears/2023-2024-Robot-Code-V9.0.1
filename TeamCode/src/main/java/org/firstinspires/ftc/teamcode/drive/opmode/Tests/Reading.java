@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.ArrayList;
@@ -29,41 +30,18 @@ public class Reading extends LinearOpMode {
     private FtcDashboard dash;
     private TelemetryPacket packet;
     private OdometrySubsystem odometrySubsystem;
+    private MecanumSubsystem mecanumSubsystem;
 
     @Override
     public void runOpMode() throws InterruptedException {
         imu = new IMUSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         odo = new GyroOdometry(odometrySubsystem, imu);
-
-        frontLeft = hardwareMap.get(DcMotor.class, "leftForward");
-        frontRight = hardwareMap.get(DcMotor.class, "rightForward");
-        backLeft = hardwareMap.get(DcMotor.class, "leftBack");
-        backRight = hardwareMap.get(DcMotor.class, "rightBack");
-
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        frontRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        frontLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        backLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        imu.resetAngle();
-        dash = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
-
-        FtcDashboard dashboard = FtcDashboard.getInstance();
-        telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry()); // allows telemetry to output to phone and dashboard
-
-//        odometrySubsystem.reset();
+        mecanumSubsystem = new MecanumSubsystem(hardwareMap);
+        frontLeft = mecanumSubsystem.getLeftForward();
+        frontRight = mecanumSubsystem.getRightForward();
+        backLeft = mecanumSubsystem.getLeftBack();
+        backRight = mecanumSubsystem.getRightBack();
 
         waitForStart();
 
