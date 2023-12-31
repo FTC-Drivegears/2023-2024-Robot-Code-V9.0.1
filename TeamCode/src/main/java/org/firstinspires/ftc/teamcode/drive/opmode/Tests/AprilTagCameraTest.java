@@ -35,7 +35,6 @@ public class AprilTagCameraTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
         aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
-        dashboard = FtcDashboard.getInstance();
 
         packet = new TelemetryPacket();
 

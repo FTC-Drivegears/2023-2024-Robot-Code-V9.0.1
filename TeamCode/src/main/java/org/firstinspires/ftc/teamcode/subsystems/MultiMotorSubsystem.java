@@ -308,41 +308,6 @@ public class MultiMotorSubsystem extends Specifications {
         aux2.setPower(getMainPower());
     }
 
-    public void internalEncoderDecelerationProcess(){
-        test = true;
-        mainTimer.reset(); //reset timer
-        encoderF = getPosition(); //get final encoder value
-        angularVelocity = -main.getVelocity(AngleUnit.RADIANS);
-        encoderI = encoderF; //set initial to target encoder value
-        if (runToPosition){ //if run to position is true
-            if (finalPosition < 5 && getPosition() < 5) {
-                power = 0;
-            } else if (finalPosition >= getPosition()){ //if target is higher than current position
-                power = pidUp.outputPositionalIntegral(finalPosition, encoderF) + m/1050 * encoderF + c; //calculate power up
-            } else if (Math.abs(getPosition()-finalPosition) < uncertainty){ //if target is less than current and the difference is less than 750
-                power = m / 1050 * encoderF + c; //maintain position with power
-            } else if (/*finalPosition < 5 && */getPosition() < 150) {
-                power = Math.min(-0.4, -0.4 * getPosition() / 40);
-            } else if (finalPosition < getPosition() - 100) {
-                power = 0.3*pidDown.outputPositionalIntegral(finalPosition, encoderF) - Math.max(kv * getAngularVelocity() * getPosition() / 300, downThreshold) + m/1050 * encoderF + c; //calculate power down
-            } else { //move down, if either no input / target is lower than current position
-                power = 0.3*pidDown.outputPositionalIntegral(finalPosition, encoderF) + m/1050 * encoderF + c; //calculate power down
-            }
-        }
-        if (power > 1) { //set power = 1 if greater than 1
-            power = 1;
-        } else if (power < -0.4 - (double) getPosition() / 9250){ //set power = -0.6 if less than -0.6
-            power = -0.4 - (double) getPosition() / 9250;
-        }
-//        if (down){
-//            main.setVelocity(-Math.sqrt(4*97.6/2/2*((getPosition() - 40)/145.1*Math.PI*2)*1.9)/1.9);
-//        } else {
-            main.setPower(power); //set power
-//        }
-        aux1.setPower(getMainPower());
-        aux2.setPower(getMainPower());
-    }
-
     public void LiftCascadeProcess(double targetPos, Interval... interval){
         runToPosition = true;
         IntervalControl velocityInterval = new IntervalControl(interval);
