@@ -1,10 +1,17 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Size;
+
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.Pipelines.AprilTagPipeline;
-import org.openftc.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -12,64 +19,149 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 public class AprilCamSubsystem {
+    AprilTagProcessor aprilTagProcessor;
+    VisionPortal visionPortal;
 
-    public OpenCvCamera webcam;
-    public AprilTagPipeline aprilTagPipeline;
-    boolean initial;
-    public static final int VIEW_WIDTH = 320;
-    public static final int VIEW_HEIGHT = 176;
-    private int cameraMonitorViewId; // ID of the viewport which camera feed will be displayed
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
+    ArrayList<AprilTagDetection> detections;
+    OpenCvCamera webcam;
 
-    // UNITS ARE METERS
-    double tagsize = 0.166;
+    //get aprilTagProcessor
+    public AprilTagProcessor getAprilTagProcessor(){
+        return aprilTagProcessor;
+    }
+
+    //get visionPortal
+    public VisionPortal getVisionPortal(){
+        return visionPortal;
+    }
 
     public AprilCamSubsystem(HardwareMap hardwareMap){
-        aprilTagPipeline = new AprilTagPipeline(0.166, fy, fx, cy, cx);
-        webcam.setPipeline(aprilTagPipeline);
-        // initiate the needed parameters
-        cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId","id",hardwareMap.appContext.getPackageName());
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-        // initiate the camera object with created parameters and pipeline
-        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
-        webcam.setPipeline(aprilTagPipeline);
+        aprilTagProcessor = new AprilTagProcessor.Builder()
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .build();
 
-        // runs camera on a separate thread so it can run simultaneously with everything else
-        webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener(){
-            @Override
-            public void onOpened() {
-                // starts the camera stream when init is pressed
-                webcam.startStreaming(VIEW_WIDTH,VIEW_HEIGHT, OpenCvCameraRotation.UPRIGHT);
-            }
-
-            @Override
-            public void onError(int errorCode) {
-
-            }
-        });
+        visionPortal = new VisionPortal.Builder()
+                .addProcessor(aprilTagProcessor)
+                .setCamera(hardwareMap.get(CameraName.class, "Webcam 1"))
+                .setCameraResolution(new Size(640, 480))
+                .build();
+        detections = new ArrayList<>();
     }
 
-    public double getTagCenterX(int tagID){
-        ArrayList<AprilTagDetection> detections = aprilTagPipeline.getLatestDetections();
-        for(AprilTagDetection detection : detections){
-            if(detection.id == tagID){
-                return detection.center.x;
-            }
+    //starts gathering detections (process)
+    public void runDetections(){
+        if(visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING){
+            detections = aprilTagProcessor.getDetections();
         }
-        return -1;
     }
-    public double getTagCenterY(int tagID){
-        ArrayList<AprilTagDetection> detections = aprilTagPipeline.getLatestDetections();
+
+    //returns list of all april tag detections
+    public ArrayList<AprilTagDetection> getDetections(){
+        return detections;
+    }
+
+    //reutrns list of all fieldpositions from april tag metadata
+    public ArrayList<VectorF> getFieldPositions(){
+        ArrayList<VectorF> fieldPositions = new ArrayList<>();
         for(AprilTagDetection detection : detections){
-            if(detection.id == tagID){
-                return detection.center.y;
-            }
+            fieldPositions.add(detection.metadata.fieldPosition);
         }
-        return -1;
+        return fieldPositions;
     }
+
+    //returns list of distanceunits from april tag metadata
+    public ArrayList<DistanceUnit> getDistanceUnits(){
+        ArrayList<DistanceUnit> distanceUnits = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            distanceUnits.add(detection.metadata.distanceUnit);
+        }
+        return distanceUnits;
+    }
+
+    //returns list of tagids from april tag
+    public ArrayList<Integer> getTagIDs(){
+        ArrayList<Integer> tagIDs = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            tagIDs.add(detection.id);
+        }
+        return tagIDs;
+    }
+
+    //returns list of x positions from april tag
+    public ArrayList<Double> getXPositions(){
+        ArrayList<Double> xPositions = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            xPositions.add(detection.ftcPose.x);
+        }
+        return xPositions;
+    }
+
+    //returns list of y positions from april tag
+    public ArrayList<Double> getYPositions(){
+        ArrayList<Double> yPositions = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            yPositions.add(detection.ftcPose.y);
+        }
+        return yPositions;
+    }
+
+    //returns list of z positions from april tag
+    public ArrayList<Double> getZPositions(){
+        ArrayList<Double> zPositions = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            zPositions.add(detection.ftcPose.z);
+        }
+        return zPositions;
+    }
+
+    //returns list of yaw angles from april tag
+    public ArrayList<Double> getYawAngles(){
+        ArrayList<Double> yawAngles = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            yawAngles.add(detection.ftcPose.yaw);
+        }
+        return yawAngles;
+    }
+
+    //returns list of pitch angles from april tag
+    public ArrayList<Double> getPitchAngles(){
+        ArrayList<Double> pitchAngles = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            pitchAngles.add(detection.ftcPose.pitch);
+        }
+        return pitchAngles;
+    }
+
+    //returns list of roll angles from april tag
+    public ArrayList<Double> getRollAngles(){
+        ArrayList<Double> rollAngles = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            rollAngles.add(detection.ftcPose.roll);
+        }
+        return rollAngles;
+    }
+
+    //returns list of ranges from april tag
+    public ArrayList<Double> getRanges(){
+        ArrayList<Double> ranges = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            ranges.add(detection.ftcPose.range);
+        }
+        return ranges;
+    }
+
+    //returns list of bearings from april tag
+    public ArrayList<Double> getBearings(){
+        ArrayList<Double> bearings = new ArrayList<>();
+        for(AprilTagDetection detection : detections){
+            bearings.add(detection.ftcPose.bearing);
+        }
+        return bearings;
+    }
+
 }
