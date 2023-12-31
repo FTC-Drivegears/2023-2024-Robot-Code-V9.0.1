@@ -33,7 +33,6 @@ public class AprilTagCameraTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        webcam = hardwareMap.get(OpenCvCamera.class, "Webcam 1");
         aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
 
         packet = new TelemetryPacket();
