@@ -314,7 +314,7 @@ public class MultiMotorSubsystem extends Specifications {
 //        angularVelocity = -main.getVelocity(AngleUnit.RADIANS);
 
         intervalValue = velocityInterval.getOutput(getPosition());
-        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, getDerivativeValue());
+        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, cascadePID.getDerivative(), 0);
         moveLift(cascadeOutput);
     }
 
@@ -382,7 +382,7 @@ public class MultiMotorSubsystem extends Specifications {
         return Math.abs(finalPosition - getPosition()) < uncertainty;
     }
     public double getDerivativeValue(){
-        return testLiftPID.getDerivative();
+        return -testLiftPID.getDerivative();
     }
     public double getLastErrorValue(){
         return testLiftPID.getLastError();

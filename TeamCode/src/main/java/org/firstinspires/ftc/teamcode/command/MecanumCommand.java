@@ -2,16 +2,14 @@ package org.firstinspires.ftc.teamcode.command;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
+import org.firstinspires.ftc.teamcode.util.LogisticFunction;
 import org.firstinspires.ftc.teamcode.util.PIDCore;
-import org.firstinspires.ftc.teamcode.util.PurePursuit;
 import org.firstinspires.ftc.teamcode.util.Specifications;
-import org.firstinspires.ftc.teamcode.util.VectorCartesian;
 
 @Config
 public class MecanumCommand {
@@ -24,6 +22,31 @@ public class MecanumCommand {
     public PIDCore globalXController;
     public PIDCore globalYController;
     public PIDCore globalThetaController;
+    public PIDCore globalCascadeXController;
+    public PIDCore globalCascadeYController;
+    public PIDCore globalCascadeThetaController;
+    private static double cascadekpx = 0.07;
+    private static double cascadekdx = 0.01;
+    private static double cascadekix = 0.004/2;
+    private static double cascadekpy = 0.055;
+    private static double cascadekdy = 0.0005;
+    private static double cascadekiy = 0.0075/2;
+    private static double cascadekptheta = 2;
+    private static double cascadekdtheta = 0.05;
+    private static double cascadekitheta = 0.0;
+
+    //TODO: tune these
+    private static double cascadekpxVel = 0.07;
+    private static double cascadekdxVel = 0.01;
+    private static double cascadekixVel = 0.004/2;
+    private static double cascadekpyVel = 0.055;
+    private static double cascadekdyVel = 0.0005;
+    private static double cascadekiyVel = 0.0075/2;
+    private static double cascadekpthetaVel = 2;
+    private static double cascadekdthetaVel = 0.05;
+    private static double cascadekithetaVel = 0.0;
+
+
     private static double kpx = 0.07;
     private static double kdx = 0.01;
     private static double kix = 0.004/2;
@@ -70,6 +93,9 @@ public class MecanumCommand {
         globalXController = new PIDCore(kpx, kdx, kix);
         globalYController = new PIDCore(kpy, kdy, kiy);
         globalThetaController = new PIDCore(kptheta, kdtheta, kitheta);
+        globalCascadeXController = new PIDCore(cascadekpx, cascadekdx, cascadekix);
+        globalCascadeYController = new PIDCore(cascadekpy, cascadekdy, cascadekiy);
+        globalCascadeThetaController = new PIDCore(cascadekptheta, cascadekdtheta, cascadekitheta);
         elapsedTime = new ElapsedTime();
         xFinal = gyroOdometry.x;
         yFinal = gyroOdometry.y;
@@ -93,39 +119,8 @@ public class MecanumCommand {
         moveGlobalPartial(true, ex, ey, etheta);
     }
 
-//    public void pidProcessPurePursuit(){
-//        e = globalPositionController.outputPositional(Math.sqrt(Math.pow((purePursuit.getPoints().get(purePursuit.getCurrentTargetPoint()).getX() - gyroOdometry.x), 2) + Math.pow((purePursuit.getPoints().get(purePursuit.getCurrentTargetPoint()).getY() - gyroOdometry.y), 2)));
-//        heading = Math.atan2(xFinal - gyroOdometry.x, yFinal - gyroOdometry.y);
-//        ex = e * Math.sin(heading);
-//        ey = e * Math.cos(heading);
-//        etheta = globalThetaController.outputPositional(thetaFinal, gyroOdometry.theta);
-//        if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
-//            double max = Math.max(Math.abs(ex), Math.abs(ey));
-//            ex = ex / max * velocity;
-//            ey = ey / max * velocity;
-//            etheta = etheta / max * velocity;
-//        }
-//        moveGlobalPartial(true, ex, ey, etheta);
-//    }
-
     public void move(boolean run, double lv, double lh, double rv, double rh) {
         mecanumSubsystem.move(run, lv, lh, rv, rh);
-    }
-
-    public void moveGlobal(boolean run, double vertical, double horizontal, double rotational){
-        if (run){
-            double localVertical = vertical*Math.cos(gyroOdometry.theta) - horizontal*Math.cos(Math.PI/2-gyroOdometry.theta);
-            double localHorizontal = vertical*Math.sin(gyroOdometry.theta) + horizontal*Math.sin(Math.PI/2-gyroOdometry.theta);
-            mecanumSubsystem.move(true, localVertical, localHorizontal, rotational);
-        }
-    }
-
-    public void moveGlobalVelocity(boolean run, double vertical, double horizontal, double rotational){
-        if (run){
-            double localVertical = vertical*Math.cos(gyroOdometry.theta) - horizontal*Math.cos(Math.PI/2-gyroOdometry.theta);
-            double localHorizontal = vertical*Math.sin(gyroOdometry.theta) + horizontal*Math.sin(Math.PI/2-gyroOdometry.theta);
-            mecanumSubsystem.moveVelocity(true, localVertical, localHorizontal, rotational);
-        }
     }
 
     public void moveGlobalPartial(boolean run, double vertical, double horizontal, double rotational){
@@ -262,133 +257,6 @@ public class MecanumCommand {
 //        mecanumSubsystem.x = xTemp;
 //        mecanumSubsystem.y = yTemp;
     }
-    //important
-    public void toPosPIDGyroOdometry(double vel, double xf, double yf, double thetaf){
-        globalXController.integralReset();
-        globalYController.integralReset();
-        globalThetaController.integralReset();
-        while ((Math.abs(xf-gyroOdometry.x) > 5 || Math.abs(yf-gyroOdometry.y) > 5 || Math.abs(thetaf-gyroOdometry.theta) > 0.05)&&opMode.opModeIsActive()){
-            if (Math.abs(xf-gyroOdometry.x) > 2){
-                ex = globalXController.outputPositional(xf, gyroOdometry.x);
-            } else {
-                ex = 0;
-            }
-            if (Math.abs(yf - gyroOdometry.y) > 2){
-                ey = globalYController.outputPositional(yf, gyroOdometry.y);
-            } else {
-                ey = 0;
-            }
-            if (Math.abs(thetaf - gyroOdometry.theta) > 0.02){
-                etheta = globalThetaController.outputPositional(thetaf, gyroOdometry.theta);
-            } else {
-                etheta = 0;
-            }
-            if (Math.abs(ex) > vel || Math.abs(ey) > vel){
-                double max = Math.max(Math.abs(ex), Math.abs(ey));
-                ex = ex / max * vel;
-                ey = ey / max * vel;
-                etheta = etheta / max * vel;
-            }
-            moveGlobalPartial(true, ex, ey, etheta);
-        }
-        moveGlobalPartial(true, 0, 0, 0);
-    }
-    public void toPosPIDGyroOdometryPreciseNoTheta(double vel, double xf, double yf){
-        double ex;
-        double ey;
-        double etheta;
-        globalXController.integralReset();
-        globalYController.integralReset();
-        globalThetaController.integralReset();
-        while ((Math.abs(xf-gyroOdometry.x) > 1 || Math.abs(yf-gyroOdometry.y) > 1 &&opMode.opModeIsActive())){
-            if (Math.abs(xf-gyroOdometry.x) > 1){
-                ex = globalXController.outputPositional(xf, gyroOdometry.x);
-            } else {
-                ex = 0;
-            }
-            if (Math.abs(yf - gyroOdometry.y) > 1){
-                ey = globalYController.outputPositional(yf, gyroOdometry.y);
-            } else {
-                ey = 0;
-            }
-            if (ex > vel || ey > vel){
-                double max = Math.max(ex, ey);
-                ex = ex / max * vel;
-                ey = ey / max * vel;
-            }
-            moveGlobalPartial(true, ex, ey, 0);
-        }
-        moveGlobalPartial(true, 0, 0, 0);
-    }
-
-    public void toPosPIDGyroOdometryPrecise(double error, double vel, double xf, double yf, double thetaf){
-        double ex;
-        double ey;
-        double etheta;
-        globalXController.integralReset();
-        globalYController.integralReset();
-        globalThetaController.integralReset();
-        while ((Math.abs(xf-gyroOdometry.x) > error || Math.abs(yf-gyroOdometry.y) > error || Math.abs(thetaf-gyroOdometry.theta) > 0.02)&&opMode.opModeIsActive()){
-            if (Math.abs(xf-gyroOdometry.x) > error){
-                ex = globalXController.outputPositional(xf, gyroOdometry.x);
-            } else {
-                ex = 0;
-            }
-            if (Math.abs(yf - gyroOdometry.y) > error){
-                ey = globalYController.outputPositional(yf, gyroOdometry.y);
-            } else {
-                ey = 0;
-            }
-            if (Math.abs(thetaf - gyroOdometry.theta) > 0.005){
-                etheta = globalThetaController.outputPositional(thetaf, gyroOdometry.theta);
-            } else {
-                etheta = 0;
-            }
-            if (ex > vel || ey > vel){
-                double max = Math.max(ex, ey);
-                ex = ex / max * vel;
-                ey = ey / max * vel;
-                etheta = etheta / max * vel;
-            }
-            moveGlobalPartial(true, ex, ey, etheta);
-        }
-        moveGlobalPartial(true, 0, 0, 0);
-    }
-
-    public void toPosPIDGyroOdometryPrecise(double error, double vel, double xf, double yf, double thetaf, double maxTime){
-        double ex;
-        double ey;
-        double etheta;
-        globalXController.integralReset();
-        globalYController.integralReset();
-        globalThetaController.integralReset();
-        elapsedTime.reset();
-        while ((Math.abs(xf-gyroOdometry.x) > error || Math.abs(yf-gyroOdometry.y) > error || Math.abs(thetaf-gyroOdometry.theta) > 0.02) && elapsedTime.time() < maxTime && opMode.opModeIsActive()){
-            if (Math.abs(xf-gyroOdometry.x) > error){
-                ex = globalXController.outputPositional(xf, gyroOdometry.x);
-            } else {
-                ex = 0;
-            }
-            if (Math.abs(yf - gyroOdometry.y) > error){
-                ey = globalYController.outputPositional(yf, gyroOdometry.y);
-            } else {
-                ey = 0;
-            }
-            if (Math.abs(thetaf - gyroOdometry.theta) > 0.005){
-                etheta = globalThetaController.outputPositional(thetaf, gyroOdometry.theta);
-            } else {
-                etheta = 0;
-            }
-            if (ex > vel || ey > vel){
-                double max = Math.max(ex, ey);
-                ex = ex / max * vel;
-                ey = ey / max * vel;
-                etheta = etheta / max * vel;
-            }
-            moveGlobalPartial(true, ex, ey, etheta);
-        }
-        moveGlobalPartial(true, 0, 0, 0);
-    }
 
     public void moveToGlobalPosition(double targetX, double targetY, double targetTheta) {
         // stop moving if within 5 ticks or 0.2 radians from the position
@@ -418,6 +286,22 @@ public class MecanumCommand {
                     gyroOdometry.theta);
         }
         mecanumSubsystem.stop(true);
+    }
+
+    public void moveToGlobalPositionLogistic(double targetX, double targetY, double targetTheta){
+        //use a logistic function with a cascade controller
+        //TODO: finish
+        LogisticFunction logisticFunctionX = new LogisticFunction(targetX - gyroOdometry.x, 0.1, 0, 0);
+        while (Math.abs(targetX - gyroOdometry.x) > 2.5
+                || Math.abs(targetY - gyroOdometry.y) > 2.5
+                || Math.abs(targetTheta - gyroOdometry.theta) > 0.1) {
+
+            mecanumSubsystem.fieldOrientedMove(
+                    globalCascadeYController.cascadeOutput(targetY, gyroOdometry.y, logisticFunctionX.getOutput(gyroOdometry.x), globalCascadeYController.getDerivative(), 0),
+                    -globalXController.outputPositionalCapped(targetX, gyroOdometry.x, 100),
+                    globalThetaController.outputPositionalCapped(targetTheta, gyroOdometry.theta, 100),
+                    gyroOdometry.theta);
+        }
     }
 
     public void moveRotation(double targetTheta) {
