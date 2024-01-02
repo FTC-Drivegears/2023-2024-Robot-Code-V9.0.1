@@ -37,12 +37,13 @@ public class AprilTagCameraTest extends LinearOpMode {
 
         packet = new TelemetryPacket();
 
-        waitForStart();
-        while(opModeIsActive()){
+        while(opModeInInit()){
             aprilCamSubsystem.runDetections();
             telemetry.addData("Detections", aprilCamSubsystem.getDetections());
             telemetry.update();
         }
+
+        waitForStart();
 
     }
 
