@@ -22,16 +22,16 @@ public class MecanumTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         imu = new IMUSubsystem(hardwareMap);
-        odo = new OdometrySubsystem(hardwareMap);
+//        odo = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odo, imu);
-        MecanumCommand mecanumCommand = new MecanumCommand(mecanumSubsystem, odo, gyroOdometry, this);
+        mecanumSubsystem = new MecanumSubsystem(hardwareMap);
+        mecanumCommand = new MecanumCommand(mecanumSubsystem, odo, gyroOdometry, this);
 
 //        drive = new MecanumCommand(mecanumSubsystem, odo, new GyroOdometry(null, null), this);
 
         imu.resetAngle();
-        odo.reset();
+//        odo.reset();
 
         waitForStart();
 
