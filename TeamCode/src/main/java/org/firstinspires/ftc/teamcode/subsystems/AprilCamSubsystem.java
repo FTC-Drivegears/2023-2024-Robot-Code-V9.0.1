@@ -96,7 +96,8 @@ public class AprilCamSubsystem {
     public ArrayList<Double> getXPositions(){
         ArrayList<Double> xPositions = new ArrayList<>();
         for(AprilTagDetection detection : detections){
-            xPositions.add(detection.ftcPose.x);
+            //cm
+            xPositions.add(detection.ftcPose.x*2.54);
         }
         return xPositions;
     }
@@ -105,7 +106,8 @@ public class AprilCamSubsystem {
     public ArrayList<Double> getYPositions(){
         ArrayList<Double> yPositions = new ArrayList<>();
         for(AprilTagDetection detection : detections){
-            yPositions.add(detection.ftcPose.y);
+            //cm
+            yPositions.add(detection.ftcPose.y*2.54);
         }
         return yPositions;
     }
@@ -114,7 +116,8 @@ public class AprilCamSubsystem {
     public ArrayList<Double> getZPositions(){
         ArrayList<Double> zPositions = new ArrayList<>();
         for(AprilTagDetection detection : detections){
-            zPositions.add(detection.ftcPose.z);
+            //cm
+            zPositions.add(detection.ftcPose.z*2.54);
         }
         return zPositions;
     }

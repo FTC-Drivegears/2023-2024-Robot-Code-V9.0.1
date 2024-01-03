@@ -61,8 +61,8 @@ public class GyroOdometry extends Specifications{
         totalsEncoder += sEncoderf;
         sEncoderf = odometrySubsystem.leftEncoder(); //s = side, b = back
         bEncoderf = odometrySubsystem.backEncoder(); //dc = cm per tick, dyc = offset Y encoder, dxc = offset X encoder
-        dx = (sEncoderf-sEncoderi)*dc + dxc*dTheta;
-        dy = (bEncoderf-bEncoderi)*dc - dyc*dTheta;
+        dx = (sEncoderf-sEncoderi)*dc - dxc*dTheta;
+        dy = (bEncoderf-bEncoderi)*dc + dyc*dTheta;
         tempX = (dx*Math.cos(theta))+(dy*Math.sin(theta));
         tempY = (dy*Math.cos(theta))-(dx*Math.sin(theta));
         testx = (bEncoderf-bEncoderi)*dc;

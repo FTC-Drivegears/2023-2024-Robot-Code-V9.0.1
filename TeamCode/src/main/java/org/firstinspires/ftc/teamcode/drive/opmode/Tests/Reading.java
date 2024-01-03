@@ -35,9 +35,9 @@ public class Reading extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         imu = new IMUSubsystem(hardwareMap);
+        mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         odo = new GyroOdometry(odometrySubsystem, imu);
-        mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         frontLeft = mecanumSubsystem.getLeftForward();
         frontRight = mecanumSubsystem.getRightForward();
         backLeft = mecanumSubsystem.getLeftBack();
@@ -81,6 +81,8 @@ public class Reading extends LinearOpMode {
             telemetry.addData("x", odo.x);
             telemetry.addData("y", odo.y);
             telemetry.addData("heading", odo.theta);
+            telemetry.addData("dtheta", odo.dTheta);
+            telemetry.addData("dtheta2", imu.dTheta);
             telemetry.addData("imu heading", imu.getTheta());
             telemetry.addData("leftEncoder", odometrySubsystem.leftEncoder());
             telemetry.addData("rightEncoder", odometrySubsystem.rightEncoder());
@@ -90,6 +92,7 @@ public class Reading extends LinearOpMode {
     }
     public void runOdometry(){
         while(opModeIsActive()){
+            imu.gyroProcess();
             odo.process();
         }
     }
