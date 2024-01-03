@@ -90,7 +90,7 @@ public class Reading extends LinearOpMode {
     }
     public void runOdometry(){
         while(opModeIsActive()){
-            odo.odometryProcess();
+            odo.process();
         }
     }
 }
