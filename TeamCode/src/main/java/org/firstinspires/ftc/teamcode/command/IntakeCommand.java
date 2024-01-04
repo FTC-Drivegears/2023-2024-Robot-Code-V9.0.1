@@ -14,19 +14,23 @@ public class IntakeCommand {
     private CRServo intakeRoller;
 
     public IntakeCommand(HardwareMap hardwareMap) {
-        intake = new SingleMotorSubsystem(hardwareMap, Specifications.INTAKE_MOTOR);
+//        intake = new SingleMotorSubsystem(hardwareMap, Specifications.INTAKE_MOTOR);
         intakeServo = hardwareMap.get(Servo.class, Specifications.INTAKE_SERVO);
-        intakeRoller = hardwareMap.get(CRServo.class, Specifications.INTAKE_ROLLER);
+//        intakeRoller = hardwareMap.get(CRServo.class, Specifications.INTAKE_ROLLER);
 
-        intakeRoller.setDirection(DcMotorSimple.Direction.FORWARD);
+//        intakeRoller.setDirection(DcMotorSimple.Direction.FORWARD);
+    }
+
+    public double intakeValue() {
+        return intakeServo.getPosition();
     }
 
     public void raiseIntake() {
-        intakeServo.setPosition(0);
+        intakeServo.setPosition(0.1);
     }
 
     public void lowerIntake() {
-        intakeServo.setPosition(0.45);
+        intakeServo.setPosition(0.4);
     }
     public void intakeRollerIn(){
         intakeRoller.setPower(-1);

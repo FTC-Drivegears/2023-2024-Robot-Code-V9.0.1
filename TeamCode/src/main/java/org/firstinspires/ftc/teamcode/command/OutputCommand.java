@@ -30,7 +30,7 @@ public class OutputCommand {
         leftTilt = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_TILT);
         rightTilt = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_TILT);
         gate = hardwareMap.get(Servo.class, Specifications.PIXEL_GATE);
-        intakeCommand = new IntakeCommand(hardwareMap);
+//        intakeCommand = new IntakeCommand(hardwareMap);
 
         leftArm.setDirection(Servo.Direction.REVERSE);
         rightArm.setDirection(Servo.Direction.FORWARD);
@@ -69,13 +69,13 @@ public class OutputCommand {
     }
     public void armToIdle(){
         //TODO: Find value
-        leftArm.setPosition(0.96);
-        rightArm.setPosition(0.96);
+        leftArm.setPosition(0.75);
+        rightArm.setPosition(0.75);
     }
 
     public void armToBoard(){
-        leftArm.setPosition(0.66);
-        rightArm.setPosition(0.66);
+        leftArm.setPosition(0.25);
+        rightArm.setPosition(0.25);
     }
 
     public void tiltToIdle(){

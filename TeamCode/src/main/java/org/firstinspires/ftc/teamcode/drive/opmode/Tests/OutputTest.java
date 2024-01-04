@@ -16,7 +16,7 @@ public class  OutputTest extends LinearOpMode {
     public static double position = 0.5;
     @Override
     public void runOpMode() throws InterruptedException {
-        outputCommand = new OutputCommand(hardwareMap);
+//        outputCommand = new OutputCommand(hardwareMap);
         intakeCommand = new IntakeCommand(hardwareMap);
 //        outputCommand.initialize();
         waitForStart();
@@ -50,14 +50,15 @@ public class  OutputTest extends LinearOpMode {
                 outputCommand.armToBoard();
             }
             else{
-                outputCommand.outputWheelStop();
+//                outputCommand.outputWheelStop();
             }
 
-            telemetry.addData("gate position", outputCommand.getGatePosition());
-            telemetry.addData("left arm position", outputCommand.getLeftArmPosition());
-            telemetry.addData("right arm position", outputCommand.getRightArmPosition());
-            telemetry.addData("left tilt position", outputCommand.getLeftTiltPosition());
-            telemetry.addData("right tilt position", outputCommand.getRightTiltPosition());
+            telemetry.addData("intake", intakeCommand.intakeValue());
+//            telemetry.addData("gate position", outputCommand.getGatePosition());
+//            telemetry.addData("left arm position", outputCommand.getLeftArmPosition());
+//            telemetry.addData("right arm position", outputCommand.getRightArmPosition());
+//            telemetry.addData("left tilt position", outputCommand.getLeftTiltPosition());
+//            telemetry.addData("right tilt position", outputCommand.getRightTiltPosition());
             telemetry.update();
         }
     }
