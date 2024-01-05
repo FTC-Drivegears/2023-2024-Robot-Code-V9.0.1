@@ -71,7 +71,7 @@ public class CoordinateTesting extends LinearOpMode {
     }
     public void pidProcess(){
         while (opModeIsActive()) {
-            mecanumCommand.pidProcess();
+            mecanumCommand.pidProcessLogistic();
         }
     }
 
