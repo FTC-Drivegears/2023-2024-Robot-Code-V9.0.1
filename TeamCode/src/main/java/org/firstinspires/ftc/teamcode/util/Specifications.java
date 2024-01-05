@@ -16,7 +16,7 @@ public class Specifications {
     public final double odometryTick = 8192;
     //beta
     public final double sideOdometryAngleFromCentre = 0;
-    public final double frontOdometryAngleFromCentre = Math.PI - Math.atan(7.2/15.91);
+    public final double frontOdometryAngleFromCentre = Math.atan(15.91/7.2);
 
 
     public static double WHEEL_RADIUS = 4.8;

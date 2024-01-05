@@ -69,22 +69,22 @@ public class OutputCommand {
     }
     public void armToIdle(){
         //TODO: Find value
-        leftArm.setPosition(0.75);
-        rightArm.setPosition(0.75);
+        leftArm.setPosition(1);
+        rightArm.setPosition(1);
     }
 
     public void armToBoard(){
-        leftArm.setPosition(0.25);
-        rightArm.setPosition(0.25);
+        leftArm.setPosition(0);
+        rightArm.setPosition(0);
     }
 
     public void tiltToIdle(){
-        leftTilt.setPosition(0.55);
-        rightTilt.setPosition(0.55);
+        leftTilt.setPosition(1);
+        rightTilt.setPosition(1);
     }
     public void tiltToBoard(){
-        leftTilt.setPosition(0.12);
-        rightTilt.setPosition(0.12);
+        leftTilt.setPosition(0.1);
+        rightTilt.setPosition(0.1);
     }
 
     public double getGatePosition(){

@@ -8,8 +8,10 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
@@ -24,7 +26,7 @@ import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 @TeleOp(name="Reading")
 public class Reading extends LinearOpMode {
 
-    private DcMotor frontLeft, frontRight, backLeft, backRight;
+    private DcMotorEx frontLeft, frontRight, backLeft, backRight;
     private GyroOdometry odo;
     private IMUSubsystem imu;
     private FtcDashboard dash;
@@ -43,34 +45,60 @@ public class Reading extends LinearOpMode {
         backLeft = mecanumSubsystem.getLeftBack();
         backRight = mecanumSubsystem.getRightBack();
 
+        mecanumSubsystem.reset();
+
         waitForStart();
 
         CompletableFuture.runAsync(this::runOdometry);
 
         while (opModeIsActive()) {
             if(gamepad1.a){
-                frontLeft.setPower(1);
+                frontLeft.setPower(0.1);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.b){
-                frontRight.setPower(1);
+                frontRight.setPower(0.1);
                 frontLeft.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.y){
-                backLeft.setPower(1);
+                backLeft.setPower(0.1);
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.x){
-                backRight.setPower(1);
+                backRight.setPower(0.1);
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
+            }
+            else if(gamepad2.dpad_up){
+                backRight.setVelocity(1, AngleUnit.RADIANS);
+                frontLeft.setVelocity(0, AngleUnit.RADIANS);
+                frontRight.setVelocity(0, AngleUnit.RADIANS);
+                backLeft.setVelocity(0, AngleUnit.RADIANS);
+            }
+            else if(gamepad2.dpad_down){
+                backRight.setVelocity(0, AngleUnit.RADIANS);
+                frontLeft.setVelocity(1, AngleUnit.RADIANS);
+                frontRight.setVelocity(0, AngleUnit.RADIANS);
+                backLeft.setVelocity(0, AngleUnit.RADIANS);
+            }
+            else if(gamepad2.dpad_right){
+                backRight.setVelocity(0, AngleUnit.RADIANS);
+                frontLeft.setVelocity(0, AngleUnit.RADIANS);
+                frontRight.setVelocity(1, AngleUnit.RADIANS);
+                backLeft.setVelocity(0, AngleUnit.RADIANS);
+            }
+            else if(gamepad2.dpad_left){
+                backRight.setVelocity(0, AngleUnit.RADIANS);
+                frontLeft.setVelocity(0, AngleUnit.RADIANS);
+                frontRight.setVelocity(0, AngleUnit.RADIANS);
+                backLeft.setVelocity(1, AngleUnit.RADIANS);
             }
             else{
                 frontLeft.setPower(0);
@@ -92,8 +120,7 @@ public class Reading extends LinearOpMode {
     }
     public void runOdometry(){
         while(opModeIsActive()){
-            imu.gyroProcess();
-            odo.process();
+            odo.combinedProcess();
         }
     }
 }
