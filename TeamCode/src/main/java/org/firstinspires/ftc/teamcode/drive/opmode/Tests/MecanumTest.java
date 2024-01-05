@@ -28,10 +28,7 @@ public class MecanumTest extends LinearOpMode {
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odo, gyroOdometry, this);
 
-//        drive = new MecanumCommand(mecanumSubsystem, odo, new GyroOdometry(null, null), this);
-
         imu.resetAngle();
-//        odo.reset();
         mecanumSubsystem.reset();
 
         waitForStart();
