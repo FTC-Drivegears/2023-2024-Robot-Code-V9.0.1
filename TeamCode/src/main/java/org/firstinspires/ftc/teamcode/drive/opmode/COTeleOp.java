@@ -55,8 +55,8 @@ public class COTeleOp extends LinearOpMode {
     private RUNNING_STATE state = RUNNING_STATE.LIFT_STOP;
 
     private final TimerList timerList = new TimerList();
-    private Servo shooterServo;
-    private Servo rightHang;
+//    private Servo shooterServo;
+//    private Servo rightHang;
 
     @SuppressLint("SuspiciousIndentation")
     @Override
@@ -83,11 +83,11 @@ public class COTeleOp extends LinearOpMode {
 
         colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
 
-        shooterServo = hardwareMap.get(Servo.class, "leftHang");
-        rightHang = hardwareMap.get(Servo.class,"rightHang");
-
-        rightHang.setDirection(Servo.Direction.REVERSE);
-        shooterServo.setDirection(Servo.Direction.REVERSE);
+//        shooterServo = hardwareMap.get(Servo.class, "leftHang");
+//        rightHang = hardwareMap.get(Servo.class,"rightHang");
+//
+//        rightHang.setDirection(Servo.Direction.REVERSE);
+//        shooterServo.setDirection(Servo.Direction.REVERSE);
 
         pixelTimer = new ElapsedTime();
         liftTimer = new ElapsedTime();
@@ -232,15 +232,15 @@ public class COTeleOp extends LinearOpMode {
                 intakeCommand.stopIntake();
             }
 
-            if(gamepad1.left_bumper){
-                shooterServo.setPosition(0.5);
-                rightHang.setPosition(0);
-
-            }
-            else{
-                shooterServo.setPosition(0);
-                rightHang.setPosition(0.28);
-            }
+//            if(gamepad1.left_bumper){
+//                shooterServo.setPosition(0.5);
+//                rightHang.setPosition(0);
+//
+//            }
+//            else{
+//                shooterServo.setPosition(0);
+//                rightHang.setPosition(0.28);
+//            }
 
             //TODO: auto center/change zero
 //            updateTelemetry();

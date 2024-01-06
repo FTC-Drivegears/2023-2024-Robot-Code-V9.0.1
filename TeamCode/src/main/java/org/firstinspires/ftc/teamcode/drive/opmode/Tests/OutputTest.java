@@ -18,7 +18,7 @@ public class  OutputTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         outputCommand = new OutputCommand(hardwareMap);
         intakeCommand = new IntakeCommand(hardwareMap);
-//        outputCommand.initialize();
+        outputCommand.initialize();
         waitForStart();
 
         while(opModeIsActive()){
@@ -42,6 +42,10 @@ public class  OutputTest extends LinearOpMode {
             }
             else if(gamepad1.right_trigger > 0.5){
                 outputCommand.outputWheelOut();
+                intakeCommand.intakeIn(0.4 * gamepad1.right_trigger);
+            }
+            else if(gamepad1.left_trigger > 0.5){
+                intakeCommand.intakeIn(0.4 * -gamepad1.left_trigger);
             }
             else if(gamepad1.dpad_right){
                 outputCommand.armToIdle();
@@ -50,7 +54,8 @@ public class  OutputTest extends LinearOpMode {
                 outputCommand.armToBoard();
             }
             else{
-//                outputCommand.outputWheelStop();
+                outputCommand.outputWheelStop();
+
             }
 
             telemetry.addData("intake", intakeCommand.intakeValue());

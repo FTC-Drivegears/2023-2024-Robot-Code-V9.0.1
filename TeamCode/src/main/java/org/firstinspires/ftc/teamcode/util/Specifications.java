@@ -33,7 +33,7 @@ public class Specifications {
     public static final String FTRT_MOTOR = "rightForward";
     public static final String BKLF_MOTOR = "leftBack";
     public static final String BKRT_MOTOR = "rightBack";
-    public static final String BK_ENCODER = "frontEncoder"; //3
+    public static final String BK_ENCODER = "intakeMotor"; //3
     public static final String LF_ENCODER = "extension2"; //1 control
     public static final String RT_ENCODER = "rightEncoder"; //2 control
     public static final String IMU = "imu";

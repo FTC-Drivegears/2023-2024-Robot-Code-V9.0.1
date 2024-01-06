@@ -105,6 +105,10 @@ public class Reading extends LinearOpMode {
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
+                backRight.setVelocity(0, AngleUnit.RADIANS);
+                frontLeft.setVelocity(0, AngleUnit.RADIANS);
+                frontRight.setVelocity(0, AngleUnit.RADIANS);
+                backLeft.setVelocity(0, AngleUnit.RADIANS);
             }
             telemetry.addData("x", odo.x);
             telemetry.addData("y", odo.y);

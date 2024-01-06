@@ -14,11 +14,11 @@ public class IntakeCommand {
     private CRServo intakeRoller;
 
     public IntakeCommand(HardwareMap hardwareMap) {
-//        intake = new SingleMotorSubsystem(hardwareMap, Specifications.INTAKE_MOTOR);
+        intake = new SingleMotorSubsystem(hardwareMap, Specifications.INTAKE_MOTOR);
         intakeServo = hardwareMap.get(Servo.class, Specifications.INTAKE_SERVO);
-//        intakeRoller = hardwareMap.get(CRServo.class, Specifications.INTAKE_ROLLER);
+        intakeRoller = hardwareMap.get(CRServo.class, Specifications.INTAKE_ROLLER);
 
-//        intakeRoller.setDirection(DcMotorSimple.Direction.FORWARD);
+        intakeRoller.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public double intakeValue() {
