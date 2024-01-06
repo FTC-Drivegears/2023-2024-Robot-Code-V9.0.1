@@ -17,6 +17,7 @@ public class PIDCore {
     private ElapsedTime integralTimer;
     private double error;
     private double derivative;
+    private double velocityDerivative;
     private double integralSum = 0;
     private double tempIntegralSum = 0;
 
@@ -136,11 +137,11 @@ public class PIDCore {
     public double outputVelocity(double setVelocity, double feedback){
         error = setVelocity - feedback;
         integralSum += error * timer.time();
-        derivative = (error - lastVelError);
+        velocityDerivative = (error - lastVelError);
         lastVelError = error;
         timer.reset();
 
-        return (error * KpVel) + (derivative * KdVel) + (integralSum * KiVel);
+        return (error * KpVel) + (derivative * KdVel) + (integralSum * KiVel) + (Kf*feedback);
     }
 
     public double outputVelocity(double setVelocity, double feedback, double power){
@@ -157,13 +158,16 @@ public class PIDCore {
         return integralSum;
     }
 
-    public double cascadeOutput(double setPoint, double feedback, double setVelocity, double feedbackVelocity, double integralCap){
-        outputPositionalValue = outputPositionalCapped(setPoint, feedback, integralCap);
+    public double cascadeOutput(double setPoint, double feedback, double setVelocity, double feedbackVelocity){
+        outputPositionalValue = outputPositional(setPoint, feedback);
         outputVelocityValue = outputVelocity(setVelocity, feedbackVelocity);
         return outputPositionalValue + outputVelocityValue;
     }
     public double getDerivative(){
         return derivative;
+    }
+    public double getVelocityDerivative(){
+        return velocityDerivative;
     }
     public double getError(){
         return error;

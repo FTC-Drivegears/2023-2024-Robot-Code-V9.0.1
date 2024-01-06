@@ -35,34 +35,37 @@ public class DualMotorPowerTest extends LinearOpMode {
 
         waitForStart();
 
-        CompletableFuture.runAsync(this::liftProcess);
+//        CompletableFuture.runAsync(this::liftProcess);
 
         while (opModeIsActive()) {
 
             if(gamepad1.a){
-                level = 4;
+                multiMotorCommand.LiftUp(true, 4);
                 targetPosition = 3100;
             }
             else if(gamepad1.b){
-                level = 3;
+                multiMotorCommand.LiftUp(true, 3);
                 targetPosition = 0;
             }
             else if(gamepad1.y){
-                level = 2;
+                multiMotorCommand.LiftUp(true, 2);
                 targetPosition = 3100;
             }
             else if(gamepad1.x){
-                level = 1;
+                multiMotorCommand.LiftUp(true, 1);
                 targetPosition = 1300;
             }
             else if(gamepad1.dpad_down){
-                level = 0;
+                multiMotorCommand.LiftUp(true, 0);
                 targetPosition = 0;
+            }
+            else {
+                multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
             }
 //            else {
 //                multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
 //            }
-            mecanumSubsystem.fieldOrientedMove(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 0);
+//            mecanumSubsystem.fieldOrientedMove(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 0);
 
             packet.put("position", multiMotorSubsystem.getPosition());
             packet.put("power", multiMotorSubsystem.getMainPower());
@@ -91,9 +94,9 @@ public class DualMotorPowerTest extends LinearOpMode {
         }
     }
 
-    public void liftProcess(){
-        while(opModeIsActive()){
-            multiMotorCommand.LiftUp(true, level);
-        }
-    }
+//    public void liftProcess(){
+//        while(opModeIsActive()){
+//            multiMotorCommand.LiftUp(true, level);
+//        }
+//    }
 }

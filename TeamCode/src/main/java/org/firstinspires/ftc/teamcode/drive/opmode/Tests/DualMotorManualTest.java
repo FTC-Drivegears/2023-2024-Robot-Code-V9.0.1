@@ -85,6 +85,7 @@ public class DualMotorManualTest extends LinearOpMode {
             telemetry.addData("controlleroutput", multiMotorSubsystem.getCascadeOutput());
             telemetry.addData("outputPositionalValue", multiMotorSubsystem.getCascadePositional());
             telemetry.addData("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
+            telemetry.addData("vel deriv", multiMotorSubsystem.getCascadeVelDerivative());
             telemetry.addData("cascadeDerivative", multiMotorSubsystem.getCascadeDerivative());
             telemetry.update();
             dash.sendTelemetryPacket(packet);

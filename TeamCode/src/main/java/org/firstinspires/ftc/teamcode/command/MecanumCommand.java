@@ -297,7 +297,7 @@ public class MecanumCommand {
                 || Math.abs(targetTheta - gyroOdometry.theta) > 0.1) {
 
             mecanumSubsystem.fieldOrientedMove(
-                    globalCascadeYController.cascadeOutput(targetY, gyroOdometry.y, logisticFunctionX.getOutput(gyroOdometry.x), globalCascadeYController.getDerivative(), 0),
+                    globalCascadeYController.cascadeOutput(targetY, gyroOdometry.y, logisticFunctionX.getOutput(gyroOdometry.x), globalCascadeYController.getDerivative()),
                     -globalXController.outputPositionalCapped(targetX, gyroOdometry.x, 100),
                     globalThetaController.outputPositionalCapped(targetTheta, gyroOdometry.theta, 100),
                     gyroOdometry.theta);
