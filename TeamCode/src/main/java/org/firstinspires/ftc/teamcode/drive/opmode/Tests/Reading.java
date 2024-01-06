@@ -53,7 +53,7 @@ public class Reading extends LinearOpMode {
 
         while (opModeIsActive()) {
             if(gamepad1.a){
-                frontLeft.setPower(0.1);
+                frontLeft.setPower(1);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
@@ -110,6 +110,10 @@ public class Reading extends LinearOpMode {
                 frontRight.setVelocity(0, AngleUnit.RADIANS);
                 backLeft.setVelocity(0, AngleUnit.RADIANS);
             }
+            telemetry.addData("leftFront", mecanumSubsystem.getLeftForward().getCurrentPosition());
+            telemetry.addData("rightFront", mecanumSubsystem.getRightForward().getCurrentPosition());
+            telemetry.addData("leftBack", mecanumSubsystem.getLeftBack().getCurrentPosition());
+            telemetry.addData("rightBack", mecanumSubsystem.getRightBack().getCurrentPosition());
             telemetry.addData("x", odo.x);
             telemetry.addData("y", odo.y);
             telemetry.addData("heading", odo.theta);
@@ -119,6 +123,7 @@ public class Reading extends LinearOpMode {
             telemetry.addData("leftEncoder", odometrySubsystem.leftEncoder());
             telemetry.addData("rightEncoder", odometrySubsystem.rightEncoder());
             telemetry.addData("aux", odometrySubsystem.backEncoder());
+            telemetry.addData("velocity test", mecanumSubsystem.getLeftForward().getVelocity(AngleUnit.RADIANS));
             telemetry.update();
         }
     }

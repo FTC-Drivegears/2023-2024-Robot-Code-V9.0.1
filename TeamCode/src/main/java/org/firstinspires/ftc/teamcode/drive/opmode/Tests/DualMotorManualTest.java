@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Config
 @TeleOp
-public class DualMotorPowerTest extends LinearOpMode {
+public class DualMotorManualTest extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private MecanumSubsystem mecanumSubsystem;
@@ -59,10 +59,9 @@ public class DualMotorPowerTest extends LinearOpMode {
                 level = 0;
                 targetPosition = 0;
             }
-//            else {
-//                multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
-//            }
-            mecanumSubsystem.fieldOrientedMove(gamepad1.left_stick_x, gamepad1.left_stick_y, gamepad1.right_stick_x, 0);
+            else {
+                multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
+            }
 
             packet.put("position", multiMotorSubsystem.getPosition());
             packet.put("power", multiMotorSubsystem.getMainPower());
@@ -82,10 +81,11 @@ public class DualMotorPowerTest extends LinearOpMode {
             telemetry.addData("auxpower", multiMotorSubsystem.getAux1Power());
             telemetry.addData("auxpos", multiMotorSubsystem.getAuxPos());
             telemetry.addData("derivativeValue", multiMotorSubsystem.getDerivativeValue());
+            telemetry.addData("level", level);
             telemetry.addData("controlleroutput", multiMotorSubsystem.getCascadeOutput());
             telemetry.addData("outputPositionalValue", multiMotorSubsystem.getCascadePositional());
             telemetry.addData("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
-            telemetry.addData("level", level);
+            telemetry.addData("cascadeDerivative", multiMotorSubsystem.getCascadeDerivative());
             telemetry.update();
             dash.sendTelemetryPacket(packet);
         }
@@ -93,7 +93,7 @@ public class DualMotorPowerTest extends LinearOpMode {
 
     public void liftProcess(){
         while(opModeIsActive()){
-            multiMotorCommand.LiftUp(true, level);
+            multiMotorSubsystem.testLiftCascadeProcess(4000, 4000);
         }
     }
 }

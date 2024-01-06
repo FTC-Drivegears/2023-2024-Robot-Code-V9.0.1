@@ -140,7 +140,7 @@ public class PIDCore {
         lastVelError = error;
         timer.reset();
 
-        return (error * KpVel) + (derivative * KdVel) + (integralSum * KiVel) + (setVelocity * Kf);
+        return (error * KpVel) + (derivative * KdVel) + (integralSum * KiVel);
     }
 
     public double outputVelocity(double setVelocity, double feedback, double power){

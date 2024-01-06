@@ -38,7 +38,7 @@ public class MecanumTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             //drive.move(gamepad1.left_stick_x, -gamepad1.left_stick_y, gamepad1.right_stick_x);
-            mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y*5, gamepad1.left_stick_x*5, gamepad1.right_stick_x*5);
 
 //            telemetry.addData("Heading in DEG", imu.getHeadingDEG());
             telemetry.addData("leftFront", mecanumSubsystem.getLeftForward().getCurrentPosition());
