@@ -42,6 +42,7 @@ public class CoordinateTesting extends LinearOpMode {
         odometrySubsystem.reset();
 
         dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
 
         waitForStart();
         odometrySubsystem.reset();
@@ -55,7 +56,7 @@ public class CoordinateTesting extends LinearOpMode {
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
         while(opModeIsActive()) {
-            mecanumCommand.setFinalPosition(true, 30, 20, 0, 0);
+            mecanumCommand.setFinalPosition(true, 30, -20, 0, 0);
         }
 //        sleep(4000);
 //        mecanumCommand.moveToGlobalPosition(100, 100, Math.PI);
@@ -66,7 +67,7 @@ public class CoordinateTesting extends LinearOpMode {
 
     public void updateOdometry() {
         while (opModeIsActive()) {
-            gyroOdometry.combinedProcess();
+            gyroOdometry.process();
         }
     }
     public void pidProcess(){
@@ -83,11 +84,16 @@ public class CoordinateTesting extends LinearOpMode {
 
     public void updateTelemetry() {
         while (opModeIsActive()) {
+            packet.put("x", gyroOdometry.x);
+            packet.put("y", gyroOdometry.y);
+            packet.put("output", mecanumCommand.globalXController.getOutputPositionalValue());
+            packet.put("y output", mecanumCommand.globalYController.getOutputPositionalValue());
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("xintegral", mecanumCommand.globalXController.getIntegralSum());
             telemetry.addData("output", mecanumCommand.globalXController.getOutputPositionalValue());
             telemetry.update();
+            dashboard.sendTelemetryPacket(packet);
         }
     }
 }
