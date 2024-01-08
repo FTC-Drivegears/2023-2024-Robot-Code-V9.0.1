@@ -60,11 +60,11 @@ public class MecanumTest extends LinearOpMode {
             telemetry.addData("rfVel", mecanumSubsystem.rfvel);
             telemetry.addData("lbvel", mecanumSubsystem.lbvel);
             telemetry.addData("rbvel", mecanumSubsystem.rbvel);
-//            telemetry.addData("x", gyroOdometry.x);
-//            telemetry.addData("y", gyroOdometry.y);
+            telemetry.addData("x", gyroOdometry.x);
+            telemetry.addData("y", gyroOdometry.y);
 //            telemetry.addData("theta", imu.Theta);
 //            telemetry.addData("theta2", imu.getTheta());
-//            telemetry.addData("gyrotheta", gyroOdometry.theta);
+            telemetry.addData("gyrotheta", gyroOdometry.theta);
             telemetry.update();
         }
     }

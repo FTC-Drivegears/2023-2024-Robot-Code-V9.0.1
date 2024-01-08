@@ -24,16 +24,18 @@ public class DualMotorAutoTest extends LinearOpMode {
         CompletableFuture.runAsync(this::liftProcess);
         CompletableFuture.runAsync(this::runTelemetry);
 
-        elapsedTime.reset();
-        while(elapsedTime.milliseconds() < 5000){
-            level = 1;
+        while(opModeIsActive()) {
+            elapsedTime.reset();
+            while (elapsedTime.milliseconds() < 5000) {
+                level = 1;
+            }
+            elapsedTime.reset();
+            while (elapsedTime.milliseconds() < 5000) {
+                level = 2;
+            }
+            elapsedTime.reset();
+//            level = 0;
         }
-        elapsedTime.reset();
-        while(elapsedTime.milliseconds() < 5000){
-            level = 2;
-        }
-        elapsedTime.reset();
-        level = 0;
     }
 
     public void liftProcess() {

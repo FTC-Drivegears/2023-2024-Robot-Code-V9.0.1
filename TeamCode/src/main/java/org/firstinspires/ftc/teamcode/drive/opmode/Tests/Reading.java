@@ -36,6 +36,8 @@ public class Reading extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        dash = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
         imu = new IMUSubsystem(hardwareMap);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
@@ -124,7 +126,12 @@ public class Reading extends LinearOpMode {
             telemetry.addData("rightEncoder", odometrySubsystem.rightEncoder());
             telemetry.addData("aux", odometrySubsystem.backEncoder());
             telemetry.addData("velocity test", mecanumSubsystem.getLeftForward().getVelocity(AngleUnit.RADIANS));
+            packet.put("x", odo.x);
+            packet.put("y", odo.y);
+            packet.put("heading", odo.theta);
+            packet.put("imu heading", imu.getTheta());
             telemetry.update();
+            dash.sendTelemetryPacket(packet);
         }
     }
     public void runOdometry(){
