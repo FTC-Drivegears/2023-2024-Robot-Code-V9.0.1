@@ -63,14 +63,14 @@ public class GyroOdometry extends Specifications{
         bEncoderf = odometrySubsystem.backEncoder(); //dc = cm per tick, dyc = offset Y encoder, dxc = offset X encoder
         dx = (sEncoderf-sEncoderi)*dc - dxc*dTheta;
         dy = (bEncoderf-bEncoderi)*dc + dyc*dTheta;
-        tempX = (dx*Math.cos(theta))+(dy*Math.sin(theta));
-        tempY = (dy*Math.cos(theta))-(dx*Math.sin(theta));
+        x += dx * Math.cos(theta) - dy * Math.sin(theta);
+        y += dx * Math.sin(theta) + dy * Math.cos(theta);
         testx = (bEncoderf-bEncoderi)*dc;
         testx2 = (sEncoderf-sEncoderi)*dc;
         testy = dxc*dTheta;
         testy2 = dyc*dTheta;
-        x = x+tempX;
-        y = y+tempY;
+//        x = x+tempX;
+//        y = y+tempY;
 
         tempXIntegrate += tempX*time.time();
         tempYIntegrate += tempY*time.time();
@@ -103,12 +103,12 @@ public class GyroOdometry extends Specifications{
 //        } else if (dTheta <= -Math.PI){
 //            dTheta += twoPi;
 //        }
-        theta = imuSubsystem.angleZ() - imuSubsystem.cTheta;
+        theta = imuSubsystem.getTheta();
         dy = (odometrySubsystem.dyc*(bEncoderf-bEncoderi))+(lengthFromOdometrySideToFront*dTheta);
-        tempX = (dx*Math.cos(theta))+(dy*Math.sin(theta));
-        tempY = (dy*Math.cos(theta))-(dx*Math.sin(theta));
-        x = x+tempX;
-        y = y+tempY;
+        x += dx * Math.cos(theta) - dy * Math.sin(theta);
+        y += dx * Math.sin(theta) + dy * Math.cos(theta);
+//        x = x+tempX;
+//        y = y+tempY;
         vxGlobal = tempX/time.time(TimeUnit.SECONDS);
         vyGlobal = tempY/time.time(TimeUnit.SECONDS);
         vxLocal = dx/time.time(TimeUnit.SECONDS);
