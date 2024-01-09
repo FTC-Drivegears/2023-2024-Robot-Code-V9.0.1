@@ -23,10 +23,10 @@ public class  OutputTest extends LinearOpMode {
 
         while(opModeIsActive()){
             if(gamepad1.a){
-                intakeCommand.raiseIntake();
+                outputCommand.openGate();
             }
             else if(gamepad1.b){
-                intakeCommand.lowerIntake();
+                outputCommand.closeGate();
             }
             else if(gamepad1.x){
                 outputCommand.closeGate();
@@ -59,6 +59,7 @@ public class  OutputTest extends LinearOpMode {
 //            telemetry.addData("gate position", outputCommand.getGatePosition());
             telemetry.addData("left arm position", outputCommand.getLeftArmPosition());
             telemetry.addData("right arm position", outputCommand.getRightArmPosition());
+            telemetry.addData("gate position", outputCommand.getGatePosition());
 //            telemetry.addData("left tilt position", outputCommand.getLeftTiltPosition());
 //            telemetry.addData("right tilt position", outputCommand.getRightTiltPosition());
             telemetry.update();

@@ -39,6 +39,10 @@ public class DualMotorPowerTest extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            if(gamepad1.left_bumper){
+                multiMotorSubsystem.reset();
+            }
+
             if(gamepad1.a){
                 multiMotorCommand.LiftUp(true, 4);
                 targetPosition = 3100;

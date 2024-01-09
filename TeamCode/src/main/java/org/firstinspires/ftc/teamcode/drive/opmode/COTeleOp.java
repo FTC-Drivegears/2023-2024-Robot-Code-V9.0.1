@@ -110,12 +110,12 @@ public class COTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(6);
-        CompletableFuture.runAsync(this::updateTelemetry, executor);
+        Executor executor = Executors.newFixedThreadPool(4);
+//        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::odometryProcess, executor);
         CompletableFuture.runAsync(this::LiftProcess, executor);
-        CompletableFuture.runAsync(this::sensorUpdate, executor);
-        CompletableFuture.runAsync(this::runMovement, executor);
+//        CompletableFuture.runAsync(this::sensorUpdate, executor);
+        CompletableFuture.runAsync(this::motorProcess);
 
         while(opModeIsActive()) {
 
@@ -198,7 +198,7 @@ public class COTeleOp extends LinearOpMode {
                     raising = false;
                     level = 0;
                 }
-                if(multiMotorSubsystem.getPosition() < 18){
+                if(multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5){
                     pixelCounter = 0;
                     level = /*-1*/0;
                     state = RUNNING_STATE.LIFT_STOP;
@@ -264,7 +264,7 @@ public class COTeleOp extends LinearOpMode {
 //            }
 
             //TODO: auto center/change zero
-//            updateTelemetry();
+            updateTelemetry();
 //            lightProcess();
             mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         }
@@ -287,14 +287,9 @@ public class COTeleOp extends LinearOpMode {
     }
     public void odometryProcess(){
         while(opModeIsActive()){
-            gyroOdometry.odometryProcess();
+            imuSubsystem.gyroProcess();
+            gyroOdometry.process();
         }
-    }
-
-    public void runMovement(){
-        //TODO: change this
-        while(opModeIsActive())
-            mecanumSubsystem.fieldOrientedMove(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, imuSubsystem.getTheta());
     }
 
 
@@ -344,11 +339,14 @@ public class COTeleOp extends LinearOpMode {
         telemetry.addData("lift level", level);
         telemetry.addData("lift state", state);
         telemetry.addData("pixelnumber", pixelCounter);
-        telemetry.addData("pixeltimer time", pixelTimer.milliseconds());
-        telemetry.addData("liftTimer time", liftTimer.milliseconds());
+        telemetry.addData("raiseLiftTimer", timerList.getTimer("raiseLift"));
+        telemetry.addData("liftTimer", timerList.getTimer("liftTimer"));
+        telemetry.addData("armTilt", timerList.getTimer("armTilt"));
         telemetry.addData("lift position", multiMotorSubsystem.getPosition());
         telemetry.addData("color1", color1);
         telemetry.addData("color2", color2);
+        telemetry.addData("lift velocity", multiMotorSubsystem.getDerivativeValue());
+        telemetry.addData("cascadeOutput",multiMotorSubsystem.getCascadeOutput());
         telemetry.update();
     }
 
