@@ -30,7 +30,7 @@ public class COTeleOp extends LinearOpMode {
     private MultiMotorCommand multiMotorCommand;
     private OdometrySubsystem odometrySubsystem;
     private MecanumSubsystem mecanumSubsystem;
-    //    private MecanumCommand mecanumCommand;
+    private MecanumCommand mecanumCommand;
 //    private OutputCommand outputCommand;
     private IntakeCommand intakeCommand;
     private IMUSubsystem imuSubsystem;
@@ -39,9 +39,11 @@ public class COTeleOp extends LinearOpMode {
     private OutputCommand outputCommand;
     private ColorSensorSubsystem colorSensorSubsystem;
     private ElapsedTime pixelTimer, liftTimer;
+    private int raiseLevel = 5;
     private int level = -1;
     private int pixelCounter = 0;
     private boolean running = true;
+    private boolean raising = false;
     private String color1 = "none";
     private String color2 = "none";
     private int colorCounter = 0;
@@ -63,9 +65,6 @@ public class COTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
 
-        multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
-        multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-
         imuSubsystem = new IMUSubsystem(hardwareMap);
 
         mecanumSubsystem = new MecanumSubsystem(hardwareMap); //MAKE SURE THIS IS INSTANTIATED BEFORE ODOMETRY SUBSYSTEM
@@ -74,7 +73,7 @@ public class COTeleOp extends LinearOpMode {
 
         gyroOdometry = new GyroOdometry(odometrySubsystem,imuSubsystem);
 
-//        mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem,  gyroOdometry, this);
+        mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem,  gyroOdometry, this);
 
         intakeCommand = new IntakeCommand(hardwareMap);
         outputCommand = new OutputCommand(hardwareMap);
@@ -82,6 +81,8 @@ public class COTeleOp extends LinearOpMode {
         gridAutoCentering = new GridAutoCentering(mecanumSubsystem, gyroOdometry);
 
         colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
+        multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
+        multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
 
 //        shooterServo = hardwareMap.get(Servo.class, "leftHang");
 //        rightHang = hardwareMap.get(Servo.class,"rightHang");
@@ -109,7 +110,8 @@ public class COTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(5);
+        Executor executor = Executors.newFixedThreadPool(6);
+        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::odometryProcess, executor);
         CompletableFuture.runAsync(this::LiftProcess, executor);
         CompletableFuture.runAsync(this::sensorUpdate, executor);
@@ -122,24 +124,28 @@ public class COTeleOp extends LinearOpMode {
                 //set lift level
                 if (gamepad1.a) {
                     timerList.resetTimer("raiseLift");
+                    raising = true;
                     level = 1;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.b) {
                     timerList.resetTimer("raiseLift");
+                    raising = true;
                     level = 2;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.y) {
                     timerList.resetTimer("raiseLift");
+                    raising = true;
                     level = 3;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.x) {
                     timerList.resetTimer("raiseLift");
+                    raising = true;
                     level = 4;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
@@ -151,6 +157,9 @@ public class COTeleOp extends LinearOpMode {
                 if(timerList.checkTimePassed("raiseLift", 1500)) {
                     outputCommand.armToBoard();
                     outputCommand.tiltToBoard();
+                    if(timerList.checkTimePassed("raiseLift", 2200)){
+                        raising = false;
+                    }
                 }
                 //change state
                 if(gamepad2.right_bumper){
@@ -169,6 +178,7 @@ public class COTeleOp extends LinearOpMode {
             }
 
             if(state == RUNNING_STATE.DROP){
+                raising = false;
                 if(!timerList.checkTimePassed("pixelDrop", 750)) {
                     if (timerList.checkTimePassed("pixelDrop", 250)) {
                         outputCommand.closeGate();
@@ -181,9 +191,11 @@ public class COTeleOp extends LinearOpMode {
                 }
             }
             if(state == RUNNING_STATE.RETRACT_LIFT){
+                raising = true;
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
                 if(timerList.checkTimePassed("liftTimer", 2000)){
+                    raising = false;
                     level = 0;
                 }
                 if(multiMotorSubsystem.getPosition() < 18){
@@ -194,6 +206,7 @@ public class COTeleOp extends LinearOpMode {
             }
             //emergency lift controls
             if(Math.abs(gamepad2.left_stick_y) > 0.8){
+                raising = false;
                 running = false;
                 state = RUNNING_STATE.DROP;
                 level = 0;
@@ -210,11 +223,13 @@ public class COTeleOp extends LinearOpMode {
                 imuSubsystem.resetAngle();
             }
             else if(gamepad2.x){
+                raising = false;
                 level = 2;
                 timerList.resetTimer("liftTimer");
                 state = RUNNING_STATE.RETRACT_LIFT;
             }
             else if(gamepad2.y){
+                raising = false;
                 //reset the lift condition after manually reaching the bottom
                 state = RUNNING_STATE.LIFT_STOP;
                 multiMotorSubsystem.reset();
@@ -229,7 +244,7 @@ public class COTeleOp extends LinearOpMode {
 
             //intake
             if(gamepad2.right_trigger > 0.5){
-                intakeCommand.intakeIn(0.55);
+                intakeCommand.intakeIn(0.8);
             }
             else if(gamepad2.left_trigger > 0.5){
                 intakeCommand.intakeOut(0.5);
@@ -250,13 +265,24 @@ public class COTeleOp extends LinearOpMode {
 
             //TODO: auto center/change zero
 //            updateTelemetry();
-            lightProcess();
+//            lightProcess();
+            mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
         }
 
     }
+    public void motorProcess(){
+        while(opModeIsActive()){
+            mecanumSubsystem.motorProcessTeleOp();
+        }
+    }
     public void LiftProcess(){
         while(opModeIsActive()){
-            multiMotorCommand.LiftUp(running,level);
+            if(raising){
+                multiMotorCommand.LiftUp(running, raiseLevel);
+            }
+            else {
+                multiMotorCommand.LiftUp(running, level);
+            }
         }
     }
     public void odometryProcess(){
@@ -311,19 +337,19 @@ public class COTeleOp extends LinearOpMode {
             colorSensorSubsystem.setColor(color1);
         }
     }
-//    public void updateTelemetry(){
-//        telemetry.addData("x", gyroOdometry.x);
-//        telemetry.addData("y", gyroOdometry.y);
-//        telemetry.addData("theta", gyroOdometry.theta);
-//        telemetry.addData("lift level", level);
-//        telemetry.addData("lift state", state);
-//        telemetry.addData("pixelnumber", pixelCounter);
-//        telemetry.addData("pixeltimer time", pixelTimer.milliseconds());
-//        telemetry.addData("liftTimer time", liftTimer.milliseconds());
-//        telemetry.addData("lift position", multiMotorSubsystem.getPosition());
-//        telemetry.addData("color1", color1);
-//        telemetry.addData("color2", color2);
-//        telemetry.update();
-//    }
+    public void updateTelemetry(){
+        telemetry.addData("x", gyroOdometry.x);
+        telemetry.addData("y", gyroOdometry.y);
+        telemetry.addData("theta", gyroOdometry.theta);
+        telemetry.addData("lift level", level);
+        telemetry.addData("lift state", state);
+        telemetry.addData("pixelnumber", pixelCounter);
+        telemetry.addData("pixeltimer time", pixelTimer.milliseconds());
+        telemetry.addData("liftTimer time", liftTimer.milliseconds());
+        telemetry.addData("lift position", multiMotorSubsystem.getPosition());
+        telemetry.addData("color1", color1);
+        telemetry.addData("color2", color2);
+        telemetry.update();
+    }
 
 }

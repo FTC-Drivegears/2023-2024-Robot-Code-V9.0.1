@@ -59,6 +59,9 @@ public class DualMotorPowerTest extends LinearOpMode {
                 multiMotorCommand.LiftUp(true, 0);
                 targetPosition = 0;
             }
+            else if(gamepad1.right_bumper){
+                multiMotorCommand.LiftUp(true, 5);
+            }
             else {
                 multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
             }
