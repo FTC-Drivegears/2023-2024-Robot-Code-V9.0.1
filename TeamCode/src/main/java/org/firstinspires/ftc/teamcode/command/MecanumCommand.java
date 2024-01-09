@@ -25,7 +25,7 @@ public class MecanumCommand {
     public PIDCore globalCascadeXController;
     public PIDCore globalCascadeYController;
     public PIDCore globalCascadeThetaController;
-    private static double cascadekpx = 0.07;
+    private static double cascadekpx = 0.055;
     private static double cascadekdx = 0.01;
     private static double cascadekix = 0.004/2;
     private static double cascadekpy = 0.055;
@@ -109,7 +109,7 @@ public class MecanumCommand {
     public void pidProcess(){
         ex = globalXController.outputPositional(xFinal, gyroOdometry.x);
         ey = -globalYController.outputPositional(yFinal, gyroOdometry.y);
-        etheta = globalThetaController.outputPositional(thetaFinal, gyroOdometry.theta);
+        etheta = -globalThetaController.outputPositional(thetaFinal, gyroOdometry.theta);
         if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
             double max = Math.max(Math.abs(ex), Math.abs(ey));
             ex = ex / max * velocity;
