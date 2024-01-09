@@ -36,6 +36,8 @@ public class Reading extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        dash = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
         imu = new IMUSubsystem(hardwareMap);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
@@ -53,25 +55,26 @@ public class Reading extends LinearOpMode {
 
         while (opModeIsActive()) {
             if(gamepad1.a){
-                frontLeft.setPower(0.1);
+                frontLeft.setPower(1);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.b){
-                frontRight.setPower(0.1);
+                frontRight.setPower(1);
                 frontLeft.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.y){
-                backLeft.setPower(0.1);
+                backLeft.setPower(1);
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.x){
-                backRight.setPower(0.1);
+                backRight.setPower(1
+                );
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
@@ -111,6 +114,10 @@ public class Reading extends LinearOpMode {
                 frontRight.setVelocity(0, AngleUnit.RADIANS);
                 backLeft.setVelocity(0, AngleUnit.RADIANS);
             }
+            telemetry.addData("leftFront", mecanumSubsystem.getLeftForward().getCurrentPosition());
+            telemetry.addData("rightFront", mecanumSubsystem.getRightForward().getCurrentPosition());
+            telemetry.addData("leftBack", mecanumSubsystem.getLeftBack().getCurrentPosition());
+            telemetry.addData("rightBack", mecanumSubsystem.getRightBack().getCurrentPosition());
             telemetry.addData("x", odo.x);
             telemetry.addData("y", odo.y);
             telemetry.addData("heading", odo.theta);
@@ -120,12 +127,19 @@ public class Reading extends LinearOpMode {
             telemetry.addData("leftEncoder", odometrySubsystem.leftEncoder());
             telemetry.addData("rightEncoder", odometrySubsystem.rightEncoder());
             telemetry.addData("aux", odometrySubsystem.backEncoder());
+            telemetry.addData("velocity test", mecanumSubsystem.getLeftForward().getVelocity(AngleUnit.RADIANS));
+            packet.put("x", odo.x);
+            packet.put("y", odo.y);
+            packet.put("heading", odo.theta);
+            packet.put("imu heading", imu.getTheta());
             telemetry.update();
+            dash.sendTelemetryPacket(packet);
         }
     }
     public void runOdometry(){
         while(opModeIsActive()){
-            odo.combinedProcess();
+            imu.gyroProcess();
+            odo.process();
         }
     }
 }

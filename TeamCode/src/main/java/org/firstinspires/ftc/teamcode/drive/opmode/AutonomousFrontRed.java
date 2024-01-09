@@ -75,80 +75,100 @@ public class AutonomousFrontRed extends LinearOpMode {
         outputCommand.tiltToIdle();
 
         double propPosition = 0;
-        while(opModeInInit()){
-            propPosition = webcamSubsystem.getXProp();
-        }
+//        while(opModeInInit()){
+//            propPosition = webcamSubsystem.getXProp();
+//        }
 
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(4);
+        Executor executor = Executors.newFixedThreadPool(5);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
-        CompletableFuture.runAsync(this::liftProcess, executor);
+        CompletableFuture.runAsync(this::motorProcess, executor);
+        CompletableFuture.runAsync(this::pidProcess, executor);
+//        CompletableFuture.runAsync(this::liftProcess, executor);
         intakeCommand.raiseIntake();
 //        sleep(8000);
-        mecanumCommand.moveToGlobalPosition(57, 0, 0);
+        mecanumCommand.setFinalPosition(true, 30, 57, 0, 0);
         sleep(1500);
         timer.reset();
         while(timer.milliseconds() < 1500) {
 
             //TODO: tune
-            if (propPosition > 100) {
-                //pos RIGHT
-                position = "right";
-                mecanumCommand.moveToGlobalPosition(47, -32, 0);
-            } else if (propPosition <= 100 && propPosition > 0) {
-                //pos middle
-                position = "middle";
-                mecanumCommand.moveToGlobalPosition(66, 3, 0);
-                sleep(1000);
-            } else {
-                //pos left
-                position = "left";
-                mecanumCommand.moveToGlobalPosition(60, 17.5, 0.832);
-            }
+            //left
+            mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
+            //right
+            mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
+            //middle
+            mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
+//            if (propPosition > 100) {
+//                //pos RIGHT
+//                position = "right";
+//                mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
+//            } else if (propPosition <= 100 && propPosition > 0) {
+//                //pos middle
+//                position = "middle";
+//                mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
+//                sleep(1000);
+//            } else {
+//                //pos left
+//                position = "left";
+//                mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
+//            }
         }
         timer.reset();
 
         while(timer.milliseconds() < 1000) {
             intakeCommand.intakeOut(0.3);
         }
-        intakeCommand.stopIntake();
+//        intakeCommand.stopIntake();
         level = 1;
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
+//        outputCommand.armToBoard();
+//        outputCommand.tiltToBoard();
         timer.reset();
         while(timer.milliseconds() < 3500) {
             //TODO: tune
             if (propPosition > 100) {
                 //pos right
-                mecanumCommand.moveToGlobalPosition(36, -78.5, 1.65);
+                mecanumCommand.setFinalPosition(true, 30, 36, -78.5, 1.65);
 
             } else if (propPosition <= 100 && propPosition > 0) {
                 //pos middle
-                mecanumCommand.moveToGlobalPosition(52, -80, 1.65);
+                mecanumCommand.setFinalPosition(true, 30, 52, -80, 1.65);
             } else {
                 //pos left
-                mecanumCommand.moveToGlobalPosition(68, -81.5, 1.65);
+                mecanumCommand.setFinalPosition(true, 30, 68, -81.5, 1.65);
             }
         }
         timer.reset();
-        while (timer.milliseconds() < 500){
-            outputCommand.openGate();
-        }
-        outputCommand.closeGate();
-        outputCommand.tiltToIdle();
-        outputCommand.armToIdle();
+//        while (timer.milliseconds() < 500){
+//            outputCommand.openGate();
+//        }
+//        outputCommand.closeGate();
+//        outputCommand.tiltToIdle();
+//        outputCommand.armToIdle();
         sleep(6000);
         level = 0;
-        mecanumCommand.moveToGlobalPosition(0, -84, 1.65);
+        mecanumCommand.setFinalPosition(true, 30, 0, -84, 1.65);
 
 
+    }
+    public void pidProcess(){
+        while (opModeIsActive()) {
+            mecanumCommand.pidProcess();
+        }
+    }
+
+    public void motorProcess(){
+        while (opModeIsActive()) {
+            mecanumSubsystem.motorProcess();
+        }
     }
 
     public void updateOdometry() {
         while (opModeIsActive()) {
-            gyroOdometry.odometryProcess();
+            imu.gyroProcess();
+            gyroOdometry.process();
         }
     }
 

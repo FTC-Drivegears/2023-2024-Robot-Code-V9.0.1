@@ -143,7 +143,7 @@ public class IMUSubsystem extends Specifications {
         orientation = imu.getAngularOrientation(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
         double Theta = orientation.thirdAngle - cTheta;
         //normalize angle to: 0 < Theta < 2Π
-        if (Theta > twoPi){
+        if (Theta > 2*Math.PI){
             Theta -= twoPi;
         } else if (Theta < 0){
             Theta += twoPi;

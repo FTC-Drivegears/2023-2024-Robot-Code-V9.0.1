@@ -121,21 +121,25 @@ public class COTeleOp extends LinearOpMode {
             if (state == RUNNING_STATE.LIFT_STOP) {
                 //set lift level
                 if (gamepad1.a) {
+                    timerList.resetTimer("raiseLift");
                     level = 1;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.b) {
+                    timerList.resetTimer("raiseLift");
                     level = 2;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.y) {
+                    timerList.resetTimer("raiseLift");
                     level = 3;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.x) {
+                    timerList.resetTimer("raiseLift");
                     level = 4;
                     state = RUNNING_STATE.RAISE_LIFT;
                     timerList.resetTimer("armTilt");
@@ -144,8 +148,10 @@ public class COTeleOp extends LinearOpMode {
             }
             //when lift is raised
             if (state == RUNNING_STATE.RAISE_LIFT) {
-                outputCommand.armToBoard();
-                outputCommand.tiltToBoard();
+                if(timerList.checkTimePassed("raiseLift", 1500)) {
+                    outputCommand.armToBoard();
+                    outputCommand.tiltToBoard();
+                }
                 //change state
                 if(gamepad2.right_bumper){
                     if(pixelCounter != 0 || timerList.checkTimePassed("armTilt", 1000)) {
@@ -260,6 +266,7 @@ public class COTeleOp extends LinearOpMode {
     }
 
     public void runMovement(){
+        //TODO: change this
         while(opModeIsActive())
             mecanumSubsystem.fieldOrientedMove(-gamepad1.left_stick_x, gamepad1.left_stick_y, -gamepad1.right_stick_x, imuSubsystem.getTheta());
     }

@@ -10,8 +10,8 @@ public class Specifications {
     public final int FINALPOS = 1230;
     //b
     //length front to middle = 15.91
-    public final double SideOdometryToCentre = 13.12;
-    public final double lengthFromOdometrySideToFront = 7.2;
+    public final double SideOdometryToCentre = 12.8;
+    public final double lengthFromOdometrySideToFront = 7.05;
     public final double odometryCir = 3.5*Math.PI;
     public final double odometryTick = 8192;
     //beta

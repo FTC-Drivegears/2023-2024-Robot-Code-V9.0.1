@@ -25,7 +25,7 @@ public class MecanumCommand {
     public PIDCore globalCascadeXController;
     public PIDCore globalCascadeYController;
     public PIDCore globalCascadeThetaController;
-    private static double cascadekpx = 0.07;
+    private static double cascadekpx = 0.055;
     private static double cascadekdx = 0.01;
     private static double cascadekix = 0.004/2;
     private static double cascadekpy = 0.055;
@@ -47,9 +47,9 @@ public class MecanumCommand {
     private static double cascadekithetaVel = 0.0;
 
 
-    private static double kpx = 0.07;
+    private static double kpx = 0.055;
     private static double kdx = 0.01;
-    private static double kix = 0.004/2;
+    private static double kix = 0.0075/2;
     private static double kpy = 0.055;
     private static double kdy = 0.0005;
     private static double kiy = 0.0075/2;
@@ -108,8 +108,8 @@ public class MecanumCommand {
 
     public void pidProcess(){
         ex = globalXController.outputPositional(xFinal, gyroOdometry.x);
-        ey = globalYController.outputPositional(yFinal, gyroOdometry.y);
-        etheta = globalThetaController.outputPositional(thetaFinal, gyroOdometry.theta);
+        ey = -globalYController.outputPositional(yFinal, gyroOdometry.y);
+        etheta = -globalThetaController.outputPositional(thetaFinal, gyroOdometry.theta);
         if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
             double max = Math.max(Math.abs(ex), Math.abs(ey));
             ex = ex / max * velocity;
@@ -297,7 +297,7 @@ public class MecanumCommand {
                 || Math.abs(targetTheta - gyroOdometry.theta) > 0.1) {
 
             mecanumSubsystem.fieldOrientedMove(
-                    globalCascadeYController.cascadeOutput(targetY, gyroOdometry.y, logisticFunctionX.getOutput(gyroOdometry.x), globalCascadeYController.getDerivative(), 0),
+                    globalCascadeYController.cascadeOutput(targetY, gyroOdometry.y, logisticFunctionX.getOutput(gyroOdometry.x), globalCascadeYController.getDerivative()),
                     -globalXController.outputPositionalCapped(targetX, gyroOdometry.x, 100),
                     globalThetaController.outputPositionalCapped(targetTheta, gyroOdometry.theta, 100),
                     gyroOdometry.theta);

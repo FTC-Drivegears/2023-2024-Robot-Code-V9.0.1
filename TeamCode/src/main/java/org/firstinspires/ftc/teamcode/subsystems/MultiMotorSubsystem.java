@@ -141,7 +141,7 @@ public class MultiMotorSubsystem extends Specifications {
             aux1 = hardwareMap.get(DcMotor.class, EXTENSION_MOTOR_AUX1);
 
             main.setDirection(DcMotorSimple.Direction.REVERSE);
-            aux1.setDirection(DcMotorSimple.Direction.FORWARD);
+            aux1.setDirection(DcMotorSimple.Direction.REVERSE);
 
             if (reset) {
                 main.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -314,8 +314,15 @@ public class MultiMotorSubsystem extends Specifications {
 //        angularVelocity = -main.getVelocity(AngleUnit.RADIANS);
 
         intervalValue = velocityInterval.getOutput(getPosition());
-        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, cascadePID.getDerivative(), 0);
+        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, getDerivativeValue());
         moveLift(cascadeOutput);
+    }
+
+    public void testLiftCascadeProcess(double targetPos, double targetVelocity){
+        runToPosition = true;
+        intervalValue = targetVelocity;
+        //TODO: Reorganize derivative value
+        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, getDerivativeValue());
     }
 
 
@@ -422,5 +429,12 @@ public class MultiMotorSubsystem extends Specifications {
     }
     public double getCascadeVelocity(){
         return cascadePID.getOutputVelocityValue();
+    }
+
+    public double getCascadeDerivative(){
+        return cascadePID.getDerivative();
+    }
+    public double getCascadeVelDerivative(){
+        return cascadePID.getVelocityDerivative();
     }
 }
