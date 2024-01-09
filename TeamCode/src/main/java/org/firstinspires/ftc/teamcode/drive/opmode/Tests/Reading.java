@@ -76,25 +76,26 @@ public class Reading extends LinearOpMode {
                 frontRight.setPower(0);
                 backLeft.setPower(0);
             }
-            else if(gamepad2.dpad_up){
+            else if(gamepad1.dpad_up){
                 backRight.setVelocity(1, AngleUnit.RADIANS);
                 frontLeft.setVelocity(0, AngleUnit.RADIANS);
                 frontRight.setVelocity(0, AngleUnit.RADIANS);
                 backLeft.setVelocity(0, AngleUnit.RADIANS);
+                telemetry.update();
             }
-            else if(gamepad2.dpad_down){
+            else if(gamepad1.dpad_down){
                 backRight.setVelocity(0, AngleUnit.RADIANS);
                 frontLeft.setVelocity(1, AngleUnit.RADIANS);
                 frontRight.setVelocity(0, AngleUnit.RADIANS);
                 backLeft.setVelocity(0, AngleUnit.RADIANS);
             }
-            else if(gamepad2.dpad_right){
+            else if(gamepad1.dpad_right){
                 backRight.setVelocity(0, AngleUnit.RADIANS);
                 frontLeft.setVelocity(0, AngleUnit.RADIANS);
                 frontRight.setVelocity(1, AngleUnit.RADIANS);
                 backLeft.setVelocity(0, AngleUnit.RADIANS);
             }
-            else if(gamepad2.dpad_left){
+            else if(gamepad1.dpad_left){
                 backRight.setVelocity(0, AngleUnit.RADIANS);
                 frontLeft.setVelocity(0, AngleUnit.RADIANS);
                 frontRight.setVelocity(0, AngleUnit.RADIANS);
