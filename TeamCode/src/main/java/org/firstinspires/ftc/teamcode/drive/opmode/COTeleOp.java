@@ -123,6 +123,7 @@ public class COTeleOp extends LinearOpMode {
             if (state == RUNNING_STATE.LIFT_STOP) {
                 //set lift level
                 if (gamepad1.a) {
+                    running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
                     level = 1;
@@ -130,6 +131,7 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.b) {
+                    running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
                     level = 2;
@@ -137,6 +139,7 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.y) {
+                    running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
                     level = 3;
@@ -144,6 +147,7 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.x) {
+                    running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
                     level = 4;
