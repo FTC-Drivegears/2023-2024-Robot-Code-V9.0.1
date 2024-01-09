@@ -61,19 +61,20 @@ public class Reading extends LinearOpMode {
                 backRight.setPower(0);
             }
             else if(gamepad1.b){
-                frontRight.setPower(0.1);
+                frontRight.setPower(1);
                 frontLeft.setPower(0);
                 backLeft.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.y){
-                backLeft.setPower(0.1);
+                backLeft.setPower(1);
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backRight.setPower(0);
             }
             else if(gamepad1.x){
-                backRight.setPower(0.1);
+                backRight.setPower(1
+                );
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);
@@ -136,7 +137,8 @@ public class Reading extends LinearOpMode {
     }
     public void runOdometry(){
         while(opModeIsActive()){
-            odo.combinedProcess();
+            imu.gyroProcess();
+            odo.process();
         }
     }
 }
