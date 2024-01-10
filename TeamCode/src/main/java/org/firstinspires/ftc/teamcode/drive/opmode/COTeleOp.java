@@ -270,7 +270,7 @@ public class COTeleOp extends LinearOpMode {
             //TODO: auto center/change zero
             updateTelemetry();
 //            lightProcess();
-            mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
         }
 
     }
