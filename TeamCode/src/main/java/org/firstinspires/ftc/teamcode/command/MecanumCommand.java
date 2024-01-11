@@ -25,15 +25,15 @@ public class MecanumCommand {
     public PIDCore globalCascadeXController;
     public PIDCore globalCascadeYController;
     public PIDCore globalCascadeThetaController;
-    private static double cascadekpx = 0.055;
+    private static double cascadekpx = 0.045;
     private static double cascadekdx = 0.0005;
-    private static double cascadekix = 0.004/2;
-    private static double cascadekpy = 0.055;
+    private static double cascadekix = 0.0075/2;
+    private static double cascadekpy = 0.045;
     private static double cascadekdy = 0.0005;
     private static double cascadekiy = 0.004/2;
     private static double cascadekptheta = 2;
     private static double cascadekdtheta = 0.05;
-    private static double cascadekitheta = 0.004/2;
+    private static double cascadekitheta = 0.0075/2;
     //TODO: tune these
     private static double cascadekpxVel = 0.07;
     private static double cascadekdxVel = 0.01;
