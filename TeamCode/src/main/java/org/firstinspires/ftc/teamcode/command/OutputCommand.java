@@ -21,7 +21,7 @@ public class OutputCommand {
     private Servo gate;
     private IntakeCommand intakeCommand;
     private TimerList timers = new TimerList();
-    private MultiMotorCommand multiMotorCommand;
+//    private MultiMotorCommand multiMotorCommand;
 
 
     public OutputCommand(HardwareMap hardwareMap) {

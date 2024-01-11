@@ -179,9 +179,16 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
 //        mecanumCommand.moveToGlobalPosition(0, 222, -1.6);
     }
 
+    public void pidProcess(){
+        while (opModeIsActive()) {
+            mecanumCommand.pidProcess();
+        }
+    }
+
     public void updateOdometry() {
         while (opModeIsActive()) {
-            gyroOdometry.odometryProcess();
+            imu.gyroProcess();
+            gyroOdometry.process();
         }
     }
 
@@ -202,6 +209,12 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
     public void liftProcess() {
         while(opModeIsActive()) {
             multiMotorCommand.LiftUp(true, level);
+        }
+    }
+
+    public void motorProcess(){
+        while (opModeIsActive()) {
+            mecanumSubsystem.motorProcess();
         }
     }
 }

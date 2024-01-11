@@ -91,18 +91,26 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         sleep(2000);
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 80.9, 20.77, 0);
+            while(mecanumCommand.isPositionReached()) {
+                mecanumCommand.setFinalPosition(true, 30, 80.9, 20.77, 0);
+            }
         }
         else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 96.2, 0.9, 0);
+            while(mecanumCommand.isPositionReached()) {
+                mecanumCommand.setFinalPosition(true, 30, 96.2, 0.9, 0);
+            }
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 61.85, -19.68, 0.87);
+            while(mecanumCommand.isPositionReached()) {
+                mecanumCommand.setFinalPosition(true, 30, 61.85, -19.68, 0.87);
+            }
         }
         sleep(5000);
 
         if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 79.74, 6.13, 0.84);
+            while(mecanumCommand.isPositionPassed()) {
+                mecanumCommand.setFinalPosition(true, 30, 79.74, 6.13, 0.84);
+            }
         }
 //        mecanumCommand.moveToGlobalPosition(57, 0, 0);
 //        timer.reset();
@@ -138,19 +146,20 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //            }
 //        }
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            while(mecanumCommand.isPositionReached()) {
+                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            }
         }
         else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 51.39, 79.13, 1.52);
+            while(mecanumCommand.isPositionReached()) {
+                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            }
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 67.17, 79.14, 1.52    );
+            while(mecanumCommand.isPositionReached()) {
+                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            }
         }
-        //left
-        //middle
-
-        //right
-
 //        timer.reset();
 //        while (timer.milliseconds() < 500){
 //            outputCommand.openGate();

@@ -18,7 +18,7 @@ public class IntakeCommand {
         intakeServo = hardwareMap.get(Servo.class, Specifications.INTAKE_SERVO);
         intakeRoller = hardwareMap.get(CRServo.class, Specifications.INTAKE_ROLLER);
 
-        intakeRoller.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeRoller.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public double intakeValue() {

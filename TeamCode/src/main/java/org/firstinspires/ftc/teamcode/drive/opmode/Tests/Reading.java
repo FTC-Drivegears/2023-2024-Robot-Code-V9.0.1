@@ -132,6 +132,9 @@ public class Reading extends LinearOpMode {
             packet.put("y", odo.y);
             packet.put("heading", odo.theta);
             packet.put("imu heading", imu.getTheta());
+            packet.put("leftEncoder", odometrySubsystem.leftEncoder());
+            packet.put("rightEncoder", odometrySubsystem.rightEncoder());
+            packet.put("aux", odometrySubsystem.backEncoder());
             telemetry.update();
             dash.sendTelemetryPacket(packet);
         }

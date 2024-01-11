@@ -9,8 +9,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
 import org.firstinspires.ftc.teamcode.command.MultiMotorCommand;
+import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,6 +21,9 @@ import java.util.concurrent.CompletableFuture;
 @TeleOp
 public class DualMotorManualTest extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
+    private IMUSubsystem imu;
+    private OdometrySubsystem odometrySubsystem;
+    private GyroOdometry gyroOdometry;
     private MultiMotorCommand multiMotorCommand;
     private MecanumSubsystem mecanumSubsystem;
     private int level = 0;
@@ -29,6 +35,9 @@ public class DualMotorManualTest extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         double targetPosition = 0;
 
+        odometrySubsystem = new OdometrySubsystem(hardwareMap);
+        imu = new IMUSubsystem(hardwareMap);
+        gyroOdometry = new GyroOdometry(odometrySubsystem,imu);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
@@ -36,6 +45,7 @@ public class DualMotorManualTest extends LinearOpMode {
         waitForStart();
 
         CompletableFuture.runAsync(this::liftProcess);
+        CompletableFuture.runAsync(this::runOdometry);
 
         while (opModeIsActive()) {
 
@@ -75,6 +85,9 @@ public class DualMotorManualTest extends LinearOpMode {
             packet.put("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
             packet.put("level", level);
             packet.put("Target Position", targetPosition);
+            packet.put("x", gyroOdometry.x);
+            packet.put("y", gyroOdometry.y);
+            packet.put("heading", gyroOdometry.theta);
             telemetry.addData("Target Position", targetPosition);
             telemetry.addData("position", multiMotorSubsystem.getPosition());
             telemetry.addData("power", multiMotorSubsystem.getMainPower());
@@ -89,6 +102,13 @@ public class DualMotorManualTest extends LinearOpMode {
             telemetry.addData("cascadeDerivative", multiMotorSubsystem.getCascadeDerivative());
             telemetry.update();
             dash.sendTelemetryPacket(packet);
+        }
+    }
+
+    public void runOdometry(){
+        while(opModeIsActive()){
+            imu.gyroProcess();
+            gyroOdometry.process();
         }
     }
 

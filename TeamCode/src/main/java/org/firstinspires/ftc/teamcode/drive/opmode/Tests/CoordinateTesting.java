@@ -56,7 +56,7 @@ public class CoordinateTesting extends LinearOpMode {
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
         while(opModeIsActive()) {
-            mecanumCommand.setFinalPosition(true, 30, 40, 40, Math.PI / 2);
+            mecanumCommand.setFinalPosition(true, 30, 40, 0, 0);
             sleep(4000);
 
         }
@@ -81,7 +81,6 @@ public class CoordinateTesting extends LinearOpMode {
 
     public void motorProcess(){
         while (opModeIsActive()) {
-            imu.gyroProcess();
             mecanumSubsystem.motorProcess();
         }
     }
@@ -94,6 +93,10 @@ public class CoordinateTesting extends LinearOpMode {
             packet.put("y output", mecanumCommand.globalYController.getOutputPositionalValue());
             packet.put("theta", gyroOdometry.theta);
             packet.put("theta output", mecanumCommand.globalThetaController.getOutputPositionalValue());
+            packet.put("lfvel", mecanumSubsystem.lfvel);
+            packet.put("lbvel", mecanumSubsystem.lbvel);
+            packet.put("rfvel", mecanumSubsystem.rfvel);
+            packet.put("rbvel", mecanumSubsystem.rbvel);
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("xintegral", mecanumCommand.globalXController.getIntegralSum());
