@@ -74,6 +74,10 @@ public class AutonomousFrontRed extends LinearOpMode {
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
 
+        String position = "left";
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
+
         double propPosition = 0;
 //        while(opModeInInit()){
 //            propPosition = webcamSubsystem.getXProp();
@@ -87,6 +91,9 @@ public class AutonomousFrontRed extends LinearOpMode {
         CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
 //        CompletableFuture.runAsync(this::liftProcess, executor);
+
+
+        /*
         intakeCommand.raiseIntake();
 //        sleep(8000);
         mecanumCommand.setFinalPosition(true, 30, 57, 0, 0);
@@ -116,12 +123,50 @@ public class AutonomousFrontRed extends LinearOpMode {
 //                mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
 //            }
         }
+
+         */
+
+        sleep(2000);
+        if(position.equals("left")) {
+            mecanumCommand.setFinalPosition(true, 20, 73, 6.5, -1.5);
+            while(!mecanumCommand.isPositionReached(true,false)) {}
+        }
+        else if(position.equals("middle")){
+            mecanumCommand.setFinalPosition(true, 20, 122, 8, 0);
+            while(!mecanumCommand.isPositionReached(false,true)) {}
+        }
+        else if(position.equals("right")) {
+            mecanumCommand.setFinalPosition(true, 20, 103, -18, 0);
+            while (!mecanumCommand.isPositionReached(true, false)) {
+            }
+        }
+
+        intakeCommand.lowerIntake();
+
         timer.reset();
 
-        while(timer.milliseconds() < 1000) {
-            intakeCommand.intakeOut(0.3);
+        while(timer.milliseconds() < 3000) {
+            intakeCommand.intakeOut(0.5);
         }
-//        intakeCommand.stopIntake();
+        intakeCommand.stopIntake();
+
+
+        if(position.equals("left")) {
+            mecanumCommand.setFinalPosition(true, 30, 60, -70, -1.53);
+            while(!mecanumCommand.isPositionReached(false,false)) {}
+
+        }
+        else if(position.equals("middle")){
+            while(!mecanumCommand.isPositionReached(false,false)) {
+                mecanumCommand.setFinalPosition(true, 30, 70, -54, -1.53);
+            }
+        }
+        else if(position.equals("right")){
+            while(!mecanumCommand.isPositionReached(false,false)) {
+                mecanumCommand.setFinalPosition(true, 30, 70, -54, -1.53);
+            }
+        }
+        /*
         level = 1;
 //        outputCommand.armToBoard();
 //        outputCommand.tiltToBoard();
@@ -140,6 +185,8 @@ public class AutonomousFrontRed extends LinearOpMode {
                 mecanumCommand.setFinalPosition(true, 30, 68, -81.5, 1.65);
             }
         }
+         */
+        /*
         timer.reset();
 //        while (timer.milliseconds() < 500){
 //            outputCommand.openGate();
@@ -149,8 +196,8 @@ public class AutonomousFrontRed extends LinearOpMode {
 //        outputCommand.armToIdle();
         sleep(6000);
         level = 0;
-        mecanumCommand.setFinalPosition(true, 30, 0, -84, 1.65);
 
+        */
 
     }
     public void pidProcess(){

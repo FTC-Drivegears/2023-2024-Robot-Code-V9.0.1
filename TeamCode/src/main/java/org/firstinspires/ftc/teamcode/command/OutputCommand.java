@@ -70,7 +70,7 @@ public class OutputCommand {
     public void armToIdle(){
         //TODO: Find value
         leftArm.setPosition(0.29);
-        rightArm.setPosition(0.288);
+        rightArm.setPosition(0.29);
     }
 
     public void armToBoard(){

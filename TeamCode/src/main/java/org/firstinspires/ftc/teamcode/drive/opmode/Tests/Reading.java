@@ -73,8 +73,7 @@ public class Reading extends LinearOpMode {
                 backRight.setPower(0);
             }
             else if(gamepad1.x){
-                backRight.setPower(1
-                );
+                backRight.setPower(1);
                 frontLeft.setPower(0);
                 frontRight.setPower(0);
                 backLeft.setPower(0);

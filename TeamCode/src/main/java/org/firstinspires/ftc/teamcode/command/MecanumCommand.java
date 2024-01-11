@@ -355,8 +355,16 @@ public class MecanumCommand {
         return getXDifference() < 5 && getYDifference() < 5 && getThetaDifference() < 0.05;
     }
 
-    public boolean isPositionReached(){
-        return getXDifference() < 1 && getYDifference() < 1 && getThetaDifference() < 0.02;
+    public boolean isPositionReached(boolean xtol, boolean ytol){
+        boolean withinXRange = (getXDifference() < 1.5);
+        if (xtol) {
+            withinXRange = (getXDifference() < 3);
+        }
+        boolean withinYRange = (getYDifference() < 1.5);
+        if (ytol) {
+            withinXRange = (getXDifference() < 3);
+        }
+        return withinXRange && withinYRange && getThetaDifference() < 0.02;
     }
 
     public boolean isCoordinateReached(){

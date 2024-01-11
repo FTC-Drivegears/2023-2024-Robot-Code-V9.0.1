@@ -73,13 +73,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //
 //        outputCommand.armToIdle();
 //        outputCommand.tiltToIdle();
-        String position = "left";
+        String position = "middle";
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
         double propPosition = 0;
         while(opModeInInit()){
             propPosition = webcamSubsystem.getXProp();
         }
+
         waitForStart();
 
         Executor executor = Executors.newFixedThreadPool(4);
@@ -91,26 +92,37 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         sleep(2000);
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 98, 21.2, 0);
-            while(!mecanumCommand.isPositionReached()) {}
+            mecanumCommand.setFinalPosition(true, 20, 103, 15, 0);
+            while(!mecanumCommand.isPositionReached(true,false)) {}
         }
         else if(position.equals("middle")){
-            while(!mecanumCommand.isPositionReached()) {
-                mecanumCommand.setFinalPosition(true, 30, 96.2, 0.9, 0);
-            }
+            mecanumCommand.setFinalPosition(true, 20, 122, -8, 0);
+            while(!mecanumCommand.isPositionReached(false,true)) {}
         }
         else if(position.equals("right")){
-            while(!mecanumCommand.isPositionReached()) {
-                mecanumCommand.setFinalPosition(true, 30, 61.85, -19.68, 0.87);
+            mecanumCommand.setFinalPosition(true, 20, 70, -7, 1.5);
+            while(!mecanumCommand.isPositionReached(true,false)) {
             }
         }
-        sleep(5000);
 
+        intakeCommand.lowerIntake();
+
+        timer.reset();
+
+        while(timer.milliseconds() < 3000) {
+            intakeCommand.intakeOut(0.5);
+        }
+        intakeCommand.stopIntake();
+
+        sleep(2000);
+        /*
         if(position.equals("right")){
             while(mecanumCommand.isPositionPassed()) {
                 mecanumCommand.setFinalPosition(true, 30, 79.74, 6.13, 0.84);
             }
         }
+        */
+
 //        timer.reset();
 //        while(timer.milliseconds() < 1500) {
 //            if (propPosition < 100 && propPosition > 0) {
@@ -123,12 +135,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //                mecanumCommand.moveToGlobalPositionAccurate(54, 20, 0);
 //            }
 //        }
+        /*
         timer.reset();
 
-//        while(timer.milliseconds() < 1000) {
-//            intakeCommand.intakeOut(0.3);
-//        }
-//        intakeCommand.stopIntake();
+        while(timer.milliseconds() < 1000) {
+            intakeCommand.intakeOut(0.3);
+        }
+        intakeCommand.stopIntake();
+        */
 //        level = 1;
 //        outputCommand.armToBoard();
 //        outputCommand.tiltToBoard();
@@ -143,6 +157,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //                mecanumCommand.moveToGlobalPosition(34, 83.5, -1.58);
 //            }
 //        }
+        /*
         if(position.equals("left")) {
             mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
             while(!mecanumCommand.isPositionReached()) {}
@@ -158,6 +173,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
             }
         }
+         */
 //        timer.reset();
 //        while (timer.milliseconds() < 500){
 //            outputCommand.openGate();
@@ -197,7 +213,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             packet.put("x", gyroOdometry.x);
             packet.put("y", gyroOdometry.y);
             packet.put("theta", gyroOdometry.theta);
-            packet.put("position reached", mecanumCommand.isPositionReached());
+            packet.put("position reached", mecanumCommand.isPositionReached(false,false));
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("theta", gyroOdometry.theta);

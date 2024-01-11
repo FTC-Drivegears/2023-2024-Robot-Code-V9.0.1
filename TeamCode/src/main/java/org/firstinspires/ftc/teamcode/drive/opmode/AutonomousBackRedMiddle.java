@@ -90,17 +90,17 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
         //PIXEL DROPOFF POSITION
         if(position.equals("left")) {
-            while(mecanumCommand.isPositionReached()) {
+            while(mecanumCommand.isPositionReached(false,false)) {
                 mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
             }
         }
         else if(position.equals("middle")){
-            while(mecanumCommand.isPositionReached()) {
+            while(mecanumCommand.isPositionReached(false,false)) {
                 mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
             }
         }
         else if(position.equals("right")){
-            while(mecanumCommand.isPositionReached()) {
+            while(mecanumCommand.isPositionReached(false,false)) {
                 mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
             }
         }
@@ -126,17 +126,17 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         while(timer.milliseconds() < 3500) {
             //TODO: tune
             if(position.equals("left")) {
-                while(mecanumCommand.isPositionReached()) {
+                while(mecanumCommand.isPositionReached(false,false)) {
                     mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
                 }
             }
             else if(position.equals("middle")){
-                while(mecanumCommand.isPositionReached()) {
+                while(mecanumCommand.isPositionReached(false,false)) {
                     mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
                 }
             }
             else if(position.equals("right")){
-                while(mecanumCommand.isPositionReached()) {
+                while(mecanumCommand.isPositionReached(false,false)) {
                     mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
                 }
             }
