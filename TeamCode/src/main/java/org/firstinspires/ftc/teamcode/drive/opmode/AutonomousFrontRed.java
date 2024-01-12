@@ -74,7 +74,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
 
-        String position = "left";
+        String position = "middle";
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
 
@@ -145,28 +145,43 @@ public class AutonomousFrontRed extends LinearOpMode {
 
         timer.reset();
 
-        while(timer.milliseconds() < 3000) {
+        while(timer.milliseconds() < 5000) {
             intakeCommand.intakeOut(0.5);
         }
         intakeCommand.stopIntake();
 
 
-        if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 60, -70, -1.53);
-            while(!mecanumCommand.isCoordinatePassed()) {}
+        sleep(2000);
 
-        }
-        else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 70, -54, -1.53);
+        if(position.equals("middle")) {
+            mecanumCommand.setFinalPosition(true, 20, 146, -77, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 59, -76, 0);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 64, -77, -1.58);
+            while(!mecanumCommand.isPositionReached(true,true)) {}
+            //mecanumCommand.setFinalPosition(true, 30, 64, -77, -1.58);
+            //while(!mecanumCommand.isPositionReached(false,false)) {}
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 70, -54, -1.53);
+            mecanumCommand.setFinalPosition(true, 20, 68, 83.5, -1.58);
             while(!mecanumCommand.isCoordinatePassed()) {}
-        /*
+            mecanumCommand.setFinalPosition(true, 20, 59, -76, 0);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 20, 68, 83.5, -1.58);
+            while(!mecanumCommand.isPositionReached(false,false)) {}
+        }
+        else if(position.equals("left")){
+            mecanumCommand.setFinalPosition(true, 20, 34, 81.69, 1.53);
+            while(!mecanumCommand.isPositionReached(false,false)) {}
+        }
+
+        level = 5;
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
         level = 1;
-//        outputCommand.armToBoard();
-//        outputCommand.tiltToBoard();
+
+        /*
         timer.reset();
         while(timer.milliseconds() < 3500) {
             //TODO: tune

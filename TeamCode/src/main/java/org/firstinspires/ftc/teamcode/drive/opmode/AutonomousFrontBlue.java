@@ -112,7 +112,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         timer.reset();
 
-        while(timer.milliseconds() < 3000) {
+        while(timer.milliseconds() < 5000) {
             intakeCommand.intakeOut(0.5);
         }
         intakeCommand.stopIntake();
@@ -147,6 +147,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.stopIntake();
         */
 
+
         level = 1;
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
@@ -164,6 +165,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        }
 
         if(position.equals("middle")) {
+            mecanumCommand.setFinalPosition(true, 30, 146, -77, 0);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 59, -76, 0);
+            while(!mecanumCommand.isCoordinatePassed()) {}
             mecanumCommand.setFinalPosition(true, 30, 53, 83.5, -1.58);
             while(!mecanumCommand.isPositionReached(false,false)) {}
         }
