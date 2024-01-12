@@ -90,6 +90,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::motorProcess, executor);
 //        CompletableFuture.runAsync(this::liftProcess, executor);
 
+
+
+
         sleep(2000);
         if(position.equals("left")) {
             mecanumCommand.setFinalPosition(true, 20, 103, 15, 0);
@@ -143,10 +146,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
         intakeCommand.stopIntake();
         */
-//        level = 1;
-//        outputCommand.armToBoard();
-//        outputCommand.tiltToBoard();
-//        timer.reset();
+
+        level = 1;
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        timer.reset();
+
 //        while(timer.milliseconds() < 3500) {
 //            if (propPosition < 100 && propPosition > 0 && opModeIsActive()) {
 //                //pos 2
@@ -157,32 +162,37 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //                mecanumCommand.moveToGlobalPosition(34, 83.5, -1.58);
 //            }
 //        }
-        /*
-        if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-            while(!mecanumCommand.isPositionReached()) {}
 
-        }
-        else if(position.equals("middle")){
-            while(!mecanumCommand.isPositionReached()) {
-                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-            }
+        if(position.equals("middle")) {
+            mecanumCommand.setFinalPosition(true, 30, 53, 83.5, -1.58);
+            while(!mecanumCommand.isPositionReached(false,false)) {}
         }
         else if(position.equals("right")){
-            while(!mecanumCommand.isPositionReached()) {
-                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-            }
+            mecanumCommand.setFinalPosition(true, 30, 68, 83.5, -1.58);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 68, 83.5, -1.58);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 68, 83.5, -1.58);
+            while(!mecanumCommand.isPositionReached(false,false)) {}
         }
-         */
-//        timer.reset();
-//        while (timer.milliseconds() < 500){
-//            outputCommand.openGate();
-//        }
-//        outputCommand.closeGate();
-//        outputCommand.tiltToIdle();
-//        outputCommand.armToIdle();
-//        sleep(3000);
-//        level = 0;
+        else if(position.equals("left")){
+            mecanumCommand.setFinalPosition(true, 30, 34, 81.69, 1.53);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 34, 81.69, 1.53);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 34, 81.69, 1.53);
+            while(!mecanumCommand.isPositionReached(false,false)) {}
+        }
+
+        timer.reset();
+        while (timer.milliseconds() < 500){
+            outputCommand.openGate();
+        }
+        outputCommand.closeGate();
+        outputCommand.tiltToIdle();
+        outputCommand.armToIdle();
+        sleep(3000);
+        level = 0;
 //        mecanumCommand.moveToGlobalPosition(30, 65, -1.58);
 //        sleep(1000);
 //        mecanumCommand.moveToGlobalPosition(0, 84, -1.58);
