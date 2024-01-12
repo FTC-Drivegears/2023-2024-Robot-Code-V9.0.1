@@ -154,11 +154,11 @@ public class AutonomousFrontRed extends LinearOpMode {
         sleep(2000);
 
         if(position.equals("middle")) {
-            mecanumCommand.setFinalPosition(true, 20, 146, -77, 0);
+            mecanumCommand.setFinalPosition(true, 5, 126, 0, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
-            mecanumCommand.setFinalPosition(true, 30, 59, -76, 0);
+            mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
-            mecanumCommand.setFinalPosition(true, 30, 64, -77, -1.58);
+            mecanumCommand.setFinalPosition(true, 30, 60, -92, -1.58);
             while(!mecanumCommand.isPositionReached(true,true)) {}
             //mecanumCommand.setFinalPosition(true, 30, 64, -77, -1.58);
             //while(!mecanumCommand.isPositionReached(false,false)) {}
@@ -233,15 +233,15 @@ public class AutonomousFrontRed extends LinearOpMode {
 
     public void updateTelemetry() {
         while (opModeIsActive()) {
-//            packet.put("x", gyroOdometry.x);
-//            packet.put("y", gyroOdometry.y);
+            packet.put("x", gyroOdometry.x);
+            packet.put("y", gyroOdometry.y);
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("theta", gyroOdometry.theta);
             telemetry.addData("position", position);
-//            packet.put("x", gyroOdometry.x);
-//            packet.put("y", gyroOdometry.y);
-//            dashboard.sendTelemetryPacket(packet);
+            packet.put("x", gyroOdometry.x);
+            packet.put("y", gyroOdometry.y);
+            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
     }
