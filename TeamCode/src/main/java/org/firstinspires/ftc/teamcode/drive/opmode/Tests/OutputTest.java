@@ -60,7 +60,7 @@ public class  OutputTest extends LinearOpMode {
             telemetry.addData("left arm position", outputCommand.getLeftArmPosition());
             telemetry.addData("right arm position", outputCommand.getRightArmPosition());
             telemetry.addData("gate position", outputCommand.getGatePosition());
-//            telemetry.addData("left tilt position", outputCommand.getLeftTiltPosition());
+            telemetry.addData("left tilt position", outputCommand.getLeftTiltPosition());
 //            telemetry.addData("right tilt position", outputCommand.getRightTiltPosition());
             telemetry.update();
         }
