@@ -44,6 +44,8 @@ public class Specifications {
     public static final String LEFT_OUTPUT_TILT = "leftTilt";
     public static final String RIGHT_OUTPUT_TILT = "rightTilt";
     public static final String PIXEL_GATE = "pixelGate";
+
+    public static final String DRONE_LAUNCHER = "droneShooter";
     public static final String FIRST_COLOR_SENSOR = "pixelSensor";
     public static final String SECOND_COLOR_SENSOR = "pixelSensor2";
     public static final String LED = "led";

@@ -30,7 +30,7 @@ public class OutputCommand {
         leftArm = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_ARM);
         rightArm = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_ARM);
         leftTilt = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_TILT);
-        droneShooter = hardwareMap.get(CRServo.class, "droneShooter");
+        droneShooter = hardwareMap.get(CRServo.class, Specifications.DRONE_LAUNCHER);
         rightTilt = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_TILT);
         gate = hardwareMap.get(Servo.class, Specifications.PIXEL_GATE);
         intakeCommand = new IntakeCommand(hardwareMap);
