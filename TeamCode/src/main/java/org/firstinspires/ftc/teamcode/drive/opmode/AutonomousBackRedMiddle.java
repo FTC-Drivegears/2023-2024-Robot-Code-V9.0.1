@@ -90,7 +90,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
         //PIXEL DROPOFF POSITION
         if(position.equals("left")) {
-            while(mecanumCommand.isPositionReached(false,false)) {
+            while(mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
                 mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
             }
         }

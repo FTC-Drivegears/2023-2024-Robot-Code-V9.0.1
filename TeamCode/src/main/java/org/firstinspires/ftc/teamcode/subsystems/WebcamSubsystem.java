@@ -56,7 +56,7 @@ public class WebcamSubsystem extends Specifications {
 //            webcam.setPipeline(redIntakePipeline);
 //        }
         if(pipelineName == PipelineName.CONTOUR_BLUE){
-            contourPipeline = new ContourPipeline(138, 255, 255, 102, 167, 92);
+            contourPipeline = new ContourPipeline(116, 255, 255, 108, 87, 21);
         }
         else if(pipelineName == PipelineName.CONTOUR_RED){
             contourPipeline = new ContourPipeline(180, 255, 255, 155, 142, 195);

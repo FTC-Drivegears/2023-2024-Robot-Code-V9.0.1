@@ -103,5 +103,13 @@ public class OutputCommand {
         return rightTilt.getPosition();
     }
 
+    public Servo getleftTilt(){
+        return leftTilt;
+    }
+
+    public Servo getRightTile(){
+        return rightTilt;
+    }
+
 
 }
