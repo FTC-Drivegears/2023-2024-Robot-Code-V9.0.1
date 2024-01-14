@@ -18,19 +18,21 @@ public class IntakeCommand {
         intakeServo = hardwareMap.get(Servo.class, Specifications.INTAKE_SERVO);
         intakeRoller = hardwareMap.get(CRServo.class, Specifications.INTAKE_ROLLER);
 
+
         intakeRoller.setDirection(DcMotorSimple.Direction.FORWARD);
     }
+
 
     public double intakeValue() {
         return intakeServo.getPosition();
     }
 
     public void raiseIntake() {
-        intakeServo.setPosition(0.1);
+        intakeServo.setPosition(0.02);
     }
 
     public void lowerIntake() {
-        intakeServo.setPosition(0.4);
+        intakeServo.setPosition(0.45);
     }
     public void intakeRollerIn(){
         intakeRoller.setPower(-1);
@@ -46,7 +48,7 @@ public class IntakeCommand {
     }
 
     public void intakeIn(double power) {
-        intake.motorTurnPurePower(true, -Math.abs(power));
+        intake.motorTurnPurePower(true, Math.abs(power));
         intakeRollerIn();
     }
 
@@ -55,7 +57,7 @@ public class IntakeCommand {
     }
 
     public void intakeOut(double power) {
-        intake.motorTurnPurePower(true, Math.abs(power));
+        intake.motorTurnPurePower(true, -Math.abs(power));
     }
 
     public void stopIntake() {
