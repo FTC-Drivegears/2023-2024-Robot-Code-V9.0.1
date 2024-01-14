@@ -80,7 +80,7 @@ public class COTeleOp extends LinearOpMode {
 
         gridAutoCentering = new GridAutoCentering(mecanumSubsystem, gyroOdometry);
 
-        colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
+//        colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
 
@@ -102,6 +102,7 @@ public class COTeleOp extends LinearOpMode {
 
             outputCommand.armToIdle();
             outputCommand.tiltToIdle();
+
             pixelCounter = 0;
             timerList.resetTimer("colorLoop");
         }
@@ -181,6 +182,11 @@ public class COTeleOp extends LinearOpMode {
                 }
             }
 
+            if(gamepad1.dpad_right){
+                imuSubsystem.resetAngle();
+
+            }
+
             if(state == RUNNING_STATE.DROP){
                 raising = false;
                 if(!timerList.checkTimePassed("pixelDrop", 750)) {
@@ -223,6 +229,7 @@ public class COTeleOp extends LinearOpMode {
                 running = true;
             }
 
+
             if(gamepad1.dpad_left) {
                 imuSubsystem.resetAngle();
             }
@@ -244,6 +251,16 @@ public class COTeleOp extends LinearOpMode {
             }
             else if(gamepad2.dpad_down){
                 intakeCommand.lowerIntake();
+            }
+
+            if(gamepad2.dpad_right){
+                outputCommand.droneToShoot();
+            }
+            else if(gamepad2.dpad_left){
+                outputCommand.droneToNotShoot();
+            }
+            else {
+                outputCommand.droneToIdle();
             }
 
             //intake
@@ -296,46 +313,46 @@ public class COTeleOp extends LinearOpMode {
         }
     }
 
-
-    //i moved sensor update since color sensor read times are so fucking long itll screw up the light color timings
-    public void sensorUpdate(){
-        timerList.resetTimer("sensorLoop");
-        while(opModeIsActive()) {
-            if(timerList.checkTimePassed("sensorLoop", 1500)) {
-                color1 = colorSensorSubsystem.findColor1();
-                color2 = colorSensorSubsystem.findColor2();
-                timerList.resetTimer("sensorLoop");
-            }
-        }
-    }
-    public void lightProcess(){
-            //light pattern sequence (ORDER OF THE IF-ELSE STATEMENTS MATTER)
-        if(timerList.checkTimePassed("colorLoop", 1425) || (color2.equals("none") && timerList.checkTimePassed("colorLoop", 100))){
-            colorSensorSubsystem.setColor(color1);
-            timerList.resetTimer("colorLoop");
-            //color 1 on at end of blink sequence, resets timer (so start from the else statement again and come back up)
-            //or stay on if color 2 is missing
-        }
-        else if(timerList.checkTimePassed("colorLoop", 1350)){
-            colorSensorSubsystem.setColor("none");
-            //off for 75ms
-        } else if(timerList.checkTimePassed("colorLoop", 1250)){
-            colorSensorSubsystem.setColor(color2);
-            //color 2 on for 100ms
-        } else if(timerList.checkTimePassed("colorLoop", 1175)){
-            colorSensorSubsystem.setColor("none");
-            //off for 75ms
-        } else if(timerList.checkTimePassed("colorLoop", 1075)){
-            colorSensorSubsystem.setColor(color2);
-            //color 2 on for 100 ms
-        } else if(timerList.checkTimePassed("colorLoop", 1000)) {
-            colorSensorSubsystem.setColor("none");
-            //off for 75 ms
-        } else {
-            //color 1 on for 1 second
-            colorSensorSubsystem.setColor(color1);
-        }
-    }
+//    public void lightProcess(){
+//        //light pattern sequence (ORDER OF THE IF-ELSE STATEMENTS MATTER)
+//        if(timerList.checkTimePassed("colorLoop", 1425) || (color2.equals("none") && timerList.checkTimePassed("colorLoop", 100))){
+//            colorSensorSubsystem.setColor(color1);
+//            timerList.resetTimer("colorLoop");
+//            //color 1 on at end of blink sequence, resets timer (so start from the else statement again and come back up)
+//            //or stay on if color 2 is missing
+//        }
+//        else if(timerList.checkTimePassed("colorLoop", 1350)){
+//            colorSensorSubsystem.setColor("none");
+//            //off for 75ms
+//        } else if(timerList.checkTimePassed("colorLoop", 1250)){
+//            colorSensorSubsystem.setColor(color2);
+//            //color 2 on for 100ms
+//        } else if(timerList.checkTimePassed("colorLoop", 1175)){
+//            colorSensorSubsystem.setColor("none");
+//            //off for 75ms
+//        } else if(timerList.checkTimePassed("colorLoop", 1075)){
+//            colorSensorSubsystem.setColor(color2);
+//            //color 2 on for 100 ms
+//        } else if(timerList.checkTimePassed("colorLoop", 1000)) {
+//            colorSensorSubsystem.setColor("none");
+//            //off for 75 ms
+//        } else {
+//            //color 1 on for 1 second
+//            colorSensorSubsystem.setColor(color1);
+//        }
+//    }
+//
+//    //i moved sensor update since color sensor read times are so fucking long itll screw up the light color timings
+//    public void sensorUpdate(){
+//        timerList.resetTimer("sensorLoop");
+//        while(opModeIsActive()) {
+//            if(timerList.checkTimePassed("sensorLoop", 1500)) {
+//                color1 = colorSensorSubsystem.findColor1();
+//                color2 = colorSensorSubsystem.findColor2();
+//                timerList.resetTimer("sensorLoop");
+//            }
+//        }
+//    }
     public void updateTelemetry(){
         telemetry.addData("x", gyroOdometry.x);
         telemetry.addData("y", gyroOdometry.y);

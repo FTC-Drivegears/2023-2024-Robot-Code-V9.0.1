@@ -28,7 +28,7 @@ public class IntakeCommand {
     }
 
     public void raiseIntake() {
-        intakeServo.setPosition(0.02);
+        intakeServo.setPosition(0);
     }
 
     public void lowerIntake() {

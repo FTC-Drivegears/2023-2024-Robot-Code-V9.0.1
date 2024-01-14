@@ -15,6 +15,7 @@ public class SingleMotorSubsystem extends Specifications {
 
     public SingleMotorSubsystem(HardwareMap hardwareMap, String motorName){
         this.motor = hardwareMap.get(DcMotorEx.class, motorName);
+        this.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         pidCore = new PIDCore(0.1, 0.0001, 0);
     }
 

@@ -79,9 +79,9 @@ public class AutonomousFrontRed extends LinearOpMode {
         packet = new TelemetryPacket();
 
         double propPosition = 0;
-//        while(opModeInInit()){
-//            propPosition = webcamSubsystem.getXProp();
-//        }
+        while(opModeInInit()){
+            propPosition = webcamSubsystem.getXProp();
+        }
 
         waitForStart();
 
@@ -90,10 +90,10 @@ public class AutonomousFrontRed extends LinearOpMode {
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
-//        CompletableFuture.runAsync(this::liftProcess, executor);
+        CompletableFuture.runAsync(this::liftProcess, executor);
 
 
-        /*
+
         intakeCommand.raiseIntake();
 //        sleep(8000);
         mecanumCommand.setFinalPosition(true, 30, 57, 0, 0);
@@ -108,23 +108,23 @@ public class AutonomousFrontRed extends LinearOpMode {
             mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
             //middle
             mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
-//            if (propPosition > 100) {
-//                //pos RIGHT
-//                position = "right";
-//                mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
-//            } else if (propPosition <= 100 && propPosition > 0) {
-//                //pos middle
-//                position = "middle";
-//                mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
-//                sleep(1000);
-//            } else {
-//                //pos left
-//                position = "left";
-//                mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
-//            }
+            if (propPosition > 100) {
+                //pos RIGHT
+                position = "right";
+                mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
+            } else if (propPosition <= 100 && propPosition > 0) {
+                //pos middle
+                position = "middle";
+                mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
+                sleep(1000);
+            } else {
+                //pos left
+                position = "left";
+                mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
+            }
         }
 
-         */
+
 
         sleep(2000);
         if(position.equals("left")) {
@@ -154,7 +154,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         sleep(2000);
 
         if(position.equals("middle")) {
-            mecanumCommand.setFinalPosition(true, 5, 126, 0, 0);
+            mecanumCommand.setFinalPosition(true, 20, 126, 0, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
             mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
@@ -174,6 +174,10 @@ public class AutonomousFrontRed extends LinearOpMode {
         else if(position.equals("left")){
             mecanumCommand.setFinalPosition(true, 20, 34, 81.69, 1.53);
             while(!mecanumCommand.isPositionReached(false,false)) {}
+            mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
+            while(!mecanumCommand.isCoordinatePassed()) {}
+            mecanumCommand.setFinalPosition(true, 30, 60, -92, -1.58);
+            while(!mecanumCommand.isPositionReached(true,true)) {}
         }
 
         level = 5;
