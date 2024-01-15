@@ -118,6 +118,25 @@ public class MecanumCommand {
         moveGlobalPartial(true, ex, ey, etheta);
     }
 
+    public void pidProcessLogistic(){
+        //TODO: make sure xFinal works as a valid L, might need to overshoot a bit because of nature of PID Controllers
+
+        LogisticFunction logisticFunctionX = new LogisticFunction(xFinal, 0.1, gyroOdometry.x, 0);
+        LogisticFunction logisticFunctionY = new LogisticFunction(yFinal, 0.1, gyroOdometry.y, 0);
+        LogisticFunction logisticFunctionTheta = new LogisticFunction(thetaFinal, 0.1, gyroOdometry.theta, 0);
+
+        ex = globalCascadeXController.cascadeOutput(xFinal, gyroOdometry.x, logisticFunctionX.getDerivativeOutput(gyroOdometry.x), globalCascadeXController.getDerivative(), 0);
+        ey = globalCascadeYController.cascadeOutput(yFinal, gyroOdometry.y, logisticFunctionY.getDerivativeOutput(gyroOdometry.y), globalCascadeYController.getDerivative(), 0);
+        etheta = globalCascadeThetaController.cascadeOutput(thetaFinal, gyroOdometry.theta, logisticFunctionTheta.getDerivativeOutput(gyroOdometry.theta), globalCascadeThetaController.getDerivative(), 0);
+        if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
+            double max = Math.max(Math.abs(ex), Math.abs(ey));
+            ex = ex / max * velocity;
+            ey = ey / max * velocity;
+            etheta = etheta / max * velocity;
+        }
+        moveGlobalPartial(true, ex, ey, etheta);
+    }
+
     public void move(boolean run, double lv, double lh, double rv, double rh) {
         mecanumSubsystem.move(run, lv, lh, rv, rh);
     }
