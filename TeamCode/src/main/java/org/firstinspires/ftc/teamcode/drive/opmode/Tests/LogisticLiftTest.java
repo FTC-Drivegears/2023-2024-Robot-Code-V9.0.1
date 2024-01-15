@@ -30,38 +30,30 @@ public class LogisticLiftTest extends LinearOpMode {
 
         waitForStart();
 
-//        CompletableFuture.runAsync(this::liftProcess);
-
         while (opModeIsActive()) {
 
-            if(gamepad1.left_bumper){
+            if (gamepad1.left_bumper) {
                 multiMotorSubsystem.reset();
             }
 
-            if(gamepad1.a){
+            if (gamepad1.a) {
                 multiMotorSubsystem.LogisticLiftCascadeProcess(2700);
                 targetPosition = 3100;
-            }
-            else if(gamepad1.b){
+            } else if (gamepad1.b) {
                 multiMotorSubsystem.LogisticLiftCascadeProcess(2300);
                 targetPosition = 0;
-            }
-            else if(gamepad1.y){
+            } else if (gamepad1.y) {
                 multiMotorSubsystem.LogisticLiftCascadeProcess(1200);
                 targetPosition = 3100;
-            }
-            else if(gamepad1.x){
+            } else if (gamepad1.x) {
                 multiMotorSubsystem.LogisticLiftCascadeProcess(840);
                 targetPosition = 1300;
-            }
-            else if(gamepad1.dpad_down){
+            } else if (gamepad1.dpad_down) {
                 multiMotorSubsystem.LogisticLiftCascadeProcess(0);
                 targetPosition = 0;
-            }
-            else if(gamepad1.right_bumper){
+            } else if (gamepad1.right_bumper) {
                 multiMotorCommand.LiftUp(true, 5);
-            }
-            else {
+            } else {
                 multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
             }
 //            else {
@@ -94,4 +86,5 @@ public class LogisticLiftTest extends LinearOpMode {
             telemetry.update();
             dash.sendTelemetryPacket(packet);
         }
+    }
 }
