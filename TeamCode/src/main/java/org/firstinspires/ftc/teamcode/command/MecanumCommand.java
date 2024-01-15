@@ -125,9 +125,9 @@ public class MecanumCommand {
         LogisticFunction logisticFunctionY = new LogisticFunction(yFinal, 0.1, gyroOdometry.y, 0);
         LogisticFunction logisticFunctionTheta = new LogisticFunction(thetaFinal, 0.1, gyroOdometry.theta, 0);
 
-        ex = globalCascadeXController.cascadeOutput(xFinal, gyroOdometry.x, logisticFunctionX.getDerivativeOutput(gyroOdometry.x), globalCascadeXController.getDerivative(), 0);
-        ey = globalCascadeYController.cascadeOutput(yFinal, gyroOdometry.y, logisticFunctionY.getDerivativeOutput(gyroOdometry.y), globalCascadeYController.getDerivative(), 0);
-        etheta = globalCascadeThetaController.cascadeOutput(thetaFinal, gyroOdometry.theta, logisticFunctionTheta.getDerivativeOutput(gyroOdometry.theta), globalCascadeThetaController.getDerivative(), 0);
+        ex = globalCascadeXController.cascadeOutput(xFinal, gyroOdometry.x, logisticFunctionX.getDerivativeOutput(gyroOdometry.x), globalCascadeXController.getDerivative());
+        ey = globalCascadeYController.cascadeOutput(yFinal, gyroOdometry.y, logisticFunctionY.getDerivativeOutput(gyroOdometry.y), globalCascadeYController.getDerivative());
+        etheta = globalCascadeThetaController.cascadeOutput(thetaFinal, gyroOdometry.theta, logisticFunctionTheta.getDerivativeOutput(gyroOdometry.theta), globalCascadeThetaController.getDerivative());
         if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
             double max = Math.max(Math.abs(ex), Math.abs(ey));
             ex = ex / max * velocity;

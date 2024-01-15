@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.Interval;
 import org.firstinspires.ftc.teamcode.util.IntervalControl;
+import org.firstinspires.ftc.teamcode.util.LogisticFunction;
 import org.firstinspires.ftc.teamcode.util.PIDCore;
 import org.firstinspires.ftc.teamcode.util.Specifications;
 
@@ -321,12 +322,17 @@ public class MultiMotorSubsystem extends Specifications {
     public void testLiftCascadeProcess(double targetPos, double targetVelocity){
         runToPosition = true;
         intervalValue = targetVelocity;
-        //TODO: Reorganize derivative value
         cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, getDerivativeValue());
     }
 
-
-
+    public void LogisticLiftCascadeProcess(double targetPos){
+        runToPosition = true;
+        //TODO: tune k values
+        //TODO: when at a diff position the function needs to adjust based off x0 and b
+        LogisticFunction logisticFunction = new LogisticFunction(targetPos, 0.1, 0, 0);
+        intervalValue = logisticFunction.getDerivativeOutput(getPosition());
+        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, getDerivativeValue());
+    }
 
     public void motorTurn(boolean run, int position){
         if (run){
