@@ -43,6 +43,8 @@ public class AprilTagCameraTest extends LinearOpMode {
 
         waitForStart();
 
+        int target = 1;
+
         while(!isStopRequested() && opModeIsActive()) {
             aprilCamSubsystem.runDetections();
             if(aprilCamSubsystem.getDetections().size() > 0) {
@@ -55,6 +57,19 @@ public class AprilTagCameraTest extends LinearOpMode {
                     telemetry.addData("yaw" + i, detections.get(i).ftcPose.yaw);
                     telemetry.addData("pitch" + i, detections.get(i).ftcPose.pitch);
                     telemetry.addData("roll" + i, detections.get(i).ftcPose.roll);
+                    telemetry.update();
+
+                    //Note: probably in the wrong spot
+                    /*if(detections.get(i).id == target){
+                        double targetX = ;
+                        double targetY = ;
+                        double targetTheta = ;
+                        mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
+                        while(!mecanumCommand.isCoordinatePassed()) {};
+                    }
+                    */
+
+
                 }
             }
             telemetry.update();
