@@ -93,11 +93,14 @@ public class AprilTagCameraTest extends LinearOpMode {
                     telemetry.update();
 
                     //Note: probably in the wrong spot
-                    double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
-                    double targetY =  gyroOdometry.y + detections.get(i).ftcPose.y;
-                    double targetTheta = Math.PI/2;
-                    mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
-                    while(!mecanumCommand.isCoordinatePassed()) {};
+                    if(detections.get(i).id == target) {
+                        double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
+                        double targetY = gyroOdometry.y + detections.get(i).ftcPose.y;
+                        double targetTheta = Math.PI / 2;
+                        mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
+                        while (!mecanumCommand.isCoordinatePassed()) {
+                        }
+                    }
 
                 }
             }
