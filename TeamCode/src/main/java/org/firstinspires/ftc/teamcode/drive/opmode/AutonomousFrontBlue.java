@@ -118,6 +118,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
 
      */
+        /*
         level = 5;
         sleep(2000);
         outputCommand.armToBoard();
@@ -133,6 +134,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         else if (timer.milliseconds() < 750){
             outputCommand.openGate();
         }
+
+         */
 
 
         /*
@@ -248,8 +251,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        sleep(1000);
 //        mecanumCommand.moveToGlobalPosition(0, 84, -1.58);
 
-        //goToAprilTag = true;
-
+        goToAprilTag = true;
         sleep(500);
         while (!mecanumCommand.isPositionReached(false, false)) {
         }
@@ -299,6 +301,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     public void DetectAprilTags() {
         while (goToAprilTag) {
+
             aprilCamSubsystem.runDetections();
             if (aprilCamSubsystem.getDetections().size() > 0) {
                 ArrayList<AprilTagDetection> detections = aprilCamSubsystem.getDetections();
