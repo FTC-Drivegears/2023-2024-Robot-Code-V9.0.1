@@ -53,6 +53,7 @@ public class MultiMotorSubsystem extends Specifications {
     private double downThreshold = -0.3;
     private double intervalValue = 0;
     private double cascadeOutput = 0;
+    private final double maxVel = 2000;
 
     public double vel = 0;
 
@@ -325,13 +326,13 @@ public class MultiMotorSubsystem extends Specifications {
         cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), intervalValue, getDerivativeValue());
     }
 
-    public void LogisticLiftCascadeProcess(double targetPos, double maxVal){
+    public void LogisticLiftCascadeProcess(double targetPos){
         runToPosition = true;
         //TODO: tune k values
         //TODO: when at a diff position the function needs to adjust based off x0 and b
         LogisticFunction logisticFunction = new LogisticFunction(targetPos, 0.1, 0, 0);
         intervalValue = logisticFunction.getDerivativeOutput(getPosition());
-        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), Math.max(intervalValue, maxVal), getDerivativeValue());
+        cascadeOutput = cascadePID.cascadeOutput(targetPos, getPosition(), Math.max(intervalValue, maxVel), getDerivativeValue());
     }
 
     public void motorTurn(boolean run, int position){

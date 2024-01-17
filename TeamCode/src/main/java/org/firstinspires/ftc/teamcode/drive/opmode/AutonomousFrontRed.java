@@ -128,7 +128,7 @@ public class AutonomousFrontRed extends LinearOpMode {
 
         sleep(2000);
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 20, 73, 6.5, -1.5);
+            mecanumCommand.setFinalPosition(true, 20, 73, 9, -1.02);
             while(!mecanumCommand.isPositionReached(true,false)) {}
         }
         else if(position.equals("middle")){
@@ -136,7 +136,7 @@ public class AutonomousFrontRed extends LinearOpMode {
             while(!mecanumCommand.isPositionReached(false,true)) {}
         }
         else if(position.equals("right")) {
-            mecanumCommand.setFinalPosition(true, 20, 103, -18, 0);
+            mecanumCommand.setFinalPosition(true, 20, 73, 9, 1.02);
             while (!mecanumCommand.isPositionReached(true, false)) {
             }
         }
@@ -164,7 +164,7 @@ public class AutonomousFrontRed extends LinearOpMode {
             //while(!mecanumCommand.isPositionReached(false,false)) {}
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 20, 68, 83.5, -1.58);
+            mecanumCommand.setFinalPosition(true, 20, 73, 9, 1.02;
             while(!mecanumCommand.isCoordinatePassed()) {}
             mecanumCommand.setFinalPosition(true, 20, 59, -76, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
@@ -172,7 +172,7 @@ public class AutonomousFrontRed extends LinearOpMode {
             while(!mecanumCommand.isPositionReached(false,false)) {}
         }
         else if(position.equals("left")){
-            mecanumCommand.setFinalPosition(true, 20, 34, 81.69, 1.53);
+            mecanumCommand.setFinalPosition(true, 20, 73, 9, -1.02);
             while(!mecanumCommand.isPositionReached(false,false)) {}
             mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}

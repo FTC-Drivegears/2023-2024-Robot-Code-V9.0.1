@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 import java.util.concurrent.CompletableFuture;
 
 @TeleOp(name="drive test")
-public class MecanumTest extends LinearOpMode {
+public class MecanumTest extends LinearOpMode{
     private MecanumSubsystem mecanumSubsystem;
     private IMUSubsystem imu;
     private OdometrySubsystem odo;
