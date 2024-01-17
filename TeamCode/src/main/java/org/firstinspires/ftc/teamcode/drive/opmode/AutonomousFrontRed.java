@@ -164,7 +164,7 @@ public class AutonomousFrontRed extends LinearOpMode {
             //while(!mecanumCommand.isPositionReached(false,false)) {}
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 20, 68, 83.5, -1.58);
+            mecanumCommand.setFinalPosition(true, 20, 73, 9, 1.02;
             while(!mecanumCommand.isCoordinatePassed()) {}
             mecanumCommand.setFinalPosition(true, 20, 59, -76, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
@@ -172,7 +172,7 @@ public class AutonomousFrontRed extends LinearOpMode {
             while(!mecanumCommand.isPositionReached(false,false)) {}
         }
         else if(position.equals("left")){
-            mecanumCommand.setFinalPosition(true, 20, 34, 81.69, 1.53);
+            mecanumCommand.setFinalPosition(true, 20, 73, 9, -1.02);
             while(!mecanumCommand.isPositionReached(false,false)) {}
             mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
             while(!mecanumCommand.isCoordinatePassed()) {}
