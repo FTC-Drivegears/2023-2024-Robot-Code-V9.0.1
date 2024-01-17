@@ -18,6 +18,11 @@ import org.firstinspires.ftc.robotcore.external.function.Continuation;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.stream.CameraStreamSource;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.command.MecanumCommand;
+import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -34,12 +39,22 @@ public class AprilTagCameraTest extends LinearOpMode {
     private FtcDashboard dashboard;
     private TelemetryPacket packet;
     private OpenCvCamera webcam;
+    private MecanumSubsystem mecanumSubsystem;
+    private MecanumCommand mecanumCommand;
+    private IMUSubsystem imu;
+    private OdometrySubsystem odometrySubsystem;
+    private GyroOdometry gyroOdometry;
 
     @Override
     public void runOpMode() throws InterruptedException {
         aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
 
         packet = new TelemetryPacket();
+        imu = new IMUSubsystem(hardwareMap);
+        mecanumSubsystem = new MecanumSubsystem(hardwareMap);
+        odometrySubsystem = new OdometrySubsystem(hardwareMap);
+        gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
+        mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
 
         waitForStart();
 
@@ -55,12 +70,10 @@ public class AprilTagCameraTest extends LinearOpMode {
                 /*
                 for (int i = 0; i < detections.size(); i++) {
 
-
-
                 }
                 if(){
-                    double targetX = gyroOdomotry.x + detections.get(i).ftcPose.x;
-                    double targetY =  gyroOdomotry.y + detections.get(i).ftcPose.y;
+                    double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
+                    double targetY =  gyroOdometry.y + detections.get(i).ftcPose.y;
                     double targetTheta = math.pi/2;
                     mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
                     while(!mecanumCommand.isCoordinatePassed()) {};
@@ -80,9 +93,9 @@ public class AprilTagCameraTest extends LinearOpMode {
                     telemetry.update();
 
                     //Note: probably in the wrong spot
-                    double targetX = gyroOdomotry.x + detections.get(i).ftcPose.x;
-                    double targetY =  gyroOdomotry.y + detections.get(i).ftcPose.y;
-                    double targetTheta = math.pi/2;
+                    double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
+                    double targetY =  gyroOdometry.y + detections.get(i).ftcPose.y;
+                    double targetTheta = Math.PI/2;
                     mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
                     while(!mecanumCommand.isCoordinatePassed()) {};
 

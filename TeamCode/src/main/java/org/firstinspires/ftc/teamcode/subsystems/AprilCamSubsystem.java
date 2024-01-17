@@ -51,6 +51,7 @@ public class AprilCamSubsystem {
                 .setCameraResolution(new Size(640, 480))
                 .build();
         detections = new ArrayList<>();
+
     }
 
     //starts gathering detections (process)
