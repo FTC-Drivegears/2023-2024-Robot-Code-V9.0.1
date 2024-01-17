@@ -43,13 +43,33 @@ public class AprilTagCameraTest extends LinearOpMode {
 
         waitForStart();
 
-        int target = 1;
+        int target = 4;
 
         while(!isStopRequested() && opModeIsActive()) {
             aprilCamSubsystem.runDetections();
             if(aprilCamSubsystem.getDetections().size() > 0) {
                 ArrayList<AprilTagDetection> detections = aprilCamSubsystem.getDetections();
                 telemetry.addData("Detections", detections);
+
+                //int closestnum = detections.get(0).id;
+                /*
+                for (int i = 0; i < detections.size(); i++) {
+
+
+
+                }
+                if(){
+                    double targetX = gyroOdomotry.x + detections.get(i).ftcPose.x;
+                    double targetY =  gyroOdomotry.y + detections.get(i).ftcPose.y;
+                    double targetTheta = math.pi/2;
+                    mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
+                    while(!mecanumCommand.isCoordinatePassed()) {};
+                }
+                else{
+
+                }
+                */
+
                 for (int i = 0; i < detections.size(); i++) {
                     telemetry.addData("x" + i, detections.get(i).ftcPose.x);
                     telemetry.addData("y" + i, detections.get(i).ftcPose.y);
@@ -60,15 +80,11 @@ public class AprilTagCameraTest extends LinearOpMode {
                     telemetry.update();
 
                     //Note: probably in the wrong spot
-                    /*if(detections.get(i).id == target){
-                        double targetX = ;
-                        double targetY = ;
-                        double targetTheta = ;
-                        mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
-                        while(!mecanumCommand.isCoordinatePassed()) {};
-                    }
-                    */
-
+                    double targetX = gyroOdomotry.x + detections.get(i).ftcPose.x;
+                    double targetY =  gyroOdomotry.y + detections.get(i).ftcPose.y;
+                    double targetTheta = math.pi/2;
+                    mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
+                    while(!mecanumCommand.isCoordinatePassed()) {};
 
                 }
             }
