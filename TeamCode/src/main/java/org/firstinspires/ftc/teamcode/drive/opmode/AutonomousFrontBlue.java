@@ -46,7 +46,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private MultiMotorCommand multiMotorCommand;
     FtcDashboard dashboard;
     TelemetryPacket packet;
-    private ElapsedTime timer;
+    private ElapsedTime timer, positionTimer;
     //67, -3, 0
     //54, 24, 0
     //57, -22, -0.832
@@ -72,6 +72,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
+        positionTimer = new ElapsedTime();
         LinearOpMode opMode = this;
 
         odometrySubsystem.reset();

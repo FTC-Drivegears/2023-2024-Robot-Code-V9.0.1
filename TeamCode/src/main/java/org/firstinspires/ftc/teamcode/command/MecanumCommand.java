@@ -46,15 +46,15 @@ public class MecanumCommand {
     private static double cascadekithetaVel = 0.0;
 
 
-    private static double kpx = 0.055;
-    private static double kdx = 0.01;
-    private static double kix = 0.0075/2;
-    private static double kpy = 0.055;
-    private static double kdy = 0.0005;
-    private static double kiy = 0.0075/2;
+    private static double kpx = 0.06;
+    private static double kdx = 0;
+    private static double kix = 0.0075/2 + 0.015;
+    private static double kpy = 0.06;
+    private static double kdy = 0;
+    private static double kiy = 0.0075/2 + 0.015;
     private static double kptheta = 2;
-    private static double kdtheta = 0.05;
-    private static double kitheta = 0.0;
+    private static double kdtheta = 0;
+    private static double kitheta = 0;
     private double ex = 0;
     private double ey = 0;
     private double etheta = 0;
@@ -84,6 +84,21 @@ public class MecanumCommand {
         globalThetaController.setConstant(kptheta, kdtheta, kitheta);
     }
 
+    public void addToConstants(double kpx, double kdx, double kix, double kpy, double kdy, double kiy, double kptheta, double kdtheta, double kitheta){
+        MecanumCommand.kpx += kpx;
+        MecanumCommand.kdx += kdx;
+        MecanumCommand.kix += kix;
+        MecanumCommand.kpy += kpy;
+        MecanumCommand.kdy += kdy;
+        MecanumCommand.kiy += kiy;
+        MecanumCommand.kptheta += kptheta;
+        MecanumCommand.kdtheta += kdtheta;
+        MecanumCommand.kitheta += kitheta;
+        globalXController.setConstant(kpx, kdx, kix);
+        globalYController.setConstant(kpy, kdy, kiy);
+        globalThetaController.setConstant(kptheta, kdtheta, kitheta);
+    }
+
     public MecanumCommand(MecanumSubsystem mecanumSubsystem, OdometrySubsystem odometrySubsystem, GyroOdometry gyroOdometry, LinearOpMode opmode) {
         this.mecanumSubsystem = mecanumSubsystem;
         this.odometrySubsystem = odometrySubsystem;;
@@ -106,9 +121,9 @@ public class MecanumCommand {
     }
 
     public void pidProcess(){
-        ex = globalXController.outputPositional(xFinal, gyroOdometry.x);
-        ey = -globalYController.outputPositional(yFinal, gyroOdometry.y);
-        etheta = -globalThetaController.outputPositional(thetaFinal, gyroOdometry.theta);
+        ex = globalXController.outputPositionalIntegralSwap(xFinal, gyroOdometry.x);
+        ey = -globalYController.outputPositionalIntegralSwap(yFinal, gyroOdometry.y);
+        etheta = -globalThetaController.outputPositionalIntegralSwap(thetaFinal, gyroOdometry.theta);
         if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
             double max = Math.max(Math.abs(ex), Math.abs(ey));
             ex = ex / max * velocity;

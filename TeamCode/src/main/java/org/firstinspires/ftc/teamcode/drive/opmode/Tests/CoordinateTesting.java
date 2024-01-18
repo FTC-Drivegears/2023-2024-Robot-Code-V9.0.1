@@ -55,9 +55,13 @@ public class CoordinateTesting extends LinearOpMode {
 
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
-        while(opModeIsActive()) {
+        while(opModeIsActive() && !isStopRequested()) {
             mecanumCommand.setFinalPosition(true, 30, 40, 0, 0);
-            sleep(4000);
+            while(!mecanumCommand.isPositionReached(true, true)){}
+            mecanumCommand.setFinalPosition(true, 30, 40, 0, Math.PI/2);
+            while(!mecanumCommand.isPositionReached(true, true)){}
+            mecanumCommand.setFinalPosition(true, 30, 40, 0, -Math.PI/2);
+            while(!mecanumCommand.isPositionReached(true, true));
 
         }
 //        sleep(4000);
