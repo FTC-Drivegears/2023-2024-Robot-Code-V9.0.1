@@ -93,9 +93,9 @@ public class DualMotorPowerTest extends LinearOpMode {
             telemetry.addData("auxpos", multiMotorSubsystem.getAuxPos());
             telemetry.addData("derivativeValue", multiMotorSubsystem.getDerivativeValue());
             telemetry.addData("controlleroutput", multiMotorSubsystem.getCascadeOutput());
-            telemetry.addData("outputPositionalValue", multiMotorSubsystem.getCascadePositional());
-            telemetry.addData("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
             telemetry.addData("level", level);
+            telemetry.addData("positionalValue", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
+            telemetry.addData("integralValue", multiMotorSubsystem.getPidUp().getIntegralSum()*0.000119);
             telemetry.update();
             dash.sendTelemetryPacket(packet);
         }

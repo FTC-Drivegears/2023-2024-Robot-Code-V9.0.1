@@ -453,4 +453,7 @@ public class MultiMotorSubsystem extends Specifications {
     public double getCascadeVelDerivative(){
         return cascadePID.getVelocityDerivative();
     }
+    public PIDCore getPidUp(){
+        return pidUp;
+    }
 }
