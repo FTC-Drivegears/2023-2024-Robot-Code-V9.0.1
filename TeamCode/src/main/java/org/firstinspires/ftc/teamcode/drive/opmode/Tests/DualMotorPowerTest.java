@@ -44,27 +44,27 @@ public class DualMotorPowerTest extends LinearOpMode {
             }
 
             if(gamepad1.a){
-                multiMotorCommand.LiftUpPositional(true, 4);
+                multiMotorCommand.LiftUp(true, 4);
                 targetPosition = 3100;
             }
             else if(gamepad1.b){
-                multiMotorCommand.LiftUpPositional(true, 3);
+                multiMotorCommand.LiftUp(true, 3);
                 targetPosition = 0;
             }
             else if(gamepad1.y){
-                multiMotorCommand.LiftUpPositional(true, 2);
+                multiMotorCommand.LiftUp(true, 2);
                 targetPosition = 3100;
             }
             else if(gamepad1.x){
-                multiMotorCommand.LiftUpPositional(true, 1);
+                multiMotorCommand.LiftUp(true, 1);
                 targetPosition = 1300;
             }
             else if(gamepad1.dpad_down){
-                multiMotorCommand.LiftUpPositional(true, 0);
+                multiMotorCommand.LiftUp(true, 0);
                 targetPosition = 0;
             }
             else if(gamepad1.right_bumper){
-                multiMotorCommand.LiftUpPositional(true, 5);
+                multiMotorCommand.LiftUp(true, 5);
             }
             else {
                 multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
