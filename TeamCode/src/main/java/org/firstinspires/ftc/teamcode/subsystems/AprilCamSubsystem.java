@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 import org.firstinspires.ftc.teamcode.util.Pipelines.AprilTagPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -17,12 +18,17 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 public class AprilCamSubsystem {
     AprilTagProcessor aprilTagProcessor;
     VisionPortal visionPortal;
 
     ArrayList<AprilTagDetection> detections;
+
+    //<id, <dataType, value>>
+    HashMap<Integer, HashMap<String, Double>> detectionsMap;
     OpenCvCamera webcam;
 
     //get aprilTagProcessor
@@ -58,6 +64,7 @@ public class AprilCamSubsystem {
     public void runDetections(){
         if(visionPortal.getCameraState() == VisionPortal.CameraState.STREAMING){
             detections = aprilTagProcessor.getDetections();
+            createMap();
         }
     }
 
@@ -167,5 +174,30 @@ public class AprilCamSubsystem {
         }
         return bearings;
     }
+
+    //creates the following map of maps: <april tag id, <value type, value>>
+    public void createMap(){
+        for (int i = 0; i < detections.size(); i++) {
+            HashMap<String, Double> tempMap = new HashMap<>();
+            tempMap.put("x",detections.get(i).ftcPose.x);
+            tempMap.put("y", detections.get(i).ftcPose.y);
+            tempMap.put("z", detections.get(i).ftcPose.z);
+            tempMap.put("yaw", detections.get(i).ftcPose.yaw);
+            tempMap.put("pitch", detections.get(i).ftcPose.pitch);
+            tempMap.put("roll", detections.get(i).ftcPose.roll);
+            detectionsMap.put(detections.get(i).id, tempMap);
+        }
+    }
+
+    //returns a value specified by april tag id and value type
+    public Double getValue(int id, String dataType){
+        return((Objects.requireNonNull(detectionsMap.get(id))).get(dataType));
+    }
+
+    //returns the map of value types to values for a specified id
+    public HashMap<String, Double> getIdValues(int id){
+        return(detectionsMap.get(id));
+    }
+
 
 }

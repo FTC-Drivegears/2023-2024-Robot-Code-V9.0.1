@@ -57,6 +57,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
     AprilCamSubsystem aprilCamSubsystem;
     private OpenCvCamera webcam;
 
+    private ArrayList<AprilTagDetection> detections;
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -98,7 +100,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
-        CompletableFuture.runAsync(this::DetectAprilTags, executor);
 
     /*
         sleep(2000);
@@ -253,8 +254,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         goToAprilTag = true;
         sleep(500);
-        while (!mecanumCommand.isPositionReached(false, false)) {
+        timer.reset();
+        while(timer.milliseconds() < 30000){
         }
+        //while (!mecanumCommand.isPositionReached(false, false)) {
+        //}
+
 
     }
 
@@ -286,8 +291,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("theta", gyroOdometry.theta);
+
 //            packet.put("x", gyroOdometry.x);
 //            packet.put("y", gyroOdometry.y);
+
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
@@ -299,55 +306,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
     }
 
-    public void DetectAprilTags() {
-        while (goToAprilTag) {
 
-            aprilCamSubsystem.runDetections();
-            if (aprilCamSubsystem.getDetections().size() > 0) {
-                ArrayList<AprilTagDetection> detections = aprilCamSubsystem.getDetections();
-                telemetry.addData("Detections", detections);
-
-                //int closestnum = detections.get(0).id;
-                /*
-                for (int i = 0; i < detections.size(); i++) {
-
-                }
-                if(){
-                    double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
-                    double targetY =  gyroOdometry.y + detections.get(i).ftcPose.y;
-                    double targetTheta = math.pi/2;
-                    mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
-                    while(!mecanumCommand.isCoordinatePassed()) {};
-                }
-                else{
-
-                }
-                */
-
-                int target = 4;
-
-                for (int i = 0; i < detections.size(); i++) {
-                    telemetry.addData("x" + i, detections.get(i).ftcPose.x);
-                    telemetry.addData("y" + i, detections.get(i).ftcPose.y);
-                    telemetry.addData("z" + i, detections.get(i).ftcPose.z);
-                    telemetry.addData("yaw" + i, detections.get(i).ftcPose.yaw);
-                    telemetry.addData("pitch" + i, detections.get(i).ftcPose.pitch);
-                    telemetry.addData("roll" + i, detections.get(i).ftcPose.roll);
-                    telemetry.update();
-
-                    //Note: probably in the wrong spot
-                    if (detections.get(i).id == target) {
-                        double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
-                        double targetY = gyroOdometry.y + detections.get(i).ftcPose.y;
-                        //double targetTheta = Math.PI / 2;
-                        double targetTheta = 0;
-                        mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
-                    }
-
-                }
-            }
-        }
-
-    }
 
 }
+
+
