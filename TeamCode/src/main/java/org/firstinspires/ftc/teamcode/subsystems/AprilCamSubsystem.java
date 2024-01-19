@@ -28,7 +28,7 @@ public class AprilCamSubsystem {
     ArrayList<AprilTagDetection> detections;
 
     //<id, <dataType, value>>
-    HashMap<Integer, HashMap<String, Double>> detectionsMap;
+    HashMap<Integer, AprilTagDetection> detectionsMap;
     OpenCvCamera webcam;
 
     //get aprilTagProcessor
@@ -178,24 +178,14 @@ public class AprilCamSubsystem {
     //creates the following map of maps: <april tag id, <value type, value>>
     public void createMap(){
         for (int i = 0; i < detections.size(); i++) {
-            HashMap<String, Double> tempMap = new HashMap<>();
-            tempMap.put("x",detections.get(i).ftcPose.x);
-            tempMap.put("y", detections.get(i).ftcPose.y);
-            tempMap.put("z", detections.get(i).ftcPose.z);
-            tempMap.put("yaw", detections.get(i).ftcPose.yaw);
-            tempMap.put("pitch", detections.get(i).ftcPose.pitch);
-            tempMap.put("roll", detections.get(i).ftcPose.roll);
-            detectionsMap.put(detections.get(i).id, tempMap);
+            detectionsMap.put(detections.get(i).id, detections.get(i));
         }
     }
 
     //returns a value specified by april tag id and value type
-    public Double getValue(int id, String dataType){
-        return((Objects.requireNonNull(detectionsMap.get(id))).get(dataType));
-    }
 
     //returns the map of value types to values for a specified id
-    public HashMap<String, Double> getIdValues(int id){
+    public AprilTagDetection getIdValues(int id){
         return(detectionsMap.get(id));
     }
 
