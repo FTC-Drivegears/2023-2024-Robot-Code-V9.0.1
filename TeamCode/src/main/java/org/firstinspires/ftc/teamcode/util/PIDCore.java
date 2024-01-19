@@ -83,6 +83,19 @@ public class PIDCore {
     public void integralReset(){
         integralSum = 0;
     }
+    public double outputPositionalIntegralSwap(double setPoint, double feedback){
+        error = setPoint - feedback;
+        derivative = (error - lastError) / timer.time();
+        integralSum += error * timer.seconds();
+        if(Math.signum(error) != Math.signum(integralSum)){
+            integralReset();
+        }
+        lastError = error;
+        timer.reset();
+        outputPositionalValue = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+
+        return (error * Kp) + (derivative * Kd) + (integralSum * Ki);
+    }
 
     public double outputPositional(double setPoint, double feedback) {
 

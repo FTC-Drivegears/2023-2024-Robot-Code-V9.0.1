@@ -11,7 +11,9 @@ public class Specifications {
     //b
     //length front to middle = 15.91
     public final double SideOdometryToCentre = 12.8;
-    public final double lengthFromOdometrySideToFront = 7.05;
+
+    //making this zero makes things super godo for some reason
+    public final double lengthFromOdometrySideToFront = 0;
     public final double odometryCir = 3.5*Math.PI;
     public final double odometryTick = 8192;
     //beta
