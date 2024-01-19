@@ -224,8 +224,8 @@ public class MoveToAprilTagTest extends LinearOpMode {
 
                     int target = 4;
 
-                    double targetX = gyroOdometry.x + aprilCamSubsystem.getValue(target, "x");
-                    double targetY = gyroOdometry.y + aprilCamSubsystem.getValue(target, "y");
+                    double targetX = gyroOdometry.x + aprilCamSubsystem.getIdValues(target).ftcPose.x;
+                    double targetY = gyroOdometry.y + aprilCamSubsystem.getIdValues(target).ftcPose.y;
                     //double targetTheta = Math.PI / 2;
                     double targetTheta = 0;
                     //mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
