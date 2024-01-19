@@ -166,10 +166,10 @@ public class COTeleOp extends LinearOpMode {
             }
             //when lift is raised
             if (state == RUNNING_STATE.RAISE_LIFT) {
-                if(timerList.checkTimePassed("raiseLift", 1500)) {
+                if(timerList.checkTimePassed("raiseLift", 825)) {
                     outputCommand.armToBoard();
                     outputCommand.tiltToBoard();
-                    if(timerList.checkTimePassed("raiseLift", 2200)){
+                    if(timerList.checkTimePassed("raiseLift", 1600)){
                         raising = false;
                     }
                 }
@@ -211,10 +211,11 @@ public class COTeleOp extends LinearOpMode {
                 raising = true;
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
-                if(timerList.checkTimePassed("liftTimer", 2000)){
+                if(timerList.checkTimePassed("liftTimer", 1700)){
                     raising = false;
                     level = 0;
                 }
+                //TODO: potentially implement
                 if(multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5){
                     pixelCounter = 0;
                     level = /*-1*/0;
