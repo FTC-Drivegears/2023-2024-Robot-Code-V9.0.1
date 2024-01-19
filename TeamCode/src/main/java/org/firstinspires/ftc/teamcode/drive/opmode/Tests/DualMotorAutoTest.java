@@ -40,7 +40,7 @@ public class DualMotorAutoTest extends LinearOpMode {
 
     public void liftProcess() {
         while(opModeIsActive()) {
-            multiMotorCommand.LiftUp(true, level);
+            multiMotorCommand.LiftUpPositional(true, level);
         }
     }
 

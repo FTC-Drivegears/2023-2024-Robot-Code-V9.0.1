@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Config
 @TeleOp
-public class DualMotorPowerTest extends LinearOpMode {
+public class DualMotorPositionalTest extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private MecanumSubsystem mecanumSubsystem;
@@ -44,27 +44,27 @@ public class DualMotorPowerTest extends LinearOpMode {
             }
 
             if(gamepad1.a){
-                multiMotorCommand.LiftUpPositional(true, 4);
+                multiMotorSubsystem.LiftPositionalProcess(2200);
                 targetPosition = 3100;
             }
             else if(gamepad1.b){
-                multiMotorCommand.LiftUpPositional(true, 3);
+                multiMotorSubsystem.LiftPositionalProcess(1300);
                 targetPosition = 0;
             }
             else if(gamepad1.y){
-                multiMotorCommand.LiftUpPositional(true, 2);
+                multiMotorSubsystem.LiftPositionalProcess(800);
                 targetPosition = 3100;
             }
             else if(gamepad1.x){
-                multiMotorCommand.LiftUpPositional(true, 1);
+                multiMotorSubsystem.LiftPositionalProcess(500);
                 targetPosition = 1300;
             }
             else if(gamepad1.dpad_down){
-                multiMotorCommand.LiftUpPositional(true, 0);
+                multiMotorSubsystem.LiftPositionalProcess(0);
                 targetPosition = 0;
             }
             else if(gamepad1.right_bumper){
-                multiMotorCommand.LiftUpPositional(true, 5);
+//                multiMotorCommand.LiftUp(true, 5);
             }
             else {
                 multiMotorSubsystem.moveLift(gamepad1.left_stick_y);

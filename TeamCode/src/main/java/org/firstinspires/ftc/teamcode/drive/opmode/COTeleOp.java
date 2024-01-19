@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import android.annotation.SuppressLint;
 
+import com.acmerobotics.dashboard.DashboardCore;
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,6 +29,8 @@ import java.util.concurrent.Executors;
 
 @TeleOp
 public class COTeleOp extends LinearOpMode {
+    private FtcDashboard dashboard;
+    private TelemetryPacket packet;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private OdometrySubsystem odometrySubsystem;
@@ -63,6 +68,8 @@ public class COTeleOp extends LinearOpMode {
     @SuppressLint("SuspiciousIndentation")
     @Override
     public void runOpMode() throws InterruptedException {
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
         colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
 
         imuSubsystem = new IMUSubsystem(hardwareMap);
@@ -299,10 +306,10 @@ public class COTeleOp extends LinearOpMode {
     public void LiftProcess(){
         while(opModeIsActive()){
             if(raising){
-                multiMotorCommand.LiftUp(running, raiseLevel);
+                multiMotorCommand.LiftUpPositional(running, raiseLevel);
             }
             else {
-                multiMotorCommand.LiftUp(running, level);
+                multiMotorCommand.LiftUpPositional(running, level);
             }
         }
     }
@@ -354,6 +361,7 @@ public class COTeleOp extends LinearOpMode {
 //        }
 //    }
     public void updateTelemetry(){
+        packet.put("lift output", multiMotorSubsystem.getPower());
         telemetry.addData("x", gyroOdometry.x);
         telemetry.addData("y", gyroOdometry.y);
         telemetry.addData("theta", gyroOdometry.theta);
@@ -368,6 +376,7 @@ public class COTeleOp extends LinearOpMode {
         telemetry.addData("color2", color2);
         telemetry.addData("lift velocity", multiMotorSubsystem.getDerivativeValue());
         telemetry.addData("cascadeOutput",multiMotorSubsystem.getCascadeOutput());
+        dashboard.sendTelemetryPacket(packet);
         telemetry.update();
     }
 

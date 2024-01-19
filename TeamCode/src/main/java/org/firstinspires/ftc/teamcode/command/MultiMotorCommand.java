@@ -11,6 +11,43 @@ public class MultiMotorCommand {
         this.multiMotorSubsystem = multiMotorSubsystem;
     }
 
+    public void LiftUpPositional(boolean run, int level){
+        switch(level){
+            case 0:
+                if(run) {
+                    multiMotorSubsystem.LiftPositionalProcess(-5);
+                }
+                break;
+            case 1:
+                //TODO: deceleration intervals
+                if(run) {
+                    multiMotorSubsystem.LiftPositionalProcess(450);
+                }
+                break;
+            case 2:
+                if(run) {
+                    multiMotorSubsystem.LiftPositionalProcess(1200);
+                }
+                break;
+            case 3:
+                if(run) {
+                    multiMotorSubsystem.LiftPositionalProcess(2317);
+                }
+                break;
+            case 4:
+                if(run) {
+                    multiMotorSubsystem.LiftPositionalProcess(2700);
+                }
+                break;
+            case 5:
+                multiMotorSubsystem.LiftPositionalProcess(820);
+                break;
+            default:
+//                multiMotorSubsystem.moveLift(0);
+                break;
+        }
+    }
+
     public void LiftUp(boolean run, int level){
         this.level = level;
         Interval interval1;
