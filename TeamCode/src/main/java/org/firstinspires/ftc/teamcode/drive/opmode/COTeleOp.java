@@ -215,7 +215,6 @@ public class COTeleOp extends LinearOpMode {
                     raising = false;
                     level = 0;
                 }
-                //TODO: potentially implement
                 if(multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5){
                     pixelCounter = 0;
                     level = /*-1*/0;
@@ -237,11 +236,19 @@ public class COTeleOp extends LinearOpMode {
                 running = true;
             }
 
-
             if(gamepad1.dpad_left) {
-                imuSubsystem.resetAngle();
+                gridAutoCentering.setTargetAngle(-Math.PI);
+                gridAutoCentering.process(true);
             }
-            else if(gamepad2.x){
+            else if(gamepad1.dpad_right){
+                gridAutoCentering.setTargetAngle(Math.PI);
+                gridAutoCentering.process(true);
+            }
+            else if(gamepad1.dpad_up){
+                gridAutoCentering.setTargetAngle(0);
+                gridAutoCentering.process(true);
+            }
+            if(gamepad2.x){
                 raising = false;
                 level = 2;
                 timerList.resetTimer("liftTimer");
@@ -260,19 +267,13 @@ public class COTeleOp extends LinearOpMode {
             else if(gamepad2.dpad_down){
                 intakeCommand.lowerIntake();
             }
-
-            if(gamepad2.dpad_right){
+            else if(gamepad2.dpad_right){
                 outputCommand.droneToShoot();
             }
             else if(gamepad2.dpad_left){
                 outputCommand.droneToNotShoot();
             }
-            else {
-                outputCommand.droneToIdle();
-            }
-
-            //intake
-            if(gamepad2.right_trigger > 0.5){
+            else if(gamepad2.right_trigger > 0.5){
                 intakeCommand.intakeIn(0.8);
             }
             else if(gamepad2.left_trigger > 0.5){
@@ -280,6 +281,7 @@ public class COTeleOp extends LinearOpMode {
             }
             else{
                 intakeCommand.stopIntake();
+                outputCommand.droneToIdle();
             }
 
 //            if(gamepad1.left_bumper){
