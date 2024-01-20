@@ -183,15 +183,10 @@ public class COTeleOp extends LinearOpMode {
                         state = RUNNING_STATE.DROP;
                     }
                 }
-                if(gamepad2.b && timerList.checkTimePassed("armTilt", 1000)){
+                if((gamepad2.b || gamepad1.right_trigger > 0.5) && timerList.checkTimePassed("armTilt", 1000)){
                     timerList.resetTimer("liftTimer");
                     state = RUNNING_STATE.RETRACT_LIFT;
                 }
-            }
-
-            if(gamepad1.dpad_right){
-                imuSubsystem.resetAngle();
-
             }
 
             if(state == RUNNING_STATE.DROP){
@@ -247,6 +242,9 @@ public class COTeleOp extends LinearOpMode {
             else if(gamepad1.dpad_up){
                 gridAutoCentering.setTargetAngle(0);
                 gridAutoCentering.process(true);
+            }
+            else if(gamepad1.dpad_down){
+                imuSubsystem.resetAngle();
             }
             if(gamepad2.x){
                 raising = false;
