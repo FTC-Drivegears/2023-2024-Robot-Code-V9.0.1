@@ -100,8 +100,23 @@ public class MoveToAprilTagTest extends LinearOpMode {
 
         goToAprilTag = true;
         sleep(500);
-        timer.reset();
-        while(timer.milliseconds() < 30000){
+
+        int target = 2;
+        telemetry.addData("target", target);
+
+
+        while(opModeIsActive()) {
+            if (aprilCamSubsystem.getIdValues(target) != null && aprilCamSubsystem.getIdValues(target) != null) {
+
+                double targetX = gyroOdometry.x + aprilCamSubsystem.getIdValues(target).ftcPose.y * 2.54;
+                double targetY = gyroOdometry.y + aprilCamSubsystem.getIdValues(target).ftcPose.x * 2.54;
+
+                telemetry.addData("target X", targetX);
+                telemetry.addData("target Y", targetY);
+                //double targetTheta = Math.PI / 2;
+                double targetTheta = 0;
+                mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
+            }
         }
         //while (!mecanumCommand.isPositionReached(false, false)) {
         //}
@@ -159,35 +174,13 @@ public class MoveToAprilTagTest extends LinearOpMode {
 
             aprilCamSubsystem.runDetections();
 
-            int target = 4;
-
-            telemetry.addData("target", target);
-
-            String test = "hello";
-            telemetry.addData("Hello", test);
-
             ArrayList<AprilTagDetection> detections = aprilCamSubsystem.getDetections();
-
-            level = 5;
 
             telemetry.addData("Detections", detections);
 
             telemetry.addData("Number of Detections", detections.size());
 
-            if (aprilCamSubsystem.getIdValues(target)!= null && aprilCamSubsystem.getIdValues(target) != null) {
-
-                double targetX = gyroOdometry.x + aprilCamSubsystem.getIdValues(target).ftcPose.x;
-                double targetY = gyroOdometry.y + aprilCamSubsystem.getIdValues(target).ftcPose.y;
-
-                telemetry.addData("target X", targetX);
-                telemetry.addData("target Y", targetY);
-                //double targetTheta = Math.PI / 2;
-                double targetTheta = 0;
-                //mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
-            }
-
             for (int i = 0; i < detections.size(); i++) {
-                level = i + 1;
                 telemetry.addData("x" + i, detections.get(i).ftcPose.x);
                 telemetry.addData("y" + i, detections.get(i).ftcPose.y);
                 telemetry.addData("z" + i, detections.get(i).ftcPose.z);
@@ -196,8 +189,6 @@ public class MoveToAprilTagTest extends LinearOpMode {
                 telemetry.addData("roll" + i, detections.get(i).ftcPose.roll);
             }
 
-
-            telemetry.update();
         }
 
 
