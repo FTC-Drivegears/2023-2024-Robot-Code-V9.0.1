@@ -4,6 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.geometry.euclidean.twod.Line;
+import org.firstinspires.ftc.teamcode.subsystems.AprilCamSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
@@ -16,6 +18,7 @@ public class MecanumCommand {
     private MecanumSubsystem mecanumSubsystem;
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
+    private AprilCamSubsystem aprilCamSubsystem;
     private boolean run;
     private LinearOpMode opMode;
     private ElapsedTime elapsedTime;
@@ -46,12 +49,12 @@ public class MecanumCommand {
     private static double cascadekithetaVel = 0.0;
 
 
-    private static double kpx = 0.06;
-    private static double kdx = 0;
-    private static double kix = 0.0075/2 + 0.015;
-    private static double kpy = 0.06;
-    private static double kdy = 0;
-    private static double kiy = 0.0075/2 + 0.015;
+    private static double kpx = 0.025;
+    private static double kdx = 0.01;
+    private static double kix = 0.012;
+    private static double kpy = 0.025;
+    private static double kdy = 0.01;
+    private static double kiy = 0.012;
     private static double kptheta = 2;
     private static double kdtheta = 0;
     private static double kitheta = 0;
@@ -116,6 +119,25 @@ public class MecanumCommand {
         thetaFinal = gyroOdometry.theta;
         velocity = 0;
     }
+
+    public MecanumCommand(MecanumSubsystem mecanumSubsystem, OdometrySubsystem odometrySubsystem, GyroOdometry gyroOdometry, AprilCamSubsystem aprilCamSubsystem, LinearOpMode opmode) {
+        this.mecanumSubsystem = mecanumSubsystem;
+        this.odometrySubsystem = odometrySubsystem;;
+        this.gyroOdometry = gyroOdometry;
+        this.aprilCamSubsystem = aprilCamSubsystem;
+        this.opMode = opmode;
+        globalXController = new PIDCore(kpx, kdx, kix);
+        globalYController = new PIDCore(kpy, kdy, kiy);
+        globalThetaController = new PIDCore(kptheta, kdtheta, kitheta);
+        globalCascadeXController = new PIDCore(cascadekpx, cascadekdx, cascadekix);
+        globalCascadeYController = new PIDCore(cascadekpy, cascadekdy, cascadekiy);
+        globalCascadeThetaController = new PIDCore(cascadekptheta, cascadekdtheta, cascadekitheta);
+        elapsedTime = new ElapsedTime();
+        xFinal = gyroOdometry.x;
+        yFinal = gyroOdometry.y;
+        thetaFinal = gyroOdometry.theta;
+        velocity = 0;
+    }
     public void turnOffInternalPID(){
         mecanumSubsystem.turnOffInternalPID();
     }
@@ -124,6 +146,12 @@ public class MecanumCommand {
         ex = globalXController.outputPositionalIntegralSwap(xFinal, gyroOdometry.x);
         ey = -globalYController.outputPositionalIntegralSwap(yFinal, gyroOdometry.y);
         etheta = -globalThetaController.outputPositionalIntegralSwap(thetaFinal, gyroOdometry.theta);
+        if(isXReached()){
+            globalXController.integralReset();
+        }
+        if(isYReached()){
+            globalYController.integralReset();
+        }
         if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
             double max = Math.max(Math.abs(ex), Math.abs(ey));
             ex = ex / max * velocity;
@@ -132,6 +160,8 @@ public class MecanumCommand {
         }
         moveGlobalPartial(true, ex, ey, etheta);
     }
+
+
 
     public void pidProcessLogistic(){
         //TODO: make sure xFinal works as a valid L, might need to overshoot a bit because of nature of PID Controllers
@@ -354,6 +384,16 @@ public class MecanumCommand {
             xFinal = x;
             yFinal = y;
             thetaFinal = theta;
+            this.velocity = velocity;
+        }
+    }
+
+    public void setFinalAprilPosition(boolean run, double velocity, double dx, double dy, double dTheta){
+        if (run){
+            //get x, y, theta values from the april tag
+            xFinal = xFinal - dx;
+            yFinal = yFinal - dy;
+            thetaFinal = thetaFinal - dTheta;
             this.velocity = velocity;
         }
     }

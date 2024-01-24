@@ -87,9 +87,9 @@ public class PIDCore {
         error = setPoint - feedback;
         derivative = (error - lastError) / timer.time();
         integralSum += error * timer.seconds();
-        if(Math.signum(error) != Math.signum(integralSum)){
-            integralReset();
-        }
+//        if(Math.signum(error) != Math.signum(integralSum)){
+//            integralReset();
+//        }
         lastError = error;
         timer.reset();
         outputPositionalValue = (error * Kp) + (derivative * Kd) + (integralSum * Ki);

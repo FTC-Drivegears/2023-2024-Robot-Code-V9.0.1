@@ -37,7 +37,7 @@ public class CoordinateTesting extends LinearOpMode {
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
 
-        mecanumCommand.turnOffInternalPID();
+//        mecanumCommand.turnOffInternalPID();
         imu.resetAngle();
         odometrySubsystem.reset();
 

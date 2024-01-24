@@ -51,6 +51,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        imu = new IMUSubsystem(hardwareMap);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
@@ -61,10 +62,12 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
 
-//        odometrySubsystem.reset();
-//        imu.resetAngle();
-//
+        imu.resetAngle();
+        odometrySubsystem.reset();
+
 //        intakeCommand.raiseIntake();
 //        outputCommand.closeGate();
 //
@@ -72,38 +75,41 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //        outputCommand.tiltToIdle();
         double propPosition = 0;
         while(opModeInInit()){
+            //TODO: determine which Xprop positions make left, middle, right
 //            propPosition = webcamSubsystem.getXProp();
         }
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(6);
+        Executor executor = Executors.newFixedThreadPool(5);
         CompletableFuture.runAsync(this::updateOdometry, executor);
+        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
-        CompletableFuture.runAsync(this::updateTelemetry, executor);
 //        CompletableFuture.runAsync(this::liftProcess, executor);
+        sleep(4000);
         timer.reset();
         intakeCommand.raiseIntake();
-        mecanumCommand.moveToGlobalPosition(57, 0, 0);
         String position = "left";
         timer.reset();
 
+
         //PIXEL DROPOFF POSITION
         if(position.equals("left")) {
-            while(mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
-                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            mecanumCommand.setFinalPosition(true, 30, 95.54, 23.92, 0);
+            while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
             }
         }
         else if(position.equals("middle")){
-            while(mecanumCommand.isPositionReached(false,false)) {
-                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            mecanumCommand.setFinalPosition(true, 30, 118.33, -4, 0);
+            while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
         else if(position.equals("right")){
-            while(mecanumCommand.isPositionReached(false,false)) {
-                mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+            mecanumCommand.setFinalPosition(true, 30, 81.93, -19.46, 0.7776);
+            while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
+        sleep(2000);
         timer.reset();
         //release pixel
 
@@ -119,28 +125,42 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //        outputCommand.tiltToBoard();
 
         //move to board
-        mecanumCommand.setFinalPosition(true, 30, 68, -190, 1.6);
+        mecanumCommand.setFinalPosition(true, 30, 126.967, -7.6, 1.6);
+        while(!mecanumCommand.isPositionReached(false, false)) {
+        }
+        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
+        while(!mecanumCommand.isPositionReached(false, false)){
+        }
+
         sleep(1000);
         timer.reset();
         //LIFT DROPOFF
-        while(timer.milliseconds() < 3500) {
+//        while(timer.milliseconds() < 3500) {
             //TODO: tune
-            if(position.equals("left")) {
-                while(mecanumCommand.isPositionReached(false,false)) {
-                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-                }
-            }
-            else if(position.equals("middle")){
-                while(mecanumCommand.isPositionReached(false,false)) {
-                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-                }
-            }
-            else if(position.equals("right")){
-                while(mecanumCommand.isPositionReached(false,false)) {
-                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-                }
-            }
-        }
+            //heading: -1.5833333730697632
+            //imu heading: 4.699851934109823
+            //leftEncoder: 33559
+            //rightEncoder: 0
+            //x: 65.16827461821727
+            //y: -187.29583391841874
+//
+//            if(position.equals("left")) {
+//                while(mecanumCommand.isPositionReached(false,false)) {
+//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+//                }
+//            }
+//            else if(position.equals("middle")){
+//                while(mecanumCommand.isPositionReached(false,false)) {
+//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+//                }
+//            }
+//            else if(position.equals("right")){
+//                while(mecanumCommand.isPositionReached(false,false)) {
+//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+//                }
+//            }
+//        }
         //136, 0, `1.6
         //126, 140, 1.6
         //52, 220, 1.5
@@ -149,18 +169,18 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         //0, 222, 1.5
 // 68, 6.3, -0.3
 
-        timer.reset();
-        if(opModeIsActive()) {
-            while (timer.milliseconds() < 500) {
-                outputCommand.openGate();
-            }
-            outputCommand.closeGate();
-            outputCommand.tiltToIdle();
-            outputCommand.armToIdle();
-            sleep(2000);
-            level = 0;
-            sleep(1000);
-        }
+//        timer.reset();
+//        if(opModeIsActive()) {
+//            while (timer.milliseconds() < 500) {
+//                outputCommand.openGate();
+//            }
+//            outputCommand.closeGate();
+//            outputCommand.tiltToIdle();
+//            outputCommand.armToIdle();
+//            sleep(2000);
+//            level = 0;
+//            sleep(1000);
+//        }
 //        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
     }
 
@@ -179,15 +199,25 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
     public void updateTelemetry() {
         while (opModeIsActive()) {
-//            packet.put("x", gyroOdometry.x);
-//            packet.put("y", gyroOdometry.y);
+            packet.put("x", gyroOdometry.x);
+            packet.put("y", gyroOdometry.y);
+            packet.put("theta", gyroOdometry.theta);
+            packet.put("xReached", mecanumCommand.isXReached());
+            packet.put("yReached", mecanumCommand.isYReached());
+            packet.put("errorX", mecanumCommand.globalXController.getError());
+            packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
+            packet.put("errorY", mecanumCommand.globalYController.getError());
+            packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
+
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("theta", gyroOdometry.theta);
             telemetry.addData("position", position);
+            telemetry.addData("errorOutput", mecanumCommand.globalXController.getError()*0.04);
+
 //            packet.put("x", gyroOdometry.x);
 //            packet.put("y", gyroOdometry.y);
-//            dashboard.sendTelemetryPacket(packet);
+            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
     }
