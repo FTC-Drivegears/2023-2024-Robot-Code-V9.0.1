@@ -38,8 +38,10 @@ public class MoveToAprilTagTest extends LinearOpMode {
     private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
+    AprilCamSubsystem aprilCamSubsystem;
     FtcDashboard dashboard;
     TelemetryPacket packet;
+    private OpenCvCamera webcam;
     private ElapsedTime timer;
     //67, -3, 0
     //54, 24, 0
@@ -48,16 +50,16 @@ public class MoveToAprilTagTest extends LinearOpMode {
     private int level = -1;
 
     private boolean goToAprilTag = true;
-    AprilCamSubsystem aprilCamSubsystem;
-    private OpenCvCamera webcam;
-
-    private ArrayList<AprilTagDetection> detections;
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+        packet = new TelemetryPacket();
         //contour location before 60
         imu = new IMUSubsystem(hardwareMap);
+
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
@@ -67,6 +69,7 @@ public class MoveToAprilTagTest extends LinearOpMode {
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+
         timer = new ElapsedTime();
         LinearOpMode opMode = this;
 
@@ -80,7 +83,6 @@ public class MoveToAprilTagTest extends LinearOpMode {
         outputCommand.tiltToIdle();
         String position = "right";
         dashboard = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
         double propPosition = 0;
         while (opModeInInit()) {
             propPosition = webcamSubsystem.getXProp();
@@ -92,9 +94,9 @@ public class MoveToAprilTagTest extends LinearOpMode {
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
-        CompletableFuture.runAsync(this::detectAprilTags, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
+        CompletableFuture.runAsync(this::detectAprilTags, executor);
 
         goToAprilTag = true;
         sleep(500);
@@ -135,11 +137,7 @@ public class MoveToAprilTagTest extends LinearOpMode {
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("theta", gyroOdometry.theta);
 
-
-
-//            packet.put("x", gyroOdometry.x);
-//            packet.put("y", gyroOdometry.y);
-
+            //packet.put("goToAprilTag", goToAprilTag);
             telemetry.addData("goToAprilTag", goToAprilTag);
 
             dashboard.sendTelemetryPacket(packet);
@@ -154,96 +152,57 @@ public class MoveToAprilTagTest extends LinearOpMode {
     }
 
     public void detectAprilTags() {
-        /*
-        while (opModeIsActive()) {
-            telemetry.addData("goToAprilTag", goToAprilTag);
-            if (goToAprilTag) {
-                aprilCamSubsystem.runDetections();
-                if (aprilCamSubsystem.getDetections().size() > 0) {
-                    ArrayList<AprilTagDetection> detections = aprilCamSubsystem.getDetections();
-                    telemetry.addData("Detections", detections);
 
-                    //int closestnum = detections.get(0).id;
-                /*
-                for (int i = 0; i < detections.size(); i++) {
+        while (!isStopRequested() && opModeIsActive()) {
 
-                }
-                if(){
-                    double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
-                    double targetY =  gyroOdometry.y + detections.get(i).ftcPose.y;
-                    double targetTheta = math.pi/2;
-                    mecanumCommand.setFinalPosition(true,30 , targetX, targetY, targetTheta);
-                    while(!mecanumCommand.isCoordinatePassed()) {};
-                }
-                else{
+            //if(goToAprilTag){
 
-                }
+            aprilCamSubsystem.runDetections();
 
+            int target = 4;
 
-                    int target = 4;
+            telemetry.addData("target", target);
 
-                    for (int i = 0; i < detections.size(); i++) {
-                        telemetry.addData("x" + i, detections.get(i).ftcPose.x);
-                        telemetry.addData("y" + i, detections.get(i).ftcPose.y);
-                        telemetry.addData("z" + i, detections.get(i).ftcPose.z);
-                        telemetry.addData("yaw" + i, detections.get(i).ftcPose.yaw);
-                        telemetry.addData("pitch" + i, detections.get(i).ftcPose.pitch);
-                        telemetry.addData("roll" + i, detections.get(i).ftcPose.roll);
+            String test = "hello";
+            telemetry.addData("Hello", test);
 
+            ArrayList<AprilTagDetection> detections = aprilCamSubsystem.getDetections();
 
-                        //Note: probably in the wrong spot
-                        if (detections.get(i).id == target) {
-                            double targetX = gyroOdometry.x + detections.get(i).ftcPose.x;
-                            double targetY = gyroOdometry.y + detections.get(i).ftcPose.y;
-                            //double targetTheta = Math.PI / 2;
-                            double targetTheta = 0;
-                            //mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
-                        }
+            level = 5;
 
+            telemetry.addData("Detections", detections);
 
-                    }
-                }
+            telemetry.addData("Number of Detections", detections.size());
 
+            if (aprilCamSubsystem.getIdValues(target)!= null && aprilCamSubsystem.getIdValues(target) != null) {
+
+                double targetX = gyroOdometry.x + aprilCamSubsystem.getIdValues(target).ftcPose.x;
+                double targetY = gyroOdometry.y + aprilCamSubsystem.getIdValues(target).ftcPose.y;
+
+                telemetry.addData("target X", targetX);
+                telemetry.addData("target Y", targetY);
+                //double targetTheta = Math.PI / 2;
+                double targetTheta = 0;
+                //mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
             }
 
-        }
-
-    */
-
-
-        while (opModeIsActive()) {
-
-            if (goToAprilTag) {
-
-                aprilCamSubsystem.runDetections();
-
-                telemetry.addData("Hello", "hello");
-
-                if (aprilCamSubsystem.getDetections().size() > 0) {
-                    detections = aprilCamSubsystem.getDetections();
-
-                    int target = 4;
-
-                    double targetX = gyroOdometry.x + aprilCamSubsystem.getIdValues(target).ftcPose.x;
-                    double targetY = gyroOdometry.y + aprilCamSubsystem.getIdValues(target).ftcPose.y;
-                    //double targetTheta = Math.PI / 2;
-                    double targetTheta = 0;
-                    //mecanumCommand.setFinalPosition(true, 30, targetX, targetY, targetTheta);
-                }
-                telemetry.addData("Detections", detections);
-
-                for (int i = 0; i < detections.size(); i++) {
-                    telemetry.addData("x" + i, detections.get(i).ftcPose.x);
-                    telemetry.addData("y" + i, detections.get(i).ftcPose.y);
-                    telemetry.addData("z" + i, detections.get(i).ftcPose.z);
-                    telemetry.addData("yaw" + i, detections.get(i).ftcPose.yaw);
-                    telemetry.addData("pitch" + i, detections.get(i).ftcPose.pitch);
-                    telemetry.addData("roll" + i, detections.get(i).ftcPose.roll);
-                }
-
+            for (int i = 0; i < detections.size(); i++) {
+                level = i + 1;
+                telemetry.addData("x" + i, detections.get(i).ftcPose.x);
+                telemetry.addData("y" + i, detections.get(i).ftcPose.y);
+                telemetry.addData("z" + i, detections.get(i).ftcPose.z);
+                telemetry.addData("yaw" + i, detections.get(i).ftcPose.yaw);
+                telemetry.addData("pitch" + i, detections.get(i).ftcPose.pitch);
+                telemetry.addData("roll" + i, detections.get(i).ftcPose.roll);
             }
 
+
+            telemetry.update();
         }
+
+
+        //}
+
     }
 
 }

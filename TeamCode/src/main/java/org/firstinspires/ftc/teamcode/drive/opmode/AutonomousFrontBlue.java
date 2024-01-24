@@ -85,7 +85,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
-        String position = "right";
+        String position = "test";
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
         double propPosition = 0;
@@ -95,14 +95,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(7);
+        Executor executor = Executors.newFixedThreadPool(6);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
 
-    /*
+
         sleep(2000);
 
         if (position.equals("left")) {
@@ -119,7 +119,16 @@ public class AutonomousFrontBlue extends LinearOpMode {
             }
         }
 
-     */
+        if (position.equals("test")){
+            mecanumCommand.setFinalPosition(true, 20, 40, 0, 0);
+            while (!mecanumCommand.isPositionReached(true, true)) {}
+            mecanumCommand.setFinalPosition(true, 20, 40, 0, 3);
+            while (!mecanumCommand.isPositionReached(true, true)) {}
+            mecanumCommand.setFinalPosition(true, 20, 80, 0, 3);
+            while (!mecanumCommand.isPositionReached(true, true)) {}
+        }
+
+
         /*
         level = 5;
         sleep(2000);
@@ -306,7 +315,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
             multiMotorCommand.LiftUp(true, level);
         }
     }
-
 
 
 }
