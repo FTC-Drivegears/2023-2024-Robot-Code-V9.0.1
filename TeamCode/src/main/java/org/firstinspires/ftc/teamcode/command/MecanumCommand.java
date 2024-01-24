@@ -48,6 +48,7 @@ public class MecanumCommand {
     private static double cascadekithetaVel = 0.0;
 
 
+    //TODO: can still tune teeny tiny bit
     private static double kpx = 0.045;
     private static double kdx = 0.00;
     private static double kix = 0.06;
