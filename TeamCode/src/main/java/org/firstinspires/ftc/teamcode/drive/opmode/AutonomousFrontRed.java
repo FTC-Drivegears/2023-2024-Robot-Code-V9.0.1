@@ -40,7 +40,7 @@ public class AutonomousFrontRed extends LinearOpMode {
     private MultiMotorCommand multiMotorCommand;
     FtcDashboard dashboard;
     TelemetryPacket packet;
-    private ElapsedTime timer, positionTimer;
+    private ElapsedTime timer;
     //67, -3, 0
     //54, 24, 0
     //57, -22, -0.832
@@ -56,206 +56,137 @@ public class AutonomousFrontRed extends LinearOpMode {
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
-        //Note different for autonomous front red --> kpy
-//        mecanumCommand.addToConstants(0, 0, 0.01, 0, 0, 0.01, 0, 0, 0.001);
         intakeCommand = new IntakeCommand(hardwareMap);
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_RED);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
-        positionTimer = new ElapsedTime();
-
-        odometrySubsystem.reset();
-        imu.resetAngle();
-
-        intakeCommand.raiseIntake();
-        outputCommand.closeGate();
-
-        outputCommand.armToIdle();
-        outputCommand.tiltToIdle();
-
-        String position = "middle";
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
 
+        imu.resetAngle();
+        odometrySubsystem.reset();
+
+//        intakeCommand.raiseIntake();
+//        outputCommand.closeGate();
+//
+//        outputCommand.armToIdle();
+//        outputCommand.tiltToIdle();
         double propPosition = 0;
         while(opModeInInit()){
-            propPosition = webcamSubsystem.getXProp();
+            //TODO: determine which Xprop positions make left, middle, right
+//            propPosition = webcamSubsystem.getXProp();
         }
-
         waitForStart();
 
         Executor executor = Executors.newFixedThreadPool(5);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
-        CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
+        CompletableFuture.runAsync(this::motorProcess, executor);
 //        CompletableFuture.runAsync(this::liftProcess, executor);
-        sleep(5000);
+        sleep(4000);
+        timer.reset();
+        intakeCommand.raiseIntake();
+        String position = "right";
+        timer.reset();
 
 
-        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-        mecanumCommand.setFinalPosition(true, 30, 40, 0, Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-        mecanumCommand.setFinalPosition(true, 30, 40, 0, -Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-
-        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-        mecanumCommand.setFinalPosition(true, 30, 40, 0, -Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-        mecanumCommand.setFinalPosition(true, 30, 40, 0, Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-
-        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-        mecanumCommand.setFinalPosition(true, 30, 40, 0, Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-        mecanumCommand.setFinalPosition(true, 30, 40, 0, -Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){}
-
-        mecanumCommand.setFinalPosition(true, 30, 0, 0,0);
-        while(!mecanumCommand.isPositionReached(true, true));
-
-
-//        intakeCommand.raiseIntake();
-////        sleep(8000);
-//        mecanumCommand.setFinalPosition(true, 30, 57, 0, 0);
-//        sleep(1500);
-//        timer.reset();
-//        while(timer.milliseconds() < 1500) {
-//
-//            //TODO: tune
-//            //left
-//            mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
-//            //right
-//            mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
-//            //middle
-//            mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
-//            if (propPosition > 100) {
-//                //pos RIGHT
-//                position = "right";
-//                mecanumCommand.setFinalPosition(true, 30,47, -32, 0);
-//            } else if (propPosition <= 100 && propPosition > 0) {
-//                //pos middle
-//                position = "middle";
-//                mecanumCommand.setFinalPosition(true, 30, 66, 3, 0);
-//                sleep(1000);
-//            } else {
-//                //pos left
-//                position = "left";
-//                mecanumCommand.setFinalPosition(true, 30, 60, 17.5, 0.832);
-//            }
-//        }
-//
-//
-//
+        //PIXEL DROPOFF POSITION
+        if(position.equals("left")) {
+            mecanumCommand.setFinalPosition(true, 30, 95.54, 23.92, 0);
+            while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
+            }
+        }
+        else if(position.equals("middle")){
+            mecanumCommand.setFinalPosition(true, 30, 118.33, -4, 0);
+            while(!mecanumCommand.isPositionReached(false,false)) {
+            }
+        }
+        else if(position.equals("right")){
+            mecanumCommand.setFinalPosition(true, 30, 81.93, -19.46, 0.7776);
+            while(!mecanumCommand.isPositionReached(false,false)) {
+            }
+        }
 //        sleep(2000);
-//        if(position.equals("left")) {
-//            mecanumCommand.setFinalPosition(true, 20, 73, 9, -1.02);
-//            while(!mecanumCommand.isPositionReached(true,false)) {}
-//        }
-//        else if(position.equals("middle")){
-//            mecanumCommand.setFinalPosition(true, 20, 122, 8, 0);
-//            while(!mecanumCommand.isPositionReached(false,true)) {}
-//        }
-//        else if(position.equals("right")) {
-//            mecanumCommand.setFinalPosition(true, 20, 73, 9, 1.02);
-//            while (!mecanumCommand.isPositionReached(true, false)) {
-//            }
-//        }
-//
-//        intakeCommand.lowerIntake();
-//
-//        timer.reset();
-//
-//        while(timer.milliseconds() < 5000) {
-//            intakeCommand.intakeOut(0.5);
+        timer.reset();
+        //release pixel
+
+//        while(timer.milliseconds() < 1000) {
+//            intakeCommand.intakeOut(0.3);
 //        }
 //        intakeCommand.stopIntake();
-//
-//
-//        sleep(2000);
-//
-//        if(position.equals("middle")) {
-//            mecanumCommand.setFinalPosition(true, 20, 126, 0, 0);
-//            while(!mecanumCommand.isCoordinatePassed()) {}
-//            mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
-//            while(!mecanumCommand.isCoordinatePassed()) {}
-//            mecanumCommand.setFinalPosition(true, 30, 60, -92, -1.58);
-//            while(!mecanumCommand.isPositionReached(true,true)) {}
-//            //mecanumCommand.setFinalPosition(true, 30, 64, -77, -1.58);
-//            //while(!mecanumCommand.isPositionReached(false,false)) {}
-//        }
-//        else if(position.equals("right")){
-//            mecanumCommand.setFinalPosition(true, 20, 73, 9, 1.02);
-//            while(!mecanumCommand.isCoordinatePassed()) {}
-//            mecanumCommand.setFinalPosition(true, 20, 59, -76, 0);
-//            while(!mecanumCommand.isCoordinatePassed()) {}
-//            mecanumCommand.setFinalPosition(true, 20, 68, 83.5, -1.58);
-//            while(!mecanumCommand.isPositionReached(false,false)) {}
-//        }
-//        else if(position.equals("left")){
-//            mecanumCommand.setFinalPosition(true, 20, 73, 9, -1.02);
-//            while(!mecanumCommand.isPositionReached(false,false)) {}
-//            mecanumCommand.setFinalPosition(true, 30, 126, -64, 0);
-//            while(!mecanumCommand.isCoordinatePassed()) {}
-//            mecanumCommand.setFinalPosition(true, 30, 60, -92, -1.58);
-//            while(!mecanumCommand.isPositionReached(true,true)) {}
-//        }
-//
-//        level = 5;
+//        timer.reset();
+
+        //
+//        level = 1;
 //        outputCommand.armToBoard();
 //        outputCommand.tiltToBoard();
-//        level = 1;
-//
-//        /*
-//        timer.reset();
+
+        //move to board
+        mecanumCommand.setFinalPosition(true, 30, 126.967, -7.6, 1.6);
+        while(!mecanumCommand.isPositionReached(false, false)) {
+        }
+//        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
+        while(!mecanumCommand.isPositionReached(false, false)){
+        }
+
+//        sleep(1000);
+        timer.reset();
+        //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
-//            //TODO: tune
-//            if (propPosition > 100) {
-//                //pos right
-//                mecanumCommand.setFinalPosition(true, 30, 36, -78.5, 1.65);
+        //TODO: tune
+        //heading: -1.5833333730697632
+        //imu heading: 4.699851934109823
+        //leftEncoder: 33559
+        //rightEncoder: 0
+        //x: 65.16827461821727
+        //y: -187.29583391841874
 //
-//            } else if (propPosition <= 100 && propPosition > 0) {
-//                //pos middle
-//                mecanumCommand.setFinalPosition(true, 30, 52, -80, 1.65);
-//            } else {
-//                //pos left
-//                mecanumCommand.setFinalPosition(true, 30, 68, -81.5, 1.65);
+//            if(position.equals("left")) {
+//                while(mecanumCommand.isPositionReached(false,false)) {
+//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+//                }
+//            }
+//            else if(position.equals("middle")){
+//                while(mecanumCommand.isPositionReached(false,false)) {
+//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+//                }
+//            }
+//            else if(position.equals("right")){
+//                while(mecanumCommand.isPositionReached(false,false)) {
+//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
+//                }
 //            }
 //        }
-//         */
-//        /*
-//        timer.reset();
-////        while (timer.milliseconds() < 500){
-////            outputCommand.openGate();
-////        }
-////        outputCommand.closeGate();
-////        outputCommand.tiltToIdle();
-////        outputCommand.armToIdle();
-//        sleep(6000);
-//        level = 0;
-//
-//        */
+        //136, 0, `1.6
+        //126, 140, 1.6
+        //52, 220, 1.5
+        //67, 222, 1.5
+        //81, 222, 1.5
+        //0, 222, 1.5
+// 68, 6.3, -0.3
 
+//        timer.reset();
+//        if(opModeIsActive()) {
+//            while (timer.milliseconds() < 500) {
+//                outputCommand.openGate();
+//            }
+//            outputCommand.closeGate();
+//            outputCommand.tiltToIdle();
+//            outputCommand.armToIdle();
+//            sleep(2000);
+//            level = 0;
+//            sleep(1000);
+//        }
+//        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
     }
+
     public void pidProcess(){
         while (opModeIsActive()) {
             mecanumCommand.pidProcess();
-        }
-    }
-    public void waitUntilPosition(boolean xTol, boolean yTol){
-        while(opModeIsActive() && !isStopRequested()) {
-            mecanumCommand.isPositionReached(xTol, yTol);
-        }
-    }
-
-    public void motorProcess(){
-        while (opModeIsActive()) {
-            mecanumSubsystem.motorProcess();
         }
     }
 
@@ -270,15 +201,22 @@ public class AutonomousFrontRed extends LinearOpMode {
         while (opModeIsActive()) {
             packet.put("x", gyroOdometry.x);
             packet.put("y", gyroOdometry.y);
+            packet.put("theta", gyroOdometry.theta);
+            packet.put("xReached", mecanumCommand.isXReached());
+            packet.put("yReached", mecanumCommand.isYReached());
+            packet.put("errorX", mecanumCommand.globalXController.getError()*0.04);
+            packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
+            packet.put("errorY", mecanumCommand.globalYController.getError()*0.04);
+            packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
+
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("theta", gyroOdometry.theta);
             telemetry.addData("position", position);
-            packet.put("x", gyroOdometry.x);
-            packet.put("y", gyroOdometry.y);
-            packet.put("theta", gyroOdometry.theta);
-            packet.put("x output", mecanumCommand.globalXController.getOutputPositionalValue());
-            packet.put("x integral", mecanumCommand.globalXController.getIntegralSum()*(0.0075/2 + 0.015));
+            telemetry.addData("errorOutput", mecanumCommand.globalXController.getError()*0.04);
+
+//            packet.put("x", gyroOdometry.x);
+//            packet.put("y", gyroOdometry.y);
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
@@ -286,6 +224,12 @@ public class AutonomousFrontRed extends LinearOpMode {
     public void liftProcess() {
         while(opModeIsActive()) {
             multiMotorCommand.LiftUp(true, level);
+        }
+    }
+
+    public void motorProcess(){
+        while (opModeIsActive()) {
+            mecanumSubsystem.motorProcess();
         }
     }
 }

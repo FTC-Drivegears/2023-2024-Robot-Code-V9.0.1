@@ -95,17 +95,17 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
 
         //PIXEL DROPOFF POSITION
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 81.93, -19.46, 0.7776);
+            mecanumCommand.setFinalPosition(true, 30, 87.93, 8, -0.9);
             while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
             }
         }
         else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 118.33, -4, 0);
+            mecanumCommand.setFinalPosition(true, 30, 138.33, -8, 0);
             while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 95.54, 23.92, 0);
+            mecanumCommand.setFinalPosition(true, 30, 95.54, -6, 0.9);
             while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
