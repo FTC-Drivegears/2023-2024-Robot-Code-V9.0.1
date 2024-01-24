@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import java.util.concurrent.TimeUnit;
-
 public class PIDCore {
     private double Kp;
     private double Kd;
@@ -27,6 +25,7 @@ public class PIDCore {
     private double lastVelError = 0;
     private double outputPositionalValue = 0;
     private double outputVelocityValue = 0;
+    private boolean activateIntegral = false;
 
     public PIDCore(double kp, double kd, double ki) {
         Kp = kp;
@@ -83,13 +82,15 @@ public class PIDCore {
     public void integralReset(){
         integralSum = 0;
     }
-    public double outputPositionalIntegralSwap(double setPoint, double feedback){
+    public double outputPositionalIntegralControl(double setPoint, double feedback){
         error = setPoint - feedback;
         derivative = (error - lastError) / timer.time();
-        integralSum += error * timer.seconds();
-//        if(Math.signum(error) != Math.signum(integralSum)){
-//            integralReset();
-//        }
+        if(activateIntegral){
+            integralSum += error * timer.seconds();
+        }
+        else{
+            integralSum = 0;
+        }
         lastError = error;
         timer.reset();
         outputPositionalValue = (error * Kp) + (derivative * Kd) + (integralSum * Ki);
@@ -143,8 +144,11 @@ public class PIDCore {
         return (error * Kp) + (derivative * Kd);
     }
 
-    public boolean activateIntegral(){
-        return Math.abs(error-lastError) < 10 && Math.abs(error) > 3;
+    public void activateIntegral(){
+        activateIntegral = true;
+    }
+    public void deactivateIntegral(){
+        activateIntegral = false;
     }
 
     public double outputVelocity(double setVelocity, double feedback){

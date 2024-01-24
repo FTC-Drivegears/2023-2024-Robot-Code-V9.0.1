@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.apache.commons.math3.geometry.euclidean.twod.Line;
 import org.firstinspires.ftc.teamcode.subsystems.AprilCamSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
@@ -49,15 +48,15 @@ public class MecanumCommand {
     private static double cascadekithetaVel = 0.0;
 
 
-    private static double kpx = 0.025;
-    private static double kdx = 0.01;
-    private static double kix = 0.012;
-    private static double kpy = 0.025;
-    private static double kdy = 0.01;
-    private static double kiy = 0.012;
-    private static double kptheta = 2;
+    private static double kpx = 0.045;
+    private static double kdx = 0.00;
+    private static double kix = 0.06;
+    private static double kpy = 0.045;
+    private static double kdy = 0.00;
+    private static double kiy = 0.06;
+    private static double kptheta = 2.5;
     private static double kdtheta = 0;
-    private static double kitheta = 0;
+    private static double kitheta = 0.4;
     private double ex = 0;
     private double ey = 0;
     private double etheta = 0;
@@ -143,14 +142,37 @@ public class MecanumCommand {
     }
 
     public void pidProcess(){
-        ex = globalXController.outputPositionalIntegralSwap(xFinal, gyroOdometry.x);
-        ey = -globalYController.outputPositionalIntegralSwap(yFinal, gyroOdometry.y);
-        etheta = -globalThetaController.outputPositionalIntegralSwap(thetaFinal, gyroOdometry.theta);
+        ex = globalXController.outputPositionalIntegralControl(xFinal, gyroOdometry.x);
+        ey = -globalYController.outputPositionalIntegralControl(yFinal, gyroOdometry.y);
+        etheta = -globalThetaController.outputPositionalIntegralControl(thetaFinal, gyroOdometry.theta);
+
         if(isXReached()){
             globalXController.integralReset();
         }
         if(isYReached()){
             globalYController.integralReset();
+        }
+        if(isThetaReached()){
+            globalThetaController.integralReset();
+        }
+
+        if(isXPassed()){
+            globalXController.activateIntegral();
+        }
+        else{
+            globalXController.deactivateIntegral();
+        }
+        if(isYPassed()){
+            globalYController.activateIntegral();
+        }
+        else{
+            globalYController.deactivateIntegral();
+        }
+        if(isThetaPassed()){
+            globalThetaController.activateIntegral();
+        }
+        else{
+            globalThetaController.deactivateIntegral();
         }
         if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
             double max = Math.max(Math.abs(ex), Math.abs(ey));
@@ -450,19 +472,27 @@ public class MecanumCommand {
     }
 
     public boolean isYReached(){
-        return getYDifference() < 1;
+        return getYDifference() < 1.5;
     }
 
     public boolean isYPassed(){
-        return getYDifference() < 5;
+        return getYDifference() < 10;
     }
 
     public boolean isXReached(){
-        return getXDifference() < 1;
+        return getXDifference() < 1.5;
     }
 
     public boolean isXPassed(){
-        return getXDifference() < 3;
+        return getXDifference() < 10;
+    }
+
+    public boolean isThetaReached(){
+        return getThetaDifference() < 0.02;
+    }
+
+    public boolean isThetaPassed(){
+        return getThetaDifference() < 0.2;
     }
 
     public boolean isInGeneralVicinity() {

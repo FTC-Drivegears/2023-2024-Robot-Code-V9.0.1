@@ -89,7 +89,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         sleep(4000);
         timer.reset();
         intakeCommand.raiseIntake();
-        String position = "left";
+        String position = "right";
         timer.reset();
 
 
@@ -109,7 +109,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
-        sleep(2000);
+//        sleep(2000);
         timer.reset();
         //release pixel
 
@@ -128,12 +128,12 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         mecanumCommand.setFinalPosition(true, 30, 126.967, -7.6, 1.6);
         while(!mecanumCommand.isPositionReached(false, false)) {
         }
-        sleep(2000);
+//        sleep(2000);
         mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
         while(!mecanumCommand.isPositionReached(false, false)){
         }
 
-        sleep(1000);
+//        sleep(1000);
         timer.reset();
         //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
@@ -204,9 +204,9 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
             packet.put("theta", gyroOdometry.theta);
             packet.put("xReached", mecanumCommand.isXReached());
             packet.put("yReached", mecanumCommand.isYReached());
-            packet.put("errorX", mecanumCommand.globalXController.getError());
+            packet.put("errorX", mecanumCommand.globalXController.getError()*0.04);
             packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
-            packet.put("errorY", mecanumCommand.globalYController.getError());
+            packet.put("errorY", mecanumCommand.globalYController.getError()*0.04);
             packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
 
             telemetry.addData("x", gyroOdometry.x);
