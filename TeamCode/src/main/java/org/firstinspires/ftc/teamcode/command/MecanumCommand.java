@@ -459,9 +459,9 @@ public class MecanumCommand {
         }
         boolean withinYRange = (getYDifference() < 1.5);
         if (ytol) {
-            withinXRange = (getXDifference() < 3);
+            withinYRange = (getYDifference() < 3);
         }
-        return withinXRange && withinYRange && getThetaDifference() < 0.02;
+        return withinXRange && withinYRange && getThetaDifference() < 0.1;
     }
 
     public boolean isCoordinateReached(){

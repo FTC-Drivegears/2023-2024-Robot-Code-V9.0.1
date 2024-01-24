@@ -57,7 +57,7 @@ public class AprilCamSubsystem {
                 .setCameraResolution(new Size(640, 480))
                 .build();
         detections = new ArrayList<>();
-
+        detectionsMap = new HashMap<>();
     }
 
     //starts gathering detections (process)
@@ -186,7 +186,12 @@ public class AprilCamSubsystem {
 
     //returns the map of value types to values for a specified id
     public AprilTagDetection getIdValues(int id){
-        return(detectionsMap.get(id));
+        if(detectionsMap.containsKey(id)){
+            return(detectionsMap.get(id));
+        }
+        else{
+            return null;
+        }
     }
 
 
