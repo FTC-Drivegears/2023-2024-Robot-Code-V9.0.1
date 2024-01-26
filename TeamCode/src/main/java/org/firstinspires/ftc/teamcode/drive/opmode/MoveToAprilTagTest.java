@@ -101,7 +101,7 @@ public class MoveToAprilTagTest extends LinearOpMode {
         goToAprilTag = true;
         sleep(500);
 
-        while (!mecanumCommand.isPositionReached(false, false)) {}
+        while (opModeIsActive()){}
 
     }
 
