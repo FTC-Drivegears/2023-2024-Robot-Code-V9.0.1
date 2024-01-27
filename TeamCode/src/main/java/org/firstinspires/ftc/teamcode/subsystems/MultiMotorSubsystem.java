@@ -318,6 +318,7 @@ public class MultiMotorSubsystem extends Specifications {
 
     public void LiftPositionalProcess(double targetPos){
         runToPosition = true;
+//        TODO: tune integral term
         if(isPositionPassed(targetPos)){
             pidUp.activateIntegral();
         }
