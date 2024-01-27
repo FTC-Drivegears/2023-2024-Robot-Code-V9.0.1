@@ -47,6 +47,8 @@ public class DualMotorAutoTest extends LinearOpMode {
     public void runTelemetry(){
         while(opModeIsActive()){
             telemetry.addData("level", level);
+            telemetry.addData("targetPos", multiMotorCommand.getTargetPos());
+            telemetry.addData("position", multiMotorSubsystem.getPosition());
             telemetry.update();
         }
     }

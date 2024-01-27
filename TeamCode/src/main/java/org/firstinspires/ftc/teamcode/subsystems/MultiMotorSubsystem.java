@@ -309,9 +309,24 @@ public class MultiMotorSubsystem extends Specifications {
         aux1.setPower(getMainPower());
         aux2.setPower(getMainPower());
     }
+    public boolean isPositionPassed(double position){
+        return Math.abs(position - getPosition()) < 150;
+    }
+    public boolean isPositionReached(double position){
+        return Math.abs(position - getPosition()) < uncertainty;
+    }
 
     public void LiftPositionalProcess(double targetPos){
         runToPosition = true;
+        if(isPositionPassed(targetPos)){
+            pidUp.activateIntegral();
+        }
+        else{
+            pidUp.deactivateIntegral();
+        }
+        if(isPositionReached(targetPos)){
+            pidUp.integralReset();
+        }
         power = pidUp.outputPositional(targetPos, getPosition());
         moveLift(power);
     }

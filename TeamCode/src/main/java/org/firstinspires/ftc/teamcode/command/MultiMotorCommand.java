@@ -6,6 +6,7 @@ import org.firstinspires.ftc.teamcode.util.Interval;
 public class MultiMotorCommand {
     private MultiMotorSubsystem multiMotorSubsystem;
     private int level = -1;
+    private int targetPosition = 0;
 
     public MultiMotorCommand(MultiMotorSubsystem multiMotorSubsystem){
         this.multiMotorSubsystem = multiMotorSubsystem;
@@ -16,12 +17,14 @@ public class MultiMotorCommand {
             case 0:
                 if(run) {
                     multiMotorSubsystem.LiftPositionalProcess(-5);
+                    targetPosition = -5;
                 }
                 break;
             case 1:
                 //TODO: deceleration intervals
                 if(run) {
                     multiMotorSubsystem.LiftPositionalProcess(450);
+                    targetPosition = 450;
                 }
                 break;
             case 2:
@@ -31,16 +34,19 @@ public class MultiMotorCommand {
                 break;
             case 3:
                 if(run) {
-                    multiMotorSubsystem.LiftPositionalProcess(2317);
+                    multiMotorSubsystem.LiftPositionalProcess(1800);
+                    targetPosition = 1800;
                 }
                 break;
             case 4:
                 if(run) {
-                    multiMotorSubsystem.LiftPositionalProcess(2700);
+                    multiMotorSubsystem.LiftPositionalProcess(2200);
+                    targetPosition = 2200;
                 }
                 break;
             case 5:
                 multiMotorSubsystem.LiftPositionalProcess(900);
+                targetPosition = 900;
                 break;
             default:
 //                multiMotorSubsystem.moveLift(0);
@@ -127,5 +133,8 @@ public class MultiMotorCommand {
 
     public int getLevel() {
         return level;
+    }
+    public double getTargetPos(){
+        return targetPosition;
     }
 }
