@@ -35,6 +35,8 @@ public class CoordinateTesting extends LinearOpMode {
     private HashMap<Integer, AprilTagDetection> detectionMap;
     FtcDashboard dashboard;
     TelemetryPacket packet;
+    private double targetX = 0;
+    private double targetY = 0;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -65,14 +67,21 @@ public class CoordinateTesting extends LinearOpMode {
 
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
-//        while(opModeIsActive() && !isStopRequested()) {
+
+        while(opModeIsActive() && !isStopRequested()) {
             if(aprilCamSubsystem.getHashmap().containsKey(1)) {
+                targetY = gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(1, 0);
                 mecanumCommand.setFinalPosition(true, 30, 0, gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(1, 0), 0);
             }
             while(!mecanumCommand.isPositionReached(true, true)){}
-
-
-//        }
+            sleep(5000);
+            if(aprilCamSubsystem.getHashmap().containsKey(1)){
+                targetX = gyroOdometry.x + aprilCamSubsystem.getAprilXDistance(1, 0) - 20;
+                mecanumCommand.setFinalPosition(true, 30, targetX, gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(1, 0), 0);
+            }
+            while(!mecanumCommand.isPositionReached(true, true)){}
+            sleep(5000);
+        }
 //        sleep(4000);
 //        mecanumCommand.moveToGlobalPosition(100, 100, Math.PI);
 //        sleep(4000);
@@ -115,6 +124,9 @@ public class CoordinateTesting extends LinearOpMode {
             telemetry.addData("xintegral", mecanumCommand.globalXController.getIntegralSum());
             telemetry.addData("output", mecanumCommand.globalXController.getOutputPositionalValue());
             telemetry.addData("apriltagYdistance", aprilCamSubsystem.getAprilYDistance(1, 0));
+            telemetry.addData("apriltagXdistance", aprilCamSubsystem.getAprilXDistance(1, 0));
+            telemetry.addData("targetX", targetX);
+            telemetry.addData("targetY", targetY);
             telemetry.update();
             dashboard.sendTelemetryPacket(packet);
         }
