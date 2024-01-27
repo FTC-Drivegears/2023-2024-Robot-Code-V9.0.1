@@ -177,8 +177,8 @@ public class MoveToAprilTagTest extends LinearOpMode {
 
     public void setAprilTagTarget(){
 
-        Double aprilXDistance = aprilCamSubsystem.getAprilXDistance(target);
-        Double aprilYDistance = aprilCamSubsystem.getAprilYDistance(target);
+        Double aprilXDistance = aprilCamSubsystem.getAprilXDistance(target, 30);
+        Double aprilYDistance = aprilCamSubsystem.getAprilYDistance(target, 30);
 
         if(aprilXDistance != null && aprilYDistance != null){
             //if(aprilCamSubsystem.getDetections.size()!=0){

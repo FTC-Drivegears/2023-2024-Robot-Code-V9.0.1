@@ -9,12 +9,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
+import org.firstinspires.ftc.teamcode.subsystems.AprilCamSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -26,6 +30,9 @@ public class CoordinateTesting extends LinearOpMode {
     private IMUSubsystem imu;
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
+    private AprilCamSubsystem aprilCamSubsystem;
+    private ArrayList<org.firstinspires.ftc.vision.apriltag.AprilTagDetection> detections;
+    private HashMap<Integer, AprilTagDetection> detectionMap;
     FtcDashboard dashboard;
     TelemetryPacket packet;
 
@@ -36,6 +43,8 @@ public class CoordinateTesting extends LinearOpMode {
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
+        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+
 
 //        mecanumCommand.turnOffInternalPID();
         imu.resetAngle();
@@ -47,23 +56,23 @@ public class CoordinateTesting extends LinearOpMode {
         waitForStart();
         odometrySubsystem.reset();
 
-        Executor executor = Executors.newFixedThreadPool(5);
+        Executor executor = Executors.newFixedThreadPool(6);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
+        CompletableFuture.runAsync(this::tagDetectionProcess, executor);
 
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
-        while(opModeIsActive() && !isStopRequested()) {
-            mecanumCommand.setFinalPosition(true, 30, 40, 0, 0);
+//        while(opModeIsActive() && !isStopRequested()) {
+            if(aprilCamSubsystem.getHashmap().containsKey(1)) {
+                mecanumCommand.setFinalPosition(true, 30, 0, gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(1, 0), 0);
+            }
             while(!mecanumCommand.isPositionReached(true, true)){}
-            mecanumCommand.setFinalPosition(true, 30, 40, 0, Math.PI/2);
-            while(!mecanumCommand.isPositionReached(true, true)){}
-            mecanumCommand.setFinalPosition(true, 30, 40, 0, -Math.PI/2);
-            while(!mecanumCommand.isPositionReached(true, true));
 
-        }
+
+//        }
 //        sleep(4000);
 //        mecanumCommand.moveToGlobalPosition(100, 100, Math.PI);
 //        sleep(4000);
@@ -105,8 +114,15 @@ public class CoordinateTesting extends LinearOpMode {
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("xintegral", mecanumCommand.globalXController.getIntegralSum());
             telemetry.addData("output", mecanumCommand.globalXController.getOutputPositionalValue());
+            telemetry.addData("apriltagYdistance", aprilCamSubsystem.getAprilYDistance(1, 0));
             telemetry.update();
             dashboard.sendTelemetryPacket(packet);
+        }
+    }
+
+    public void tagDetectionProcess(){
+        while(opModeIsActive()) {
+            aprilCamSubsystem.runDetections();
         }
     }
 }

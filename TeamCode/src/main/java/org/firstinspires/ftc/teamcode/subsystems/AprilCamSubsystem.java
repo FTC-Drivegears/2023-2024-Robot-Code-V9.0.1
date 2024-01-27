@@ -72,6 +72,9 @@ public class AprilCamSubsystem {
     public ArrayList<AprilTagDetection> getDetections(){
         return detections;
     }
+    public HashMap<Integer, AprilTagDetection> getHashmap(){
+        return detectionsMap;
+    }
 
     //reutrns list of all fieldpositions from april tag metadata
     public ArrayList<VectorF> getFieldPositions(){
@@ -195,8 +198,7 @@ public class AprilCamSubsystem {
     }
 
     //returns x axis distance of april tag in cm
-    public Double getAprilXDistance(int target){
-        double XOffset = 30;
+    public Double getAprilXDistance(int target, double XOffset){
         if(detectionsMap.get(target) != null) {
             return ((detectionsMap.get(target).ftcPose.y * 2.54) - XOffset);
         }
@@ -206,9 +208,7 @@ public class AprilCamSubsystem {
     }
 
     //returns y axis distance of april tag in cm
-    public Double getAprilYDistance(int target){
-
-        double YOffset = 10;
+    public Double getAprilYDistance(int target, double YOffset){
 
         if(detectionsMap.get(target) != null) {
             return ((detectionsMap.get(target).ftcPose.x * (-2.54)) + YOffset);
