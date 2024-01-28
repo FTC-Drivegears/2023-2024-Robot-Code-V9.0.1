@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.drive.opmode.Tests;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,11 +17,15 @@ public class DualMotorAutoTest extends LinearOpMode {
     private MultiMotorCommand multiMotorCommand;
     private int level = 0;
     private ElapsedTime elapsedTime;
+    private FtcDashboard dashboard;
+    private TelemetryPacket packet;
     @Override
     public void runOpMode() throws InterruptedException{
         ElapsedTime elapsedTime = new ElapsedTime();
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
         waitForStart();
         CompletableFuture.runAsync(this::liftProcess);
         CompletableFuture.runAsync(this::runTelemetry);
@@ -46,9 +52,13 @@ public class DualMotorAutoTest extends LinearOpMode {
 
     public void runTelemetry(){
         while(opModeIsActive()){
+            dashboard.sendTelemetryPacket(packet);
             telemetry.addData("level", level);
             telemetry.addData("targetPos", multiMotorCommand.getTargetPos());
             telemetry.addData("position", multiMotorSubsystem.getPosition());
+            packet.put("level", level);
+            packet.put("targetPos", multiMotorCommand.getTargetPos());
+            packet.put("position", multiMotorSubsystem.getPosition());
             telemetry.update();
         }
     }

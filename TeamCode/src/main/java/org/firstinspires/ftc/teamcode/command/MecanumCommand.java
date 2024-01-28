@@ -51,10 +51,10 @@ public class MecanumCommand {
     //TODO: can still tune teeny tiny bit
     private static double kpx = 0.045;
     private static double kdx = 0.00;
-    private static double kix = 0.06;
+    private static double kix = 0.065;
     private static double kpy = 0.045;
     private static double kdy = 0.00;
-    private static double kiy = 0.06;
+    private static double kiy = 0.065;
     private static double kptheta = 2.5;
     private static double kdtheta = 0;
     private static double kitheta = 0.4;

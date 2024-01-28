@@ -94,22 +94,24 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
 
         //PIXEL DROPOFF POSITION
+        mecanumCommand.setFinalPosition(true, 30, 71.5, 0, 0);
+        while(!mecanumCommand.isPositionPassed() && !isStopRequested()){}
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 92, -7, -0.9);
+            mecanumCommand.setFinalPosition(true, 30, 107.76, 19.99, 0);
             while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
             }
         }
         else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 126, -11, 0);
+            mecanumCommand.setFinalPosition(true, 30, 120.36, -12.48, 0);
             while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 80, -12, 0.9);
+            mecanumCommand.setFinalPosition(true, 30,  69.48, -22, 2.11);
             while(!mecanumCommand.isPositionReached(false,false)) {
             }
         }
-        sleep(2000);
+        sleep(3000);
         timer.reset();
         //release pixel
 
@@ -125,15 +127,15 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        outputCommand.tiltToBoard();
 
         //move to board
-        mecanumCommand.setFinalPosition(true, 30, 126.967, -7.6, 1.6);
+        mecanumCommand.setFinalPosition(true, 30, 133, 31, Math.PI / 2);
         while(!mecanumCommand.isPositionReached(false, false)) {
         }
-        sleep(2000);
-        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
+        mecanumCommand.setFinalPosition(true, 30, 80.5, 49, Math.PI / 2);
         while(!mecanumCommand.isPositionReached(false, false)){
         }
 
-        sleep(1000);
+        sleep(2000);
+        stop();
         timer.reset();
         //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
