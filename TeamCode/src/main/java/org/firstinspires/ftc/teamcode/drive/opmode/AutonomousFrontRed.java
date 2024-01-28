@@ -89,27 +89,28 @@ public class AutonomousFrontRed extends LinearOpMode {
         sleep(4000);
         timer.reset();
         intakeCommand.raiseIntake();
-        String position = "right";
+        String position = "middle";
         timer.reset();
 
-
+        mecanumCommand.setFinalPosition(true, 30, 71.5, 0, 0);
+        sleep(2000);
         //PIXEL DROPOFF POSITION
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 95.54, 23.92, 0);
-            while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
+            mecanumCommand.setFinalPosition(true, 30, 69.48, 22, -2.11);
+            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested()) {
             }
         }
         else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 118.33, -4, 0);
-            while(!mecanumCommand.isPositionReached(false,false)) {
+            mecanumCommand.setFinalPosition(true, 30, 120, 1.6, 0);
+            while(!mecanumCommand.isPositionReached(true,true)) {
             }
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 81.93, -19.46, 0.7776);
-            while(!mecanumCommand.isPositionReached(false,false)) {
+            mecanumCommand.setFinalPosition(true, 30, 107.76, -18.2, 0);
+            while(!mecanumCommand.isPositionReached(true,true)) {
             }
         }
-//        sleep(2000);
+        sleep(2000);
         timer.reset();
         //release pixel
 
@@ -125,12 +126,12 @@ public class AutonomousFrontRed extends LinearOpMode {
 //        outputCommand.tiltToBoard();
 
         //move to board
-        mecanumCommand.setFinalPosition(true, 30, 126.967, -7.6, 1.6);
-        while(!mecanumCommand.isPositionReached(false, false)) {
+        mecanumCommand.setFinalPosition(true, 30, 127.4, -47, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed()) {
         }
-//        sleep(2000);
-        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
-        while(!mecanumCommand.isPositionReached(false, false)){
+        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30, 62.5, -59.8, -Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true, true)){
         }
 
 //        sleep(1000);
