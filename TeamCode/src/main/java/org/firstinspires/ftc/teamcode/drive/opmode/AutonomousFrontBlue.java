@@ -98,17 +98,17 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(!mecanumCommand.isPositionPassed() && !isStopRequested()){}
         if(position.equals("left")) {
             mecanumCommand.setFinalPosition(true, 30, 107.76, 19.99, 0);
-            while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
+            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested()) {
             }
         }
         else if(position.equals("middle")){
             mecanumCommand.setFinalPosition(true, 30, 120.36, -12.48, 0);
-            while(!mecanumCommand.isPositionReached(false,false)) {
+            while(!mecanumCommand.isPositionReached(true,true)) {
             }
         }
         else if(position.equals("right")){
             mecanumCommand.setFinalPosition(true, 30,  69.48, -22, 2.11);
-            while(!mecanumCommand.isPositionReached(false,false)) {
+            while(!mecanumCommand.isPositionReached(true,true)) {
             }
         }
         sleep(3000);

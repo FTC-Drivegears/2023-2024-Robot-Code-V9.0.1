@@ -89,27 +89,31 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         sleep(4000);
         timer.reset();
         intakeCommand.raiseIntake();
-        String position = "right";
+        String position = "left";
         timer.reset();
+
 
 
         //PIXEL DROPOFF POSITION
         if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 95.54, 23.92, 0);
-            while(!mecanumCommand.isPositionReached(false,false) && !isStopRequested()) {
+            mecanumCommand.setFinalPosition(true, 30, 107.76, 19.99, 0);
+            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested()) {
             }
+//            sleep(2000);
         }
         else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 118.33, -4, 0);
-            while(!mecanumCommand.isPositionReached(false,false)) {
+            mecanumCommand.setFinalPosition(true, 30, 120.36, -12.48, 0);
+            while(!mecanumCommand.isPositionReached(true,true)) {
             }
+//            sleep(2000);
         }
         else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 81.93, -19.46, 0.7776);
-            while(!mecanumCommand.isPositionReached(false,false)) {
+            mecanumCommand.setFinalPosition(true, 30, 69.48, -22, 2.11);
+            while(!mecanumCommand.isPositionReached(true,true)) {
             }
+//            sleep(2000);
         }
-//        sleep(2000);
+        sleep(2000);
         timer.reset();
         //release pixel
 
@@ -124,17 +128,30 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //        outputCommand.armToBoard();
 //        outputCommand.tiltToBoard();
 
-        //move to board
-        mecanumCommand.setFinalPosition(true, 30, 126.967, -7.6, 1.6);
-        while(!mecanumCommand.isPositionReached(false, false)) {
+        //move to stack
+        mecanumCommand.setFinalPosition(true, 30, 129, 43.5, -Math.PI/2);
+        while(!mecanumCommand.isPositionReached(true, true)) {
         }
-//        sleep(2000);
-        mecanumCommand.setFinalPosition(true, 30, 0, 0, 0);
+        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30, 129, 60.8, -Math.PI/2);
         while(!mecanumCommand.isPositionReached(false, false)){
         }
+        sleep(2000);
 
 //        sleep(1000);
         timer.reset();
+
+        //move to board
+
+        mecanumCommand.setFinalPosition(true, 30,  127, -190, -Math.PI/2);
+        while(!mecanumCommand.isPositionPassed()) {
+        }
+        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30, 60, -194.56, -Math.PI/2);
+        while(!mecanumCommand.isPositionReached(true, true)){
+        }
+        sleep(2000);
+
         //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
             //TODO: tune
