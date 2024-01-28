@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.command.IntakeCommand;
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
 import org.firstinspires.ftc.teamcode.command.MultiMotorCommand;
 import org.firstinspires.ftc.teamcode.command.OutputCommand;
+import org.firstinspires.ftc.teamcode.subsystems.AprilCamSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 
@@ -38,6 +39,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
+    private AprilCamSubsystem aprilCamSubsystem;
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
@@ -47,6 +49,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
     //38, 80, -1.58
     private int level = -1;
     private String position = "initalized";
+    private double targetX = 0;
+    private double targetY = 0;
+
+    private Integer aprilID = 2;
+
+    private boolean goToAprilTag = false;
+
+    private String autoColor = "blue"; // or "red"
 
 
     @Override
@@ -80,13 +90,17 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(5);
+        Executor executor = Executors.newFixedThreadPool(7);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
 //        CompletableFuture.runAsync(this::liftProcess, executor);
-        sleep(4000);
+        CompletableFuture.runAsync(this::tagDetectionProcess);
+        CompletableFuture.runAsync(this::setTagTargets);
+
+
+        sleep(1000);
         timer.reset();
         intakeCommand.raiseIntake();
         String position = "right";
@@ -111,7 +125,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             while(!mecanumCommand.isPositionReached(true,true)) {
             }
         }
-        sleep(3000);
+        sleep(1000);
         timer.reset();
         //release pixel
 
@@ -134,9 +148,13 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(!mecanumCommand.isPositionReached(false, false)){
         }
 
-        sleep(2000);
+        goToAprilTag = true;
+        sleep(1000);
+
+        while(!isStopRequested()){}
+
         stop();
-        timer.reset();
+
         //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
         //TODO: tune
@@ -217,6 +235,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("position", position);
             telemetry.addData("errorOutput", mecanumCommand.globalXController.getError()*0.04);
 
+            telemetry.addData("apriltagYdistance", aprilCamSubsystem.getAprilYDistance(1, 0));
+            telemetry.addData("apriltagXdistance", aprilCamSubsystem.getAprilXDistance(1, 0));
+            telemetry.addData("targetX", targetX);
+            telemetry.addData("targetY", targetY);
+
 //            packet.put("x", gyroOdometry.x);
 //            packet.put("y", gyroOdometry.y);
             dashboard.sendTelemetryPacket(packet);
@@ -234,4 +257,59 @@ public class AutonomousFrontBlue extends LinearOpMode {
             mecanumSubsystem.motorProcess();
         }
     }
+
+    public void tagDetectionProcess(){
+        while(opModeIsActive()) {
+            aprilCamSubsystem.runDetections();
+        }
+    }
+
+    public void setTagTargets(){
+        while(opModeIsActive() && !isStopRequested()) {
+            if(goToAprilTag) {
+                if(aprilCamSubsystem.getHashmap().containsKey(aprilID)) {
+                    mecanumCommand.setFinalPosition(true, 30, gyroOdometry.x, getTargetY(-20.0), getTargetTheta());
+                }
+                while(!mecanumCommand.isPositionReached(true, true)){}
+                sleep(5000);
+                if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+                    mecanumCommand.setFinalPosition(true, 30, getTargetX(0.0), getTargetY(-20.0), getTargetTheta());
+                }
+                while(!mecanumCommand.isPositionReached(true, true)){}
+                sleep(5000);
+            }
+        }
+    }
+
+    public Double getTargetX(Double offset){
+        if(autoColor == "red"){
+            return(gyroOdometry.x - aprilCamSubsystem.getAprilXDistance(aprilID, offset));
+        }
+        else if (autoColor == "blue"){
+            return(gyroOdometry.x + aprilCamSubsystem.getAprilXDistance(aprilID, offset));
+        }
+        return(gyroOdometry.x); //this line won't be called unless autoColor is set to something else
+    }
+
+    public Double getTargetY(Double offset){
+        if(autoColor == "red"){
+            return(gyroOdometry.y - aprilCamSubsystem.getAprilYDistance(aprilID, offset));
+        }
+        else if (autoColor == "blue"){
+            return(gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(aprilID, offset));
+        }
+        return(gyroOdometry.y); //this line won't be called unless autoColor is set to something else
+    }
+
+    public Double getTargetTheta(){
+        if(autoColor == "red"){
+            return(-Math.PI/2);
+        }
+        else if (autoColor == "blue"){
+            return(Math.PI/2);
+        }
+        return(0.0); //this line won't be called unless autoColor is set to something else
+    }
+
+
 }
