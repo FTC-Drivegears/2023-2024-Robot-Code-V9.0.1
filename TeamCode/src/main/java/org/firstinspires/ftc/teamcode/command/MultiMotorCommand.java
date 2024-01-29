@@ -16,8 +16,8 @@ public class MultiMotorCommand {
         switch(level){
             case 0:
                 if(run) {
-                    multiMotorSubsystem.LiftPositionalProcess(-5);
-                    targetPosition = -5;
+                    multiMotorSubsystem.LiftPositionalProcess(0);
+                    targetPosition = 0;
                 }
                 break;
             case 1:

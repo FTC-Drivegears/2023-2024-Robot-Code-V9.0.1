@@ -97,7 +97,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::motorProcess, executor);
 //        CompletableFuture.runAsync(this::liftProcess, executor);
         CompletableFuture.runAsync(this::tagDetectionProcess);
-        CompletableFuture.runAsync(this::setTagTargets);
 
 
         sleep(1000);
@@ -151,7 +150,13 @@ public class AutonomousFrontBlue extends LinearOpMode {
         goToAprilTag = true;
         sleep(1000);
 
-        while(!isStopRequested()){}
+        while(goToAprilTag && !isStopRequested()) {
+            if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+                mecanumCommand.setFinalPosition(true, 30, getTargetX(0.0), getTargetY(-20.0), getTargetTheta());
+            }
+            while(!mecanumCommand.isPositionReached(true, true)){}
+        }
+
 
         stop();
 
@@ -261,23 +266,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
     public void tagDetectionProcess(){
         while(opModeIsActive()) {
             aprilCamSubsystem.runDetections();
-        }
-    }
-
-    public void setTagTargets(){
-        while(opModeIsActive() && !isStopRequested()) {
-            if(goToAprilTag) {
-                if(aprilCamSubsystem.getHashmap().containsKey(aprilID)) {
-                    mecanumCommand.setFinalPosition(true, 30, gyroOdometry.x, getTargetY(-20.0), getTargetTheta());
-                }
-                while(!mecanumCommand.isPositionReached(true, true)){}
-                sleep(5000);
-                if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-                    mecanumCommand.setFinalPosition(true, 30, getTargetX(0.0), getTargetY(-20.0), getTargetTheta());
-                }
-                while(!mecanumCommand.isPositionReached(true, true)){}
-                sleep(5000);
-            }
         }
     }
 

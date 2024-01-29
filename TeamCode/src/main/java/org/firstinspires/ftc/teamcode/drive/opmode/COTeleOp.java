@@ -99,6 +99,7 @@ public class COTeleOp extends LinearOpMode {
 
         pixelTimer = new ElapsedTime();
         liftTimer = new ElapsedTime();
+        double lowestLiftValue = Integer.MAX_VALUE;
 
         while(opModeInInit()) {
             odometrySubsystem.reset();
@@ -131,6 +132,7 @@ public class COTeleOp extends LinearOpMode {
             if (state == RUNNING_STATE.LIFT_STOP) {
                 //set lift level
                 if (gamepad1.a) {
+                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -139,6 +141,7 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.b) {
+                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -147,6 +150,7 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.y) {
+                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -155,6 +159,7 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.x) {
+                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -185,6 +190,7 @@ public class COTeleOp extends LinearOpMode {
                 }
                 if((gamepad2.b || gamepad1.right_trigger > 0.5) && timerList.checkTimePassed("armTilt", 1000)){
                     timerList.resetTimer("liftTimer");
+                    lowestLiftValue = Integer.MAX_VALUE;
                     state = RUNNING_STATE.RETRACT_LIFT;
                 }
             }
@@ -206,14 +212,17 @@ public class COTeleOp extends LinearOpMode {
                 raising = true;
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
-                if(timerList.checkTimePassed("liftTimer", 1700)){
-                    raising = false;
-                    level = 0;
-                }
-                if(multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5){
+                lowestLiftValue = Math.max(Math.min(lowestLiftValue, multiMotorSubsystem.getPosition()), 5);
+                if((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5) || (multiMotorSubsystem.getPosition() == lowestLiftValue)){
                     pixelCounter = 0;
                     level = /*-1*/0;
+                    multiMotorSubsystem.reset();
                     state = RUNNING_STATE.LIFT_STOP;
+                }
+                else if(timerList.checkTimePassed("liftTimer", 1700)){
+                    multiMotorSubsystem.getPidUp().integralReset();
+                    raising = false;
+                    level = 0;
                 }
             }
             //emergency lift controls
@@ -376,7 +385,8 @@ public class COTeleOp extends LinearOpMode {
         telemetry.addData("color1", color1);
         telemetry.addData("color2", color2);
         telemetry.addData("lift velocity", multiMotorSubsystem.getDerivativeValue());
-        telemetry.addData("cascadeOutput",multiMotorSubsystem.getCascadeOutput());
+        telemetry.addData("error",multiMotorSubsystem.getPidUp().getError()*0.00381);
+        telemetry.addData("integral",multiMotorSubsystem.getPidUp().getIntegralSum()*0.000075);
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
     }

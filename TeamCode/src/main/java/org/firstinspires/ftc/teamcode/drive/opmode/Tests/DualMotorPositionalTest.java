@@ -60,6 +60,7 @@ public class DualMotorPositionalTest extends LinearOpMode {
                 targetPosition = 1300;
             }
             else if(gamepad1.dpad_down){
+                multiMotorSubsystem.getPidUp().integralReset();
                 multiMotorSubsystem.LiftPositionalProcess(0);
                 targetPosition = 0;
             }
@@ -92,7 +93,10 @@ public class DualMotorPositionalTest extends LinearOpMode {
             telemetry.addData("auxpower", multiMotorSubsystem.getAux1Power());
             telemetry.addData("auxpos", multiMotorSubsystem.getAuxPos());
             telemetry.addData("derivativeValue", multiMotorSubsystem.getDerivativeValue());
-            telemetry.addData("controlleroutput", multiMotorSubsystem.getCascadeOutput());
+            telemetry.addData("controlleroutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
+            telemetry.addData("integralTerm", multiMotorSubsystem.getPidUp().getIntegralSum()*0.00003);
+            telemetry.addData("positionalTerm", multiMotorSubsystem.getPidUp().getError()*0.00381);
+
 //            telemetry.addData("outputPositionalValue", multiMotorSubsystem.getCascadePositional());
 //            telemetry.addData("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
             telemetry.addData("level", level);
