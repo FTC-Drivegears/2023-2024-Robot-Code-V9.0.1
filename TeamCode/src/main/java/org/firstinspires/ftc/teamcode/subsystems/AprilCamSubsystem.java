@@ -4,6 +4,7 @@ import android.util.Size;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
@@ -54,7 +55,7 @@ public class AprilCamSubsystem {
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTagProcessor)
                 .setCamera(hardwareMap.get(CameraName.class, "Webcam 1"))
-                .setCameraResolution(new Size(640, 480))
+                .setCameraResolution(new Size(800, 448))
                 .build();
         detections = new ArrayList<>();
         detectionsMap = new HashMap<>();
