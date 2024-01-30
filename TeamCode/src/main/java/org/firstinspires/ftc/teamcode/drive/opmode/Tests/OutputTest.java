@@ -30,6 +30,7 @@ public class  OutputTest extends LinearOpMode {
             }
             else if(gamepad1.x){
                 outputCommand.closeGate();
+
             }
             else if(gamepad1.y){
                 outputCommand.openGate();

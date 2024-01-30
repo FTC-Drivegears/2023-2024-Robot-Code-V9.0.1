@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
 import org.firstinspires.ftc.teamcode.command.MultiMotorCommand;
+import org.firstinspires.ftc.teamcode.command.OutputCommand;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 
@@ -32,42 +33,49 @@ public class DualMotorPowerTest extends LinearOpMode {
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
+        OutputCommand outputCommand = new OutputCommand(hardwareMap);
 
         waitForStart();
 
-//        CompletableFuture.runAsync(this::liftProcess);
+        CompletableFuture.runAsync(this::liftProcess);
 
         while (opModeIsActive()) {
+            outputCommand.tiltToIdle();
+            outputCommand.armToIdle();
 
             if(gamepad1.left_bumper){
                 multiMotorSubsystem.reset();
             }
 
             if(gamepad1.a){
-                multiMotorCommand.LiftUp(true, 4);
+                multiMotorSubsystem.getPidUp().integralReset();
+                level = 4;
                 targetPosition = 3100;
             }
             else if(gamepad1.b){
-                multiMotorCommand.LiftUp(true, 3);
+                multiMotorSubsystem.getPidUp().integralReset();
+                level = 3;
                 targetPosition = 0;
             }
             else if(gamepad1.y){
-                multiMotorCommand.LiftUp(true, 2);
+                multiMotorSubsystem.getPidUp().integralReset();
+                level = 2;
                 targetPosition = 3100;
             }
             else if(gamepad1.x){
-                multiMotorCommand.LiftUp(true, 1);
+                multiMotorSubsystem.getPidUp().integralReset();
+                level = 1;
                 targetPosition = 1300;
             }
             else if(gamepad1.dpad_down){
-                multiMotorCommand.LiftUp(true, 0);
+                multiMotorSubsystem.getPidUp().integralReset();
+                level = 0;
                 targetPosition = 0;
             }
             else if(gamepad1.right_bumper){
-                multiMotorCommand.LiftUp(true, 5);
-            }
-            else {
-                multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
+                multiMotorSubsystem.getPidUp().integralReset();
+                level = 5;
+                targetPosition = 900;
             }
 //            else {
 //                multiMotorSubsystem.moveLift(gamepad1.left_stick_y);
@@ -82,7 +90,7 @@ public class DualMotorPowerTest extends LinearOpMode {
             packet.put("intervalValue", multiMotorSubsystem.getIntervalValue());
             packet.put("lastErrorValue", multiMotorSubsystem.getLastErrorValue());
             packet.put("controlleroutput", multiMotorSubsystem.getCascadeOutput());
-            packet.put("outputPositionalValue", multiMotorSubsystem.getCascadePositional());
+            packet.put("outputPositionalValue", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
             packet.put("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
             packet.put("level", level);
             packet.put("Target Position", targetPosition);
@@ -101,9 +109,14 @@ public class DualMotorPowerTest extends LinearOpMode {
         }
     }
 
-//    public void liftProcess(){
-//        while(opModeIsActive()){
-//            multiMotorCommand.LiftUp(true, level);
-//        }
-//    }
+    public void liftProcess(){
+        while(opModeIsActive()){
+            multiMotorCommand.LiftUpPositional(true, level);
+            if(level == 0) {
+                if ((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                    multiMotorSubsystem.reset();
+                }
+            }
+        }
+    }
 }

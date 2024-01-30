@@ -15,15 +15,15 @@ public class ServoTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-//        servo = hardwareMap.get(Servo.class, "leftTilt");
-        outputCommand = new OutputCommand(hardwareMap);
+        servo = hardwareMap.get(Servo.class, "rightTilt");
+//        outputCommand = new OutputCommand(hardwareMap);
         waitForStart();
         while(opModeIsActive()){
             if(gamepad1.a){
-                outputCommand.tiltToBoard();
+                servo.setPosition(0.295);
             }
             else if(gamepad1.b){
-                outputCommand.tiltToIdle();
+                servo.setPosition(0.46);
             }
 //            telemetry.addData("pos",servo.getPosition());
             telemetry.update();

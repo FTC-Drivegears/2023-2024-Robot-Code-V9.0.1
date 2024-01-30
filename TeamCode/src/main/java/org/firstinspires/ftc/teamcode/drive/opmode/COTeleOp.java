@@ -70,7 +70,7 @@ public class COTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
-        colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
+//        colorSensorSubsystem = new ColorSensorSubsystem(hardwareMap);
 
         imuSubsystem = new IMUSubsystem(hardwareMap);
 
@@ -119,8 +119,8 @@ public class COTeleOp extends LinearOpMode {
 
         waitForStart();
 
-        Executor executor = Executors.newFixedThreadPool(4);
-//        CompletableFuture.runAsync(this::updateTelemetry, executor);
+        Executor executor = Executors.newFixedThreadPool(5);
+        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::odometryProcess, executor);
         CompletableFuture.runAsync(this::LiftProcess, executor);
 //        CompletableFuture.runAsync(this::sensorUpdate, executor);
@@ -209,20 +209,16 @@ public class COTeleOp extends LinearOpMode {
                 }
             }
             if(state == RUNNING_STATE.RETRACT_LIFT){
-                raising = true;
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
                 lowestLiftValue = Math.max(Math.min(lowestLiftValue, multiMotorSubsystem.getPosition()), 5);
-                if((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5) || (multiMotorSubsystem.getPosition() == lowestLiftValue)){
-                    pixelCounter = 0;
-                    level = /*-1*/0;
-                    multiMotorSubsystem.reset();
-                    state = RUNNING_STATE.LIFT_STOP;
-                }
-                else if(timerList.checkTimePassed("liftTimer", 1700)){
+                if(timerList.checkTimePassed("liftTimer", 1700)){
                     multiMotorSubsystem.getPidUp().integralReset();
                     raising = false;
                     level = 0;
+                }
+                else{
+                    raising = true;
                 }
             }
             //emergency lift controls
@@ -320,6 +316,12 @@ public class COTeleOp extends LinearOpMode {
             }
             else {
                 multiMotorCommand.LiftUpPositional(running, level);
+            }
+            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                pixelCounter = 0;
+                level = /*-1*/0;
+                multiMotorSubsystem.reset();
+                state = RUNNING_STATE.LIFT_STOP;
             }
         }
     }
