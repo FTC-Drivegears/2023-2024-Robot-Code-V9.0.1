@@ -49,6 +49,7 @@ public class COTeleOp extends LinearOpMode {
     private int pixelCounter = 0;
     private boolean running = true;
     private boolean raising = false;
+    private boolean autoCentering = false;
     private String color1 = "none";
     private String color2 = "none";
     private int colorCounter = 0;
@@ -120,10 +121,10 @@ public class COTeleOp extends LinearOpMode {
         waitForStart();
 
         Executor executor = Executors.newFixedThreadPool(5);
-        CompletableFuture.runAsync(this::updateTelemetry, executor);
+//        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::odometryProcess, executor);
         CompletableFuture.runAsync(this::LiftProcess, executor);
-//        CompletableFuture.runAsync(this::sensorUpdate, executor);
+        CompletableFuture.runAsync(this::autoCenterProcess, executor);
         CompletableFuture.runAsync(this::motorProcess);
 
         while(opModeIsActive()) {
@@ -237,20 +238,21 @@ public class COTeleOp extends LinearOpMode {
             }
 
             if(gamepad1.dpad_left) {
+                autoCentering = true;
                 gridAutoCentering.setTargetAngle(-Math.PI);
-                gridAutoCentering.process(true);
             }
             else if(gamepad1.dpad_right){
+                autoCentering = true;
                 gridAutoCentering.setTargetAngle(Math.PI);
-                gridAutoCentering.process(true);
             }
             else if(gamepad1.dpad_up){
+                autoCentering = true;
                 gridAutoCentering.setTargetAngle(0);
-                gridAutoCentering.process(true);
             }
             else if(gamepad1.dpad_down){
                 imuSubsystem.resetAngle();
             }
+
             if(gamepad2.x){
                 raising = false;
                 level = 2;
@@ -270,12 +272,12 @@ public class COTeleOp extends LinearOpMode {
             else if(gamepad2.dpad_down){
                 intakeCommand.lowerIntake();
             }
-            else if(gamepad2.dpad_right){
-                outputCommand.droneToShoot();
-            }
-            else if(gamepad2.dpad_left){
-                outputCommand.droneToNotShoot();
-            }
+//            else if(gamepad2.dpad_right){
+//                outputCommand.droneToShoot();
+//            }
+//            else if(gamepad2.dpad_left){
+//                outputCommand.droneToNotShoot();
+//            }
             else if(gamepad2.right_trigger > 0.5){
                 intakeCommand.intakeIn(0.8);
             }
@@ -391,6 +393,13 @@ public class COTeleOp extends LinearOpMode {
         telemetry.addData("integral",multiMotorSubsystem.getPidUp().getIntegralSum()*0.000075);
         dashboard.sendTelemetryPacket(packet);
         telemetry.update();
+    }
+
+    public void autoCenterProcess(){
+        gridAutoCentering.process(autoCentering);
+        if(Math.abs(gridAutoCentering.getTargetAngle() - gyroOdometry.theta) < 0.05 || Math.abs(gamepad1.right_stick_x) > 0.1){
+            autoCentering = false;
+        }
     }
 
 }
