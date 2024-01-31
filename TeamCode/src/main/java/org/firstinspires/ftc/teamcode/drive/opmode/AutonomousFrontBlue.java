@@ -68,6 +68,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
         //intakeCommand = new IntakeCommand(hardwareMap);
         //outputCommand = new OutputCommand(hardwareMap);
+//        intakeCommand = new IntakeCommand(hardwareMap);
+//        outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
