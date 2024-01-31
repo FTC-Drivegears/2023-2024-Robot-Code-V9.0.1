@@ -64,7 +64,7 @@ public class OutputCommand {
         droneShooter.setPower(0);
     }
     public void openGate(){
-        gate.setPosition(0.21);
+        gate.setPosition(0.1);
     }
     public void closeGate(){
         gate.setPosition(0.3);

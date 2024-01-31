@@ -34,9 +34,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private IMUSubsystem imu;
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
-    private IntakeCommand intakeCommand;
+    //private IntakeCommand intakeCommand;
    //private WebcamSubsystem webcamSubsystem;
-    private OutputCommand outputCommand;
+    //private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
@@ -66,11 +66,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
-        intakeCommand = new IntakeCommand(hardwareMap);
-        outputCommand = new OutputCommand(hardwareMap);
+        //intakeCommand = new IntakeCommand(hardwareMap);
+        //outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
@@ -101,7 +102,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         sleep(1000);
         timer.reset();
-        intakeCommand.raiseIntake();
+        //intakeCommand.raiseIntake();
         String position = "right";
         timer.reset();
 
