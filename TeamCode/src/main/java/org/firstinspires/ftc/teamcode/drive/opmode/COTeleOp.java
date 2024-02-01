@@ -212,7 +212,7 @@ public class COTeleOp extends LinearOpMode {
             if(state == RUNNING_STATE.RETRACT_LIFT){
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
-                lowestLiftValue = Math.max(Math.min(lowestLiftValue, multiMotorSubsystem.getPosition()), 5);
+//                lowestLiftValue = Math.max(Math.min(lowestLiftValue, multiMotorSubsystem.getPosition()), 5);
                 if(timerList.checkTimePassed("liftTimer", 1700)){
                     multiMotorSubsystem.getPidUp().integralReset();
                     raising = false;
