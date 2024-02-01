@@ -184,16 +184,22 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
 
 
-        if(parkPlace == "left"){
-            mecanumCommand.setFinalPosition(true, 30, 130, 75, Math.PI/2);
+        if(parkPlace.equalsIgnoreCase("left")){
+            // Checkpoint
+            mecanumCommand.setFinalPosition(true, 30, 9, 80, Math.PI / 2);
+            while(!mecanumCommand.isPositionReached(true,true)) {}
+            // Park
+            mecanumCommand.setFinalPosition(true, 30, 9, 111, Math.PI / 2);
+            while(!mecanumCommand.isPositionReached(true,true)) {}
         }
-        else if(parkPlace == "right"){
-            mecanumCommand.setFinalPosition(true, 30, 30, 75, Math.PI/2);
+        else if(parkPlace.equalsIgnoreCase("right")){
+            // Checkpoint
+            mecanumCommand.setFinalPosition(true, 30, 133, 80, Math.PI / 2);
+            while(!mecanumCommand.isPositionReached(true,true)) {}
+            // Park
+            mecanumCommand.setFinalPosition(true, 30, 133, 111, Math.PI / 2);
+            while(!mecanumCommand.isPositionReached(true,true)) {}
         }
-        while(!mecanumCommand.isPositionReached(true,true)) {
-        }
-
-
 
         stop();
 
