@@ -38,9 +38,9 @@ public class CoordinateTesting extends LinearOpMode {
     private double targetX = 0;
     private double targetY = 0;
 
-    private boolean goToAprilTag = true;
+    private boolean goToAprilTag = false;
 
-    private Integer aprilID = 2;
+    private Integer aprilID = 5;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -68,12 +68,21 @@ public class CoordinateTesting extends LinearOpMode {
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
         CompletableFuture.runAsync(this::tagDetectionProcess, executor);
-        CompletableFuture.runAsync(this::setTagTargets);
 
 //        sleep(8000);
 //        mecanumCommand.moveRotation(Math.PI);
 
-        while (opModeIsActive() && !isStopRequested()){}
+
+        mecanumCommand.setFinalPosition(true, 20, -70, -20, 0);
+        while(!mecanumCommand.isPositionReached(false, false)){}
+
+
+        goToAprilTag = true;
+
+        sleep(5000);
+
+        setTagTargets();
+        sleep(20000);
 
        /* while(opModeIsActive() && !isStopRequested()) {
             if(aprilCamSubsystem.getHashmap().containsKey(aprilID)) {
@@ -132,8 +141,8 @@ public class CoordinateTesting extends LinearOpMode {
             telemetry.addData("y", gyroOdometry.y);
             telemetry.addData("xintegral", mecanumCommand.globalXController.getIntegralSum());
             telemetry.addData("output", mecanumCommand.globalXController.getOutputPositionalValue());
-            telemetry.addData("apriltagYdistance", aprilCamSubsystem.getAprilYDistance(1, 0));
-            telemetry.addData("apriltagXdistance", aprilCamSubsystem.getAprilXDistance(1, 0));
+            telemetry.addData("apriltagYdistance", -aprilCamSubsystem.getAprilXDistance(aprilID, 0));
+            telemetry.addData("apriltagXdistance", aprilCamSubsystem.getAprilYDistance(aprilID, 0));
             telemetry.addData("targetX", targetX);
             telemetry.addData("targetY", targetY);
             telemetry.update();
@@ -143,25 +152,34 @@ public class CoordinateTesting extends LinearOpMode {
 
     public void tagDetectionProcess(){
         while(opModeIsActive()) {
-            aprilCamSubsystem.runDetections();
+            if(goToAprilTag){
+                aprilCamSubsystem.runDetections();
+            }
         }
     }
+
+
 
     public void setTagTargets(){
         while(opModeIsActive() && !isStopRequested()) {
             if(goToAprilTag) {
-                if(aprilCamSubsystem.getHashmap().containsKey(aprilID)) {
-                    targetY = gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(aprilID, 0);
-                    mecanumCommand.setFinalPosition(true, 30, 0, gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(aprilID, 0), 0);
+                /*if(aprilCamSubsystem.getHashmap().containsKey(aprilID)) {
+                    targetY = gyroOdometry.y + aprilCamSubsystem.getAprilXDistance(aprilID, 0);
+                    mecanumCommand.setFinalPosition(true, 20, 0, gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(aprilID, 0), 0);
                 }
-                while(!mecanumCommand.isPositionReached(true, true)){}
-                sleep(5000);
+                */
+                //while(!mecanumCommand.isPositionReached(false, false)){}
+                sleep(1000);
                 if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-                    targetX = gyroOdometry.x + aprilCamSubsystem.getAprilXDistance(aprilID, 0) - 20;
-                    mecanumCommand.setFinalPosition(true, 30, targetX, gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(aprilID, 0), 0);
+
+
+                    targetY = gyroOdometry.y - aprilCamSubsystem.getAprilXDistance(aprilID, -5);
+                    targetX = gyroOdometry.x + aprilCamSubsystem.getAprilYDistance(aprilID, -8);
+
+                    mecanumCommand.setFinalPosition(true, 20, targetX, targetY, 0);
+                    while(!mecanumCommand.isPositionReached(false, false)){}
+                    goToAprilTag = false;
                 }
-                while(!mecanumCommand.isPositionReached(true, true)){}
-                sleep(5000);
             }
         }
     }

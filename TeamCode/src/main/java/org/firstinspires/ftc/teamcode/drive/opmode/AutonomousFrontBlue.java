@@ -34,9 +34,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private IMUSubsystem imu;
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
-    //private IntakeCommand intakeCommand;
+    private IntakeCommand intakeCommand;
    //private WebcamSubsystem webcamSubsystem;
-    //private OutputCommand outputCommand;
+    private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
@@ -58,6 +58,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     private String autoColor = "blue"; // or "red"
 
+    private String parkPlace = "left";
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -66,10 +68,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
-        //intakeCommand = new IntakeCommand(hardwareMap);
-        //outputCommand = new OutputCommand(hardwareMap);
-//        intakeCommand = new IntakeCommand(hardwareMap);
-//        outputCommand = new OutputCommand(hardwareMap);
+        intakeCommand = new IntakeCommand(hardwareMap);
+        outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
@@ -98,14 +98,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
-//        CompletableFuture.runAsync(this::liftProcess, executor);
-        CompletableFuture.runAsync(this::tagDetectionProcess);
+        CompletableFuture.runAsync(this::liftProcess, executor);
+        //CompletableFuture.runAsync(this::tagDetectionProcess);
 
 
         sleep(1000);
         timer.reset();
         //intakeCommand.raiseIntake();
-        String position = "right";
+        String position = "left";
         timer.reset();
 
 
@@ -131,11 +131,13 @@ public class AutonomousFrontBlue extends LinearOpMode {
         timer.reset();
         //release pixel
 
-//        while(timer.milliseconds() < 1000) {
-//            intakeCommand.intakeOut(0.3);
-//        }
-//        intakeCommand.stopIntake();
-//        timer.reset();
+        intakeCommand.lowerIntake();
+        while(timer.milliseconds() < 3000) {
+            intakeCommand.intakeOut(0.5);
+        }
+        intakeCommand.stopIntake();
+        intakeCommand.raiseIntake();
+        timer.reset();
 
         //
 //        level = 1;
@@ -149,16 +151,48 @@ public class AutonomousFrontBlue extends LinearOpMode {
         mecanumCommand.setFinalPosition(true, 30, 80.5, 49, Math.PI / 2);
         while(!mecanumCommand.isPositionReached(false, false)){
         }
-
+        /*
         goToAprilTag = true;
         sleep(1000);
 
         while(goToAprilTag && !isStopRequested()) {
             if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-                mecanumCommand.setFinalPosition(true, 30, getTargetX(0.0), getTargetY(-20.0), getTargetTheta());
+                mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
             }
             while(!mecanumCommand.isPositionReached(true, true)){}
         }
+
+         */
+
+        level = 5;
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        level = 1;
+
+
+        if(position.equals("left")) {
+            mecanumCommand.setFinalPosition(true, 30, 66, 85, Math.PI/2);
+        }
+        else if(position.equals("middle")){
+            mecanumCommand.setFinalPosition(true, 30, 76, 85, Math.PI/2);
+        }
+        else if(position.equals("right")){
+            mecanumCommand.setFinalPosition(true, 30, 90, 85, Math.PI/2);
+        }
+
+        while(!mecanumCommand.isPositionReached(false,false)) {
+        }
+
+
+        if(parkPlace == "left"){
+            mecanumCommand.setFinalPosition(true, 30, 130, 75, Math.PI/2);
+        }
+        else if(parkPlace == "right"){
+            mecanumCommand.setFinalPosition(true, 30, 30, 75, Math.PI/2);
+        }
+        while(!mecanumCommand.isPositionReached(true,true)) {
+        }
+
 
 
         stop();

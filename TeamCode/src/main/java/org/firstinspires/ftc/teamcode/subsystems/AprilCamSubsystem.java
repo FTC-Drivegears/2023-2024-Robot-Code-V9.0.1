@@ -55,7 +55,7 @@ public class AprilCamSubsystem {
         visionPortal = new VisionPortal.Builder()
                 .addProcessor(aprilTagProcessor)
                 .setCamera(hardwareMap.get(CameraName.class, "Webcam 1"))
-                .setCameraResolution(new Size(800, 448))
+                .setCameraResolution(new Size(864, 480))
                 .build();
         detections = new ArrayList<>();
         detectionsMap = new HashMap<>();
