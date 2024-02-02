@@ -170,13 +170,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
         running = true;
 
         //activate raising (go to level 5, raising level)
-        raising = true;
         timer.reset();
+        raising = true;
 
         //wait 1500 ms for the lift to raise
         while(timer.milliseconds() < 825){}
 
         //swing out arm and tilt
+        timer.reset();
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
 
@@ -188,8 +189,15 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         //TODO: put pixel dropoff here (open/close gate + timing)
 
+        timer.reset();
+        outputCommand.openGate();
+        while(timer.milliseconds() < 250){}
+        outputCommand.closeGate();
+        outputCommand.outputWheelIn();
+        while(timer.milliseconds() < 750){}
 
         //retract lift
+        timer.reset();
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         while(timer.milliseconds() < 1000){}
