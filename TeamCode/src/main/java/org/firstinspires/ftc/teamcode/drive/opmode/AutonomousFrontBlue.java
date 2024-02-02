@@ -280,8 +280,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             else {
                 multiMotorCommand.LiftUpPositional(true, level);
             }
-            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
-                level = 0;
+            if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
                 multiMotorSubsystem.reset();
                 running = false;
             }
