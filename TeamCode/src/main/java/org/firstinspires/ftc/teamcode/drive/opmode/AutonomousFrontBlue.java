@@ -178,12 +178,16 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         while(!mecanumCommand.isPositionReached(true,true)) {
         }
-        //activate lift mode
+
+        //set dropoff level
+        level = 1;
+
+        //activate lift mode in raising
+        raising = true;
         running = true;
 
         //activate raising (go to level 5, raising level)
         timer.reset();
-        raising = true;
 
         //wait 1500 ms for the lift to raise
         while(timer.milliseconds() < 825){}
@@ -196,11 +200,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(timer.milliseconds() < 1600){}
         raising = false;
 
-        //go to drop off level (1)
-        level = 1;
-
-        //TODO: put pixel dropoff here (open/close gate + timing)
-
+        //drop off
         timer.reset();
         outputCommand.openGate();
         while(timer.milliseconds() < 250){}
