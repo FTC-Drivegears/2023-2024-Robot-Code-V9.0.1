@@ -59,6 +59,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private String autoColor = "blue"; // or "red"
 
     private String parkPlace = "left";
+    private boolean running = false;
+    private boolean raising = false;
 
 
     @Override
@@ -295,8 +297,18 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
     }
     public void liftProcess() {
-        while(opModeIsActive()) {
-            multiMotorCommand.LiftUp(true, level);
+        while(opModeIsActive() && running){
+            if(raising){
+                multiMotorCommand.LiftUpPositional(true, 5);
+            }
+            else {
+                multiMotorCommand.LiftUpPositional(true, level);
+            }
+            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                level = 0;
+                multiMotorSubsystem.reset();
+                running = false;
+            }
         }
     }
 
@@ -310,36 +322,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(opModeIsActive()) {
             aprilCamSubsystem.runDetections();
         }
-    }
-
-    public Double getTargetX(Double offset){
-        if(autoColor == "red"){
-            return(gyroOdometry.x - aprilCamSubsystem.getAprilXDistance(aprilID, offset));
-        }
-        else if (autoColor == "blue"){
-            return(gyroOdometry.x + aprilCamSubsystem.getAprilXDistance(aprilID, offset));
-        }
-        return(gyroOdometry.x); //this line won't be called unless autoColor is set to something else
-    }
-
-    public Double getTargetY(Double offset){
-        if(autoColor == "red"){
-            return(gyroOdometry.y - aprilCamSubsystem.getAprilYDistance(aprilID, offset));
-        }
-        else if (autoColor == "blue"){
-            return(gyroOdometry.y + aprilCamSubsystem.getAprilYDistance(aprilID, offset));
-        }
-        return(gyroOdometry.y); //this line won't be called unless autoColor is set to something else
-    }
-
-    public Double getTargetTheta(){
-        if(autoColor == "red"){
-            return(-Math.PI/2);
-        }
-        else if (autoColor == "blue"){
-            return(Math.PI/2);
-        }
-        return(0.0); //this line won't be called unless autoColor is set to something else
     }
 
 
