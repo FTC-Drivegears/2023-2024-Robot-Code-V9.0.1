@@ -119,11 +119,14 @@ public class MultiMotorCommand {
 //                    multiMotorSubsystem.LiftCascadeProcess(4100, interval1, interval2, interval3, interval4);
 //                }
             case 5:
-                interval1 = new Interval(-400, 600, 2000);
-                interval2 = new Interval(600, 700, 1700);
-                interval3 = new Interval(700, 800, 800);
-                interval4 = new Interval(800, 1350+2000, 0);
-                multiMotorSubsystem.LiftCascadeProcess(820, interval1, interval2, interval3, interval4);
+                // Thompson did this :p
+                multiMotorSubsystem.LiftCascadeProcess(
+                        820,
+                        new Interval(-400, 600, 2000),
+                        new Interval(600, 700, 1700),
+                        new Interval(700, 800, 800),
+                        new Interval(800, 1350+2000, 0)
+                );
                 break;
             default:
 //                multiMotorSubsystem.moveLift(0);

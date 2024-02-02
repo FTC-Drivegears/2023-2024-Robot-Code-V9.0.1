@@ -140,6 +140,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         level = 5;
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
+        while(!multiMotorSubsystem.isPositionReached());
         level = 1;
 
         if(position.equals("left")) {
@@ -238,6 +239,8 @@ public class AutonomousFrontRed extends LinearOpMode {
             telemetry.addData("theta", gyroOdometry.theta);
             telemetry.addData("position", position);
             telemetry.addData("errorOutput", mecanumCommand.globalXController.getError()*0.04);
+
+            telemetry.addData("liftHeight", multiMotorSubsystem.getPosition());
 
 //            packet.put("x", gyroOdometry.x);
 //            packet.put("y", gyroOdometry.y);
