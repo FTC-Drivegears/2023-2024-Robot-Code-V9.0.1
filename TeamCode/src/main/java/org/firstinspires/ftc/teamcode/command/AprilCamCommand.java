@@ -21,7 +21,7 @@ public class AprilCamCommand {
     public double getxOffset(){
         return xOffset;
     }
-    
+
     public double getyOffset(){
         return yOffset;
     }
