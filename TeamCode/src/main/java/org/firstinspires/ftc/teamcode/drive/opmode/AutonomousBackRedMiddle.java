@@ -34,7 +34,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
     private IntakeCommand intakeCommand;
-    private WebcamSubsystem webcamSubsystem;
+//    private WebcamSubsystem webcamSubsystem;
     private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
@@ -60,7 +60,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+//        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
@@ -95,28 +95,22 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 
 
         //PIXEL DROPOFF POSITION
-        if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 107.76, 19.99, 0);
-            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested()) {
-            }
-//            sleep(2000);
-        }
-        else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 120.36, -12.48, 0);
-            while(!mecanumCommand.isPositionReached(true,true)) {
-            }
-//            sleep(2000);
-        }
-        else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 69.48, -22, 2.11);
-            while(!mecanumCommand.isPositionReached(true,true)) {
-            }
-//            sleep(2000);
-        }
-        sleep(2000);
-        timer.reset();
-        //release pixel
+//        if(position.equals("left")) {
+//            mecanumCommand.setFinalPosition(true, 30, 107.76, 19.99, 0);
+//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+//        }
+//        else if(position.equals("middle")){
+//            mecanumCommand.setFinalPosition(true, 30, 120.36, -12.48, 0);
+//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+//        }
+//        else if(position.equals("right")){
+//            mecanumCommand.setFinalPosition(true, 30, 69.48, -22, 2.11);
+//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+//        }
+//        sleep(2000);
+//        timer.reset();
 
+        //release pixel
 //        while(timer.milliseconds() < 1000) {
 //            intakeCommand.intakeOut(0.3);
 //        }
@@ -129,28 +123,38 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //        outputCommand.tiltToBoard();
 
         //move to stack
-        mecanumCommand.setFinalPosition(true, 30, 129, 43.5, -Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)) {
-        }
-        sleep(2000);
-        mecanumCommand.setFinalPosition(true, 30, 129, 60.8, -Math.PI/2);
-        while(!mecanumCommand.isPositionReached(false, false)){
-        }
-        sleep(2000);
+//        mecanumCommand.setFinalPosition(true, 30, 129, 43.5, -Math.PI/2);
+//        while(!mecanumCommand.isPositionReached(true, true)) {
+//        }
+//        sleep(2000);
+//        mecanumCommand.setFinalPosition(true, 30, 129, 60.8, -Math.PI/2);
+//        while(!mecanumCommand.isPositionReached(false, false)){
+//        }
+//        sleep(2000);
+//        timer.reset();
 
-//        sleep(1000);
-        timer.reset();
+        // Middle Checkpoints
+        //Back
+        mecanumCommand.setFinalPosition(true, 30,  130, 8, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed());
+
+        //Front
+        mecanumCommand.setFinalPosition(true, 30,  130, -130, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed());
+
+
+
 
         //move to board
 
-        mecanumCommand.setFinalPosition(true, 30,  127, -190, -Math.PI/2);
-        while(!mecanumCommand.isPositionPassed()) {
-        }
-        sleep(2000);
-        mecanumCommand.setFinalPosition(true, 30, 60, -194.56, -Math.PI/2);
-        while(!mecanumCommand.isPositionReached(true, true)){
-        }
-        sleep(2000);
+//        mecanumCommand.setFinalPosition(true, 30,  127, -190, -Math.PI/2);
+//        while(!mecanumCommand.isPositionPassed()) {
+//        }
+//        sleep(2000);
+//        mecanumCommand.setFinalPosition(true, 30, 60, -194.56, -Math.PI/2);
+//        while(!mecanumCommand.isPositionReached(true, true)){
+//        }
+//        sleep(2000);
 
         //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
@@ -199,6 +203,37 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //            sleep(1000);
 //        }
 //        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
+
+        // April Tag Backups Coordinates
+        // Left
+        mecanumCommand.setFinalPosition(true, 30, 75, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+
+        sleep(4000);
+
+        // Middle
+        mecanumCommand.setFinalPosition(true, 30, 68, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+        sleep(4000);
+
+        // Right
+        mecanumCommand.setFinalPosition(true, 30, 52, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+        sleep(4000);
+
+
+        // Returning to origin
+
+        // Front
+        mecanumCommand.setFinalPosition(true, 30,  130, -130, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed());
+
+        // Back
+        mecanumCommand.setFinalPosition(true, 30,  130, 8, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed());
+
+        mecanumCommand.setFinalPosition(true, 30,  0, 0, 0);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
     }
 
     public void pidProcess(){
