@@ -83,11 +83,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
         imu.resetAngle();
         odometrySubsystem.reset();
 
-//        intakeCommand.raiseIntake();
-//        outputCommand.closeGate();
-//
-//        outputCommand.armToIdle();
-//        outputCommand.tiltToIdle();
+        intakeCommand.raiseIntake();
+        outputCommand.closeGate();
+
+        outputCommand.armToIdle();
+        outputCommand.tiltToIdle();
         double propPosition = 0;
         while(opModeInInit()){
             //TODO: determine which Xprop positions make left, middle, right
@@ -140,11 +140,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.stopIntake();
         intakeCommand.raiseIntake();
         timer.reset();
-
-        //
-//        level = 1;
-//        outputCommand.armToBoard();
-//        outputCommand.tiltToBoard();
 
         //move to board
         mecanumCommand.setFinalPosition(true, 30, 133, 31, Math.PI / 2);
@@ -236,54 +231,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
 
         stop();
-
-        //LIFT DROPOFF
-//        while(timer.milliseconds() < 3500) {
-        //TODO: tune
-        //heading: -1.5833333730697632
-        //imu heading: 4.699851934109823
-        //leftEncoder: 33559
-        //rightEncoder: 0
-        //x: 65.16827461821727
-        //y: -187.29583391841874
-//
-//            if(position.equals("left")) {
-//                while(mecanumCommand.isPositionReached(false,false)) {
-//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-//                }
-//            }
-//            else if(position.equals("middle")){
-//                while(mecanumCommand.isPositionReached(false,false)) {
-//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-//                }
-//            }
-//            else if(position.equals("right")){
-//                while(mecanumCommand.isPositionReached(false,false)) {
-//                    mecanumCommand.setFinalPosition(true, 30, 36.27, 81.69, 1.53);
-//                }
-//            }
-//        }
-        //136, 0, `1.6
-        //126, 140, 1.6
-        //52, 220, 1.5
-        //67, 222, 1.5
-        //81, 222, 1.5
-        //0, 222, 1.5
-// 68, 6.3, -0.3
-
-//        timer.reset();
-//        if(opModeIsActive()) {
-//            while (timer.milliseconds() < 500) {
-//                outputCommand.openGate();
-//            }
-//            outputCommand.closeGate();
-//            outputCommand.tiltToIdle();
-//            outputCommand.armToIdle();
-//            sleep(2000);
-//            level = 0;
-//            sleep(1000);
-//        }
-//        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
     }
 
     public void pidProcess(){
@@ -316,14 +263,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("theta", gyroOdometry.theta);
             telemetry.addData("position", position);
             telemetry.addData("errorOutput", mecanumCommand.globalXController.getError()*0.04);
-
             telemetry.addData("apriltagYdistance", aprilCamSubsystem.getAprilYDistance(1, 0));
             telemetry.addData("apriltagXdistance", aprilCamSubsystem.getAprilXDistance(1, 0));
             telemetry.addData("targetX", targetX);
             telemetry.addData("targetY", targetY);
 
-//            packet.put("x", gyroOdometry.x);
-//            packet.put("y", gyroOdometry.y);
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
