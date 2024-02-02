@@ -18,6 +18,14 @@ public class AprilCamCommand {
         this.yOffset = yOffset;
     }
 
+    public double getxOffset(){
+        return xOffset;
+    }
+    
+    public double getyOffset(){
+        return yOffset;
+    }
+
     public double getTargetXRed(int aprilID){
         return gyroOdometry.x - aprilCamSubsystem.getAprilXDistance(aprilID, xOffset);
     }
