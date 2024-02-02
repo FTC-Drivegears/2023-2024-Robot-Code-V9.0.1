@@ -106,7 +106,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         sleep(1000);
         timer.reset();
-        //intakeCommand.raiseIntake();
+        intakeCommand.raiseIntake();
         String position = "left";
         timer.reset();
 
@@ -148,10 +148,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         //move to board
         mecanumCommand.setFinalPosition(true, 30, 133, 31, Math.PI / 2);
-        while(!mecanumCommand.isPositionReached(false, false)) {
+        while(!mecanumCommand.isPositionPassed()) {
         }
         mecanumCommand.setFinalPosition(true, 30, 80.5, 49, Math.PI / 2);
-        while(!mecanumCommand.isPositionReached(false, false)){
+        while(!mecanumCommand.isPositionPassed()){
         }
         /*
         goToAprilTag = true;
@@ -166,6 +166,18 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
          */
 
+        if(position.equals("left")) {
+            mecanumCommand.setFinalPosition(true, 30, 66, 85, Math.PI/2);
+        }
+        else if(position.equals("middle")){
+            mecanumCommand.setFinalPosition(true, 30, 76, 85, Math.PI/2);
+        }
+        else if(position.equals("right")){
+            mecanumCommand.setFinalPosition(true, 30, 90, 85, Math.PI/2);
+        }
+
+        while(!mecanumCommand.isPositionReached(true,true)) {
+        }
         //activate lift mode
         running = true;
 
@@ -204,20 +216,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         multiMotorSubsystem.getPidUp().integralReset();
         level = 0;
         //lift mode gets stopped in the thread afterwards
-
-
-        if(position.equals("left")) {
-            mecanumCommand.setFinalPosition(true, 30, 66, 85, Math.PI/2);
-        }
-        else if(position.equals("middle")){
-            mecanumCommand.setFinalPosition(true, 30, 76, 85, Math.PI/2);
-        }
-        else if(position.equals("right")){
-            mecanumCommand.setFinalPosition(true, 30, 90, 85, Math.PI/2);
-        }
-
-        while(!mecanumCommand.isPositionReached(false,false)) {
-        }
 
 
         if(parkPlace.equalsIgnoreCase("left")){
