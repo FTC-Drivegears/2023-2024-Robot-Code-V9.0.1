@@ -64,10 +64,10 @@ public class OutputCommand {
         droneShooter.setPower(0);
     }
     public void openGate(){
-        gate.setPosition(0.1);
+        gate.setPosition(0.445);
     }
     public void closeGate(){
-        gate.setPosition(0.3);
+        gate.setPosition(0.55);
     }
     public void outputWheelOut(){
         intakeCommand.intakeRollerOut();

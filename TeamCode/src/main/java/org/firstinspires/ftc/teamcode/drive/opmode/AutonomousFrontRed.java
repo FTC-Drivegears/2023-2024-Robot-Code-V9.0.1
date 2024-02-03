@@ -47,6 +47,8 @@ public class AutonomousFrontRed extends LinearOpMode {
     //38, 80, -1.58
     private int level = -1;
     private String position = "initalized";
+    private boolean running = false;
+    private boolean raising = false;
 
 
     @Override
@@ -249,8 +251,17 @@ public class AutonomousFrontRed extends LinearOpMode {
         }
     }
     public void liftProcess() {
-        while(opModeIsActive()) {
-            multiMotorCommand.LiftUp(true, level);
+        while(opModeIsActive() && running){
+            if(raising){
+                multiMotorCommand.LiftUpPositional(true, 5);
+            }
+            else {
+                multiMotorCommand.LiftUpPositional(true, level);
+            }
+            if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                multiMotorSubsystem.reset();
+                running = false;
+            }
         }
     }
 

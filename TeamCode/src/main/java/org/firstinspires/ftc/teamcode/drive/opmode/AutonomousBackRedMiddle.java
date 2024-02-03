@@ -47,6 +47,8 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
     //38, 80, -1.58
     private int level = -1;
     private String position = "initalized";
+    private boolean running = false;
+    private boolean raising = false;
 
 
     @Override
@@ -97,26 +99,20 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         //PIXEL DROPOFF POSITION
 //        if(position.equals("left")) {
 //            mecanumCommand.setFinalPosition(true, 30, 107.76, 19.99, 0);
-//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested()) {
-//            }
-////            sleep(2000);
+//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
 //        }
 //        else if(position.equals("middle")){
 //            mecanumCommand.setFinalPosition(true, 30, 120.36, -12.48, 0);
-//            while(!mecanumCommand.isPositionReached(true,true)) {
-//            }
-////            sleep(2000);
+//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
 //        }
 //        else if(position.equals("right")){
 //            mecanumCommand.setFinalPosition(true, 30, 69.48, -22, 2.11);
-//            while(!mecanumCommand.isPositionReached(true,true)) {
-//            }
-////            sleep(2000);
+//            while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
 //        }
 //        sleep(2000);
 //        timer.reset();
-        //release pixel
 
+        //release pixel
 //        while(timer.milliseconds() < 1000) {
 //            intakeCommand.intakeOut(0.3);
 //        }
@@ -138,8 +134,6 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //        }
 //        sleep(2000);
 
-//        sleep(1000);
-        timer.reset();
 
         //move to board
 
@@ -221,6 +215,37 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //            sleep(1000);
 //        }
 //        mecanumCommand.moveToGlobalPosition(10, -222, 1.6);
+
+        // April Tag Backups Coordinates
+        // Left
+        mecanumCommand.setFinalPosition(true, 30, 75, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+
+        sleep(4000);
+
+        // Middle
+        mecanumCommand.setFinalPosition(true, 30, 68, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+        sleep(4000);
+
+        // Right
+        mecanumCommand.setFinalPosition(true, 30, 52, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
+        sleep(4000);
+
+
+        // Returning to origin
+
+        // Front
+        mecanumCommand.setFinalPosition(true, 30,  130, -130, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed());
+
+        // Back
+        mecanumCommand.setFinalPosition(true, 30,  130, 8, -Math.PI / 2);
+        while(!mecanumCommand.isPositionPassed());
+
+        mecanumCommand.setFinalPosition(true, 30,  0, 0, 0);
+        while(!mecanumCommand.isPositionReached(true,true) && !isStopRequested());
     }
 
     public void pidProcess(){
@@ -261,8 +286,17 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         }
     }
     public void liftProcess() {
-        while(opModeIsActive()) {
-            multiMotorCommand.LiftUp(true, level);
+        while(opModeIsActive() && running){
+            if(raising){
+                multiMotorCommand.LiftUpPositional(true, 5);
+            }
+            else {
+                multiMotorCommand.LiftUpPositional(true, level);
+            }
+            if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                multiMotorSubsystem.reset();
+                running = false;
+            }
         }
     }
 
