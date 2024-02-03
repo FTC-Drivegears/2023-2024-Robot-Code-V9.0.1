@@ -65,7 +65,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         readyRobot();
 
         double propPosition = 0;
-        while(opModeInInit()){
+        while(opModeInInit() && !isStopRequested()){
             //TODO: determine which Xprop positions make left, middle, right
 //            propPosition = webcamSubsystem.getXProp();
         }
@@ -76,63 +76,63 @@ public class AutonomousFrontBlue extends LinearOpMode {
         String position = "left";
 
         //Spike Drop-off
-        moveToCheckpoint(71.5, 0, 0);
-        switch (position) {
-            case "left":
-                moveTo(107.76, 19.99, 0);
-                break;
-            case "middle":
-                moveTo(120.36, -12.48, 0);
-                break;
-            case "right":
-                moveTo(69.48, -22, 2.11);
-                break;
-        }
-        releaseIntakePixel();
-
-        //Middle Back
-        moveToCheckpoint(133, 31, Math.PI / 2);
-
-        //Middle Front
-        moveToCheckpoint(80.5, 49, Math.PI / 2);
-
-        // Detecting April Tag Code
-        //goToAprilTag = true;
-        //sleep(1000);
-        //
-        //while(goToAprilTag && !isStopRequested()) {
-        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-        //    }
-        //    while(!mecanumCommand.isPositionReached(true, true)){}
-        //}
-
-        // Pixel Board Drop-off
-        switch (position) {
-            case "left":
-                moveTo(66, 85, Math.PI / 2);
-                break;
-            case "middle":
-                moveTo(76, 85, Math.PI / 2);
-                break;
-            case "right":
-                moveTo(90, 85, Math.PI / 2);
-                break;
-        }
+//        moveToCheckpoint(71.5, 0, 0);
+//        switch (position) {
+//            case "left":
+//                moveTo(107.76, 19.99, 0);
+//                break;
+//            case "middle":
+//                moveTo(120.36, -12.48, 0);
+//                break;
+//            case "right":
+//                moveTo(69.48, -22, 2.11);
+//                break;
+//        }
+//        releaseIntakePixel();
+//
+//        //Middle Back
+//        moveToCheckpoint(133, 31, Math.PI / 2);
+//
+//        //Middle Front
+//        moveToCheckpoint(80.5, 49, Math.PI / 2);
+//
+//        // Detecting April Tag Code
+//        //goToAprilTag = true;
+//        //sleep(1000);
+//        //
+//        //while(goToAprilTag && !isStopRequested()) {
+//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+//        //    }
+//        //    while(!mecanumCommand.isPositionReached(true, true)){}
+//        //}
+//
+//        // Pixel Board Drop-off
+//        switch (position) {
+//            case "left":
+//                moveTo(66, 85, Math.PI / 2);
+//                break;
+//            case "middle":
+//                moveTo(76, 85, Math.PI / 2);
+//                break;
+//            case "right":
+//                moveTo(90, 85, Math.PI / 2);
+//                break;
+//        }
         dropPixel();
 
         // Parking
-        if (parkPlace.equalsIgnoreCase("left")) {
-            // Checkpoint
-            moveToCheckpoint(9, 80, Math.PI / 2);
-            // Park
-            moveTo(9, 111, Math.PI / 2);
-        } else {
-            // Checkpoint
-            moveToCheckpoint(133, 80, Math.PI / 2);
-            // Park
-            moveTo(133, 111, Math.PI / 2);
-        }
+//        if (parkPlace.equalsIgnoreCase("left")) {
+//            // Checkpoint
+//            moveToCheckpoint(9, 80, Math.PI / 2);
+//            // Park
+//            moveTo(9, 111, Math.PI / 2);
+//        } else {
+//            // Checkpoint
+//            moveToCheckpoint(133, 80, Math.PI / 2);
+//            // Park
+//            moveTo(133, 111, Math.PI / 2);
+//        }
 
         stop();
     }
@@ -172,6 +172,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("apriltagXdistance", aprilCamSubsystem.getAprilXDistance(1, 0));
             telemetry.addData("targetX", targetX);
             telemetry.addData("targetY", targetY);
+            telemetry.addData("timer", timer.milliseconds());
+            telemetry.addData("raising", raising);
+            telemetry.addData("running", running);
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
@@ -179,12 +182,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
     public void liftProcess() {
         while(opModeIsActive() && running){
-            if(raising){
-                multiMotorCommand.LiftUpPositional(true, 5);
-            }
-            else {
-                multiMotorCommand.LiftUpPositional(true, level);
-            }
+            multiMotorCommand.LiftUpPositional(true, level);
             if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
                 multiMotorSubsystem.reset();
                 running = false;
@@ -230,31 +228,33 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.closeGate();
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
+        multiMotorSubsystem.reset();
     }
 
     private void startThreads() {
-        Executor executor = Executors.newFixedThreadPool(7);
+        Executor executor = Executors.newFixedThreadPool(6);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
+        CompletableFuture.runAsync(this::liftProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
-        CompletableFuture.runAsync(this::liftProcess, executor);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
     private void dropPixel() {
 
         //set dropoff level
-        level = 1;
+        while(opModeIsActive() && !isStopRequested()) {
+            level = 5;
+        }
 
         //activate lift mode in raising
-        raising = true;
         running = true;
 
         //activate raising (go to level 5, raising level)
         timer.reset();
 
         //wait 1500 ms for the lift to raise
-        while(timer.milliseconds() < 825){}
+        while(timer.milliseconds() < 1500){}
 
         //swing out arm and tilt
         timer.reset();
@@ -262,7 +262,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.tiltToBoard();
 
         while(timer.milliseconds() < 1600){}
-        raising = false;
+        level = 1;
 
         //drop off
         timer.reset();

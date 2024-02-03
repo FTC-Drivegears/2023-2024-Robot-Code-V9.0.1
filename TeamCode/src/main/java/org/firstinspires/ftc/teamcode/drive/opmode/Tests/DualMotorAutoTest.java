@@ -19,6 +19,7 @@ public class DualMotorAutoTest extends LinearOpMode {
     private ElapsedTime elapsedTime;
     private FtcDashboard dashboard;
     private TelemetryPacket packet;
+    private boolean running = true;
     @Override
     public void runOpMode() throws InterruptedException{
         ElapsedTime elapsedTime = new ElapsedTime();
@@ -44,9 +45,15 @@ public class DualMotorAutoTest extends LinearOpMode {
         }
     }
 
+
+
     public void liftProcess() {
-        while(opModeIsActive()) {
+        while(opModeIsActive() && running){
             multiMotorCommand.LiftUpPositional(true, level);
+            if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                multiMotorSubsystem.reset();
+//                running = false;
+            }
         }
     }
 
