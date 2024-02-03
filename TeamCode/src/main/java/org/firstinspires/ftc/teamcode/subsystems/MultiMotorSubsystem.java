@@ -202,7 +202,7 @@ public class MultiMotorSubsystem extends Specifications {
 
     public void moveLift(double power){
         main.setPower(power);
-        aux1.setPower(getMainPower());
+        aux1.setPower(-getMainPower());
         testLiftPID.outputPositional(3900, getPosition());
     }
 
