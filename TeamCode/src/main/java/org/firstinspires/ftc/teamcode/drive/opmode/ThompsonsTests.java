@@ -40,7 +40,6 @@ public class ThompsonsTests extends LinearOpMode {
     private String position = "initalized";
 
     private boolean running = false;
-    private boolean raising = false;
     private String status = "Uninitialized";
 
     @Override
@@ -54,83 +53,32 @@ public class ThompsonsTests extends LinearOpMode {
 //            propPosition = webcamSubsystem.getXProp();
         }
 
+        level = 5;
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        level = 0;
+
         waitForStart();
         startThreads();
-        status = "Countdown: 3";
-        sleep(1000);
-        status = "Countdown: 2";
-        sleep(1000);
-        status = "Countdown: 1";
-        sleep(1000);
-        status = "Running set. level = 2";
-        running = true;
-        level = 2;
-        sleep(3000);
-        status = "level = 4";
-        level = 4;
-        sleep(3000);
+
         status = "level = 1";
         level = 1;
         sleep(3000);
+
+        status = "level = 2";
+        level = 2;
+        sleep(3000);
+
         status = "level = 3";
         level = 3;
         sleep(3000);
-        status = "raising";
-        raising = true;
+
+        status = "level = 4";
+        level = 4;
+        sleep(3000);
+
+        status = "Completed Op";
         sleep(10000);
-
-
-
-//        Run this once the lift is actually working
-//        status = "Moving to dropoff level 1";
-//        //set dropoff level
-//        level = 1;
-//
-//        while (!multiMotorSubsystem.isPositionReached() && !isStopRequested());
-//
-//        status = "Activating lift mode in raising";
-//
-//        //activate lift mode in raising
-//        raising = true;
-//        running = true;
-//
-//        //activate raising (go to level 5, raising level)
-//        timer.reset();
-//
-//        //wait 1500 ms for the lift to raise
-//        while(timer.milliseconds() < 5000){}
-//
-//        status = "Extending arm/tilt";
-//        //swing out arm and tilt
-//        timer.reset();
-//        outputCommand.armToBoard();
-//        outputCommand.tiltToBoard();
-//
-//        while(timer.milliseconds() < 5000){}
-//
-//
-//        status = "Dropping Pixel";
-//        raising = false;
-//
-//        //drop off
-//        timer.reset();
-//        outputCommand.openGate();
-//        while(timer.milliseconds() < 5000){}
-//
-//        timer.reset();
-//        outputCommand.closeGate();
-//        outputCommand.outputWheelIn();
-//        while(timer.milliseconds() < 5000){}
-//
-//        status = "Retracting Lift";
-//        //retract lift
-//        timer.reset();
-//        outputCommand.tiltToIdle();
-//        outputCommand.armToIdle();
-//        while(timer.milliseconds() < 5000){}
-//        multiMotorSubsystem.getPidUp().integralReset();
-//        level = 0;
-//        //lift mode gets stopped in the thread afterwards
 
     }
 
@@ -236,10 +184,13 @@ public class ThompsonsTests extends LinearOpMode {
     }
     private void dropPixel() {
 
+        status = "Moving to dropoff level 1";
         //set dropoff level
-        while(opModeIsActive() && !isStopRequested()) {
-            level = 5;
-        }
+        level = 1;
+
+        while (!multiMotorSubsystem.isPositionReached() && !isStopRequested());
+
+        status = "Activating lift mode in raising";
 
         //activate lift mode in raising
         running = true;
@@ -248,14 +199,63 @@ public class ThompsonsTests extends LinearOpMode {
         timer.reset();
 
         //wait 1500 ms for the lift to raise
-        while(timer.milliseconds() < 1500){}
+        while(timer.milliseconds() < 5000){}
 
+        status = "Extending arm/tilt";
         //swing out arm and tilt
         timer.reset();
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
 
-        while(timer.milliseconds() < 1600){}
+        while(timer.milliseconds() < 5000){}
+
+
+        status = "Dropping Pixel";
+//        raising = false;
+
+        //drop off
+        timer.reset();
+        outputCommand.openGate();
+        while(timer.milliseconds() < 5000){}
+
+        timer.reset();
+        outputCommand.closeGate();
+        outputCommand.outputWheelIn();
+        while(timer.milliseconds() < 5000){}
+
+        status = "Retracting Lift";
+        //retract lift
+        timer.reset();
+        outputCommand.tiltToIdle();
+        outputCommand.armToIdle();
+        while(timer.milliseconds() < 5000){}
+        multiMotorSubsystem.getPidUp().integralReset();
+        level = 0;
+        //lift mode gets stopped in the thread afterwards
+
+
+        //set dropoff level
+        while(opModeIsActive() && !isStopRequested()) {
+            level = 5;
+        }
+
+        //activate lift mode in raising
+        running = true;
+        level = 5;
+
+        /*
+        Design idea: in subsystems, write functions that return Threads.
+        We can run the join() methods to wait for them
+         */
+        while (opModeIsActive() && !isStopRequested()
+                && !multiMotorSubsystem.isPositionReached()
+        );
+
+        //swing out arm and tilt
+        timer.reset();
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        while(timer.milliseconds() < 500);
         level = 1;
 
         //drop off
@@ -297,4 +297,13 @@ public class ThompsonsTests extends LinearOpMode {
         intakeCommand.stopIntake();
     }
 
+    private void intakePixel() {
+        intakeCommand.lowerIntake();
+        intakeCommand.intakeIn(1);
+        intakeCommand.intakeRollerIn();
+        sleep(700);
+        intakeCommand.raiseIntake();
+        intakeCommand.stopIntake();
+        intakeCommand.intakeRollerStop();
+    }
 }
