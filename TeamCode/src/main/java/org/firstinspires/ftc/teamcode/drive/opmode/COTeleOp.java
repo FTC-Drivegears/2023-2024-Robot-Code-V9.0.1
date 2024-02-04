@@ -133,7 +133,6 @@ public class COTeleOp extends LinearOpMode {
             if (state == RUNNING_STATE.LIFT_STOP) {
                 //set lift level
                 if (gamepad1.a) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -142,7 +141,6 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.b) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -151,7 +149,6 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.y) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -160,7 +157,6 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.x) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -214,7 +210,6 @@ public class COTeleOp extends LinearOpMode {
                 outputCommand.armToIdle();
 //                lowestLiftValue = Math.max(Math.min(lowestLiftValue, multiMotorSubsystem.getPosition()), 5);
                 if(timerList.checkTimePassed("liftTimer", 1700)){
-                    multiMotorSubsystem.getPidUp().integralReset();
                     raising = false;
                     level = 0;
                 }
