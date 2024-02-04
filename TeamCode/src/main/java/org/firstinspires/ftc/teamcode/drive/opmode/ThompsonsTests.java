@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,22 +24,23 @@ import java.util.concurrent.Executors;
 
 @Autonomous(name="Thompson's Tests")
 public class ThompsonsTests extends LinearOpMode {
-    private MecanumSubsystem mecanumSubsystem;
-    private MecanumCommand mecanumCommand;
-    private IMUSubsystem imu;
-    private OdometrySubsystem odometrySubsystem;
+
+    // Systems, Commands, and Utils
     private GyroOdometry gyroOdometry;
+    private IMUSubsystem imu;
     private IntakeCommand intakeCommand;
-//    private WebcamSubsystem webcamSubsystem;
-    private OutputCommand outputCommand;
-    private MultiMotorSubsystem multiMotorSubsystem;
+    private MecanumCommand mecanumCommand;
+    private MecanumSubsystem mecanumSubsystem;
     private MultiMotorCommand multiMotorCommand;
+    private MultiMotorSubsystem multiMotorSubsystem;
+    private OdometrySubsystem odometrySubsystem;
+    private OutputCommand outputCommand;
+    private WebcamSubsystem webcamSubsystem;
+
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
     private int level = -1;
-    private String position = "initalized";
-
     private boolean running = false;
     private String status = "Uninitialized";
 
@@ -52,34 +54,17 @@ public class ThompsonsTests extends LinearOpMode {
             //TODO: determine which Xprop positions make left, middle, right
 //            propPosition = webcamSubsystem.getXProp();
         }
-
-        level = 5;
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-        level = 0;
-
         waitForStart();
         startThreads();
 
-        status = "level = 1";
-        level = 1;
-        sleep(3000);
+    }
 
-        status = "level = 2";
-        level = 2;
-        sleep(3000);
-
-        status = "level = 3";
-        level = 3;
-        sleep(3000);
-
-        status = "level = 4";
-        level = 4;
-        sleep(3000);
-
-        status = "Completed Op";
-        sleep(10000);
-
+    public void updateTelemetry() {
+        while (opModeIsActive()) {
+            telemetry.addData("spike location", webcamSubsystem.findSpikePosition());
+            telemetry.addData("april tags", webcamSubsystem.getDetections());
+            telemetry.update();
+        }
     }
 
     public void pidProcess(){
@@ -92,33 +77,6 @@ public class ThompsonsTests extends LinearOpMode {
         while (opModeIsActive()) {
             imu.gyroProcess();
             gyroOdometry.process();
-        }
-    }
-
-    public void updateTelemetry() {
-        while (opModeIsActive()) {
-            packet.put("x", gyroOdometry.x);
-            packet.put("y", gyroOdometry.y);
-            packet.put("theta", gyroOdometry.theta);
-            packet.put("xReached", mecanumCommand.isXReached());
-            packet.put("yReached", mecanumCommand.isYReached());
-            packet.put("errorX", mecanumCommand.globalXController.getError()*0.04);
-            packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
-            packet.put("errorY", mecanumCommand.globalYController.getError()*0.04);
-            packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
-
-            telemetry.addData("x", gyroOdometry.x);
-            telemetry.addData("y", gyroOdometry.y);
-            telemetry.addData("theta", gyroOdometry.theta);
-            telemetry.addData("lift power",
-                    multiMotorSubsystem.getPidUp().outputPositional(1000,
-                            multiMotorSubsystem.getPosition()
-                    )
-            );
-            telemetry.addData("status", status);
-
-            dashboard.sendTelemetryPacket(packet);
-            telemetry.update();
         }
     }
     public void liftProcess() {
@@ -146,7 +104,11 @@ public class ThompsonsTests extends LinearOpMode {
         }
     }
 
+    /**
+     * Create the required subsystems.
+     */
     private void instantiateSubsystems() {
+
         imu = new IMUSubsystem(hardwareMap);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
@@ -156,13 +118,15 @@ public class ThompsonsTests extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-        //aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
     }
 
+    /**
+     * Put robot in a ready position.
+     */
     private void readyRobot() {
         imu.resetAngle();
         odometrySubsystem.reset();
@@ -305,5 +269,17 @@ public class ThompsonsTests extends LinearOpMode {
         intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
         intakeCommand.intakeRollerStop();
+    }
+
+    private void detectAprilTag() {
+//        //goToAprilTag = true;
+//        //sleep(1000);
+//        //
+//        //while(goToAprilTag && !isStopRequested()) {
+//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+//        //    }
+//        //    while(!mecanumCommand.isPositionReached(true, true)){}
+
     }
 }
