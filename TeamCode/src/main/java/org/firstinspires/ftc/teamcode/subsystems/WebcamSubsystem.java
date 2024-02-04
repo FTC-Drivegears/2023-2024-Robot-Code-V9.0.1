@@ -37,10 +37,6 @@ public class WebcamSubsystem extends Specifications {
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
-    double fx = 578.272;
-    double fy = 578.272;
-    double cx = 402.145;
-    double cy = 221.506;
     private final VisionPortal VISION_PORTAL;
     private final ContourProcessor CONTOUR_PROCESSOR;
     private final AprilTagProcessor APRIL_TAG_PROCESSOR;
@@ -124,38 +120,6 @@ public class WebcamSubsystem extends Specifications {
 
             }
         });
-    }
-
-    public void switchPipeline(){
-        redIntakePipeline = new RedIntakePipeline();
-        webcam.setPipeline(redIntakePipeline);
-        webcam.setPipeline(null);
-    }
-
-    public ElementPipeline2.ElementPosition position2(){
-        return elementPipeline2.position;
-    }
-
-    public float getX() {
-        return redIntakePipeline.getXPosition();
-    }
-
-    public float getY() {
-        return redIntakePipeline.getYTopPosition();
-    }
-
-    public int getAnalysisR() {
-        return elementPipeline2.getAnalysisR();
-    }
-    public int getAnalysisG() {
-        return elementPipeline2.getAnalysisG();
-    }
-    public int getAnalysisB() {
-        return elementPipeline2.getAnalysisB();
-    }
-
-    public void stopCamera(){
-        webcam.stopStreaming();
     }
 
     public double getXProp(){
