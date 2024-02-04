@@ -125,38 +125,48 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
 //        outputCommand.tiltToBoard();
 
         //move to stack
-//        mecanumCommand.setFinalPosition(true, 30, 129, 43.5, -Math.PI/2);
-//        while(!mecanumCommand.isPositionReached(true, true)) {
-//        }
-//        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30, 129, 43.5, -Math.PI/2);
+        while(!mecanumCommand.isPositionReached(true, true)) {
+        }
+        sleep(2000);
 //        mecanumCommand.setFinalPosition(true, 30, 129, 60.8, -Math.PI/2);
 //        while(!mecanumCommand.isPositionReached(false, false)){
 //        }
 //        sleep(2000);
-//        timer.reset();
-
-        // Middle Checkpoints
-        //Back
-        mecanumCommand.setFinalPosition(true, 30,  130, 8, -Math.PI / 2);
-        while(!mecanumCommand.isPositionPassed());
-
-        //Front
-        mecanumCommand.setFinalPosition(true, 30,  130, -130, -Math.PI / 2);
-        while(!mecanumCommand.isPositionPassed());
-
-
 
 
         //move to board
 
-//        mecanumCommand.setFinalPosition(true, 30,  127, -190, -Math.PI/2);
-//        while(!mecanumCommand.isPositionPassed()) {
-//        }
-//        sleep(2000);
+        mecanumCommand.setFinalPosition(true, 30,  127, -190, -Math.PI/2);
+        while(!mecanumCommand.isPositionPassed()) {
+        }
+        sleep(2000);
 //        mecanumCommand.setFinalPosition(true, 30, 60, -194.56, -Math.PI/2);
 //        while(!mecanumCommand.isPositionReached(true, true)){
 //        }
 //        sleep(2000);
+
+        // April Backup Coordinates
+        // April Backup: Left
+        mecanumCommand.setFinalPosition(true, 30, 75, -220,  - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true, true)){}
+        sleep(2000);
+
+        // April Backup: Middle
+        mecanumCommand.setFinalPosition(true, 30, 65, -220, - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true, true)){}
+        sleep(2000);
+
+        // April Backup: Right
+        mecanumCommand.setFinalPosition(true, 30, 47, -220, - Math.PI / 2);
+        while(!mecanumCommand.isPositionReached(true, true)){}
+        sleep(2000);
+
+        /*
+        Left: 77, -220,  - Math.PI / 2
+        Middle: 70, -220, - Math.PI / 2
+        Right: 55, -220, - Math.PI / 2
+         */
 
         //LIFT DROPOFF
 //        while(timer.milliseconds() < 3500) {
