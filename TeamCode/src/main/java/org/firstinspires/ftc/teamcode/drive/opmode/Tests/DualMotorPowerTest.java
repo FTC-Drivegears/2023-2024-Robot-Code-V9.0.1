@@ -90,7 +90,7 @@ public class DualMotorPowerTest extends LinearOpMode {
             packet.put("intervalValue", multiMotorSubsystem.getIntervalValue());
             packet.put("lastErrorValue", multiMotorSubsystem.getLastErrorValue());
             packet.put("controlleroutput", multiMotorSubsystem.getCascadeOutput());
-            packet.put("outputPositionalValue", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
+//            packet.put("outputPositionalValue", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
             packet.put("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
             packet.put("level", level);
             packet.put("Target Position", targetPosition);
