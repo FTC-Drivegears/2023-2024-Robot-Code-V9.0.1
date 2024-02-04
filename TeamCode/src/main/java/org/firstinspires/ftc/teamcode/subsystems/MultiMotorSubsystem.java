@@ -24,7 +24,7 @@ public class MultiMotorSubsystem extends Specifications {
     private ElapsedTime safetyTimer; //used to make sure the lift doesn't get stuck at the bottom
     private PIDCore pidUp; //the pid used for going upward
     private double kpUp = 0.00381; //k: constant
-    private double kiUp = 0;
+    private double kiUp = (double) 1 /500;
     private double kdUp = 0;
     private PIDCore pidDown; //the pid used for going downward
     private double kpDown = 0.008;
@@ -319,7 +319,7 @@ public class MultiMotorSubsystem extends Specifications {
     public void LiftPositionalProcess(double targetPos){
         runToPosition = true;
 //        TODO: tune integral term
-        power = pidUp.outputPositional(targetPos, getPosition());
+        power = pidUp.outputPositionalSignSwap(targetPos, getPosition());
         moveLift(power);
     }
 

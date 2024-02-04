@@ -66,6 +66,11 @@ public class DualMotorAutoTest extends LinearOpMode {
             packet.put("level", level);
             packet.put("targetPos", multiMotorCommand.getTargetPos());
             packet.put("position", multiMotorSubsystem.getPosition());
+            packet.put("integralSum", multiMotorSubsystem.getPidUp().getIntegralSum());
+            packet.put("error", multiMotorSubsystem.getPidUp().getError());
+            packet.put("integralsign", Math.signum(multiMotorSubsystem.getPidUp().getIntegralSum()));
+            packet.put("errorsign", Math.signum(multiMotorSubsystem.getPidUp().getError()));
+            packet.put("output", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
             telemetry.update();
         }
     }
