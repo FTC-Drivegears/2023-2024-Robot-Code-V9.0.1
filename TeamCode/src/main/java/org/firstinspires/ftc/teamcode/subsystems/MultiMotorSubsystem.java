@@ -47,7 +47,7 @@ public class MultiMotorSubsystem extends Specifications {
     private int encoderI; //I: initial
     private int encoderF; //F: final
     public boolean test = false;
-    private int uncertainty = 3;
+    private int uncertainty = 10;
     private double m = 0.3;
     private double c = 0.1;
     private double downThreshold = -0.3;

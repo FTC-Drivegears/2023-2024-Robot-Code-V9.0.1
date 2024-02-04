@@ -256,35 +256,35 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //activate raising (go to level 5, raising level)
         timer.reset();
 
-        //wait 1500 ms for the lift to raise
-        waitTime(825);
+
+        while(!multiMotorSubsystem.isPositionReached(950));
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
-        timer.reset();
-        waitTime(4000);
+        waitTime(2000);
         level = 1;
 
         //drop off
-        timer.reset();
         outputCommand.openGate();
         waitTime(250);
         outputCommand.closeGate();
         outputCommand.outputWheelIn();
         waitTime(500);
         outputCommand.outputWheelStop();
-        waitTime(2000);
+        waitTime(1500);
 
-        timer.reset();
         level = 5;
+        while(!multiMotorSubsystem.isPositionReached(950));
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         waitTime(1700);
         //retract lift
         level = 0;
+        while(!multiMotorSubsystem.isPositionReached(0));
         //lift mode gets stopped in the thread afterwards
 
     }
     private void waitTime(double milliseconds){
+        timer.reset();
         while(timer.milliseconds() < milliseconds && !isStopRequested()){}
     }
 

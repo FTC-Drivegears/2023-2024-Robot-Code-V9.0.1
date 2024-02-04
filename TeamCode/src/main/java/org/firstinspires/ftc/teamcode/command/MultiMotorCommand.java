@@ -46,7 +46,7 @@ public class MultiMotorCommand {
                 break;
             case 5:
                 multiMotorSubsystem.LiftPositionalProcess(950);
-                targetPosition = 900;
+                targetPosition = 950;
                 break;
             default:
 //                multiMotorSubsystem.moveLift(0);
