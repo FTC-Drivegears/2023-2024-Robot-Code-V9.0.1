@@ -43,7 +43,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     //54, 24, 0
     //57, -22, -0.832
     //38, 80, -1.58
-    private int level = -1;
+    private int level = 5;
     private String position = "initalized";
     private double targetX = 0;
     private double targetY = 0;
@@ -57,6 +57,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private String parkPlace = "left";
     private boolean running = false;
     private boolean raising = false;
+    private String currentState = "";
 
 
     @Override
@@ -110,18 +111,18 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        // Pixel Board Drop-off
 //        switch (position) {
 //            case "left":
-//                moveTo(66, 85, Math.PI / 2);
+//                moveTo(66, 80, Math.PI / 2);
 //                break;
 //            case "middle":
-//                moveTo(76, 85, Math.PI / 2);
+//                moveTo(76, 80, Math.PI / 2);
 //                break;
 //            case "right":
-//                moveTo(90, 85, Math.PI / 2);
+//                moveTo(90, 80, Math.PI / 2);
 //                break;
 //        }
         dropPixel();
 
-        // Parking
+//         Parking
 //        if (parkPlace.equalsIgnoreCase("left")) {
 //            // Checkpoint
 //            moveToCheckpoint(9, 80, Math.PI / 2);
@@ -162,6 +163,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
             packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
             packet.put("errorY", mecanumCommand.globalYController.getError());
             packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
+            packet.put("currentState", currentState);
+            packet.put("level", level);
 
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
@@ -181,11 +184,13 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
     }
     public void liftProcess() {
-        while(opModeIsActive() && running){
-            multiMotorCommand.LiftUpPositional(true, level);
-            if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
-                multiMotorSubsystem.reset();
-                running = false;
+        while(opModeIsActive()){
+            if(running) {
+                multiMotorCommand.LiftUpPositional(true, level);
+                if (level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                    multiMotorSubsystem.reset();
+                    running = false;
+                }
             }
         }
     }
@@ -241,11 +246,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
     private void dropPixel() {
-
+        currentState = "dropping";
         //set dropoff level
-        while(opModeIsActive() && !isStopRequested()) {
-            level = 5;
-        }
+        level = 5;
 
         //activate lift mode in raising
         running = true;
@@ -254,33 +257,35 @@ public class AutonomousFrontBlue extends LinearOpMode {
         timer.reset();
 
         //wait 1500 ms for the lift to raise
-        while(timer.milliseconds() < 1500){}
-
-        //swing out arm and tilt
-        timer.reset();
+        waitTime(825);
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
-
-        while(timer.milliseconds() < 1600){}
+        timer.reset();
+        waitTime(4000);
         level = 1;
 
         //drop off
         timer.reset();
         outputCommand.openGate();
-        while(timer.milliseconds() < 250){}
+        waitTime(250);
         outputCommand.closeGate();
         outputCommand.outputWheelIn();
-        while(timer.milliseconds() < 750){}
+        waitTime(500);
+        outputCommand.outputWheelStop();
+        waitTime(2000);
 
-        //retract lift
         timer.reset();
+        level = 5;
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        while(timer.milliseconds() < 1000){}
-        multiMotorSubsystem.getPidUp().integralReset();
+        waitTime(1700);
+        //retract lift
         level = 0;
         //lift mode gets stopped in the thread afterwards
 
+    }
+    private void waitTime(double milliseconds){
+        while(timer.milliseconds() < milliseconds && !isStopRequested()){}
     }
 
     private void moveTo(double x, double y, double theta) {
