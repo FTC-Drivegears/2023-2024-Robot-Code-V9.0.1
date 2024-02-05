@@ -3,7 +3,15 @@ package org.firstinspires.ftc.teamcode.util;
 import java.util.HashMap;
 import java.util.NoSuchElementException;
 
+/**
+ * Stores information on coordinates used in Ops.
+ * Coordinates shift when setting the initial starting position.
+ */
 public class CoordinateSet {
+
+    /**
+     * The robot's starting position on the field.
+     */
     public enum StartingPoint {
         FRONT_BLUE,
         FRONT_RED,
@@ -11,6 +19,9 @@ public class CoordinateSet {
         BACK_RED
     }
 
+    /**
+     * The names of important locations on the field.
+     */
     public enum KeyPoints {
         ORIGIN,
         SPIKE_CHECKPOINT,
@@ -32,7 +43,16 @@ public class CoordinateSet {
         PARKING_RIGHT,
     }
 
+    /**
+     * A mapping of KeyPoints to a Coordinate object.
+     */
     HashMap<KeyPoints, Coordinate> coordinates;
+
+    /**
+     * Assigns coordinates to key points which depend on the starting point of the robot.
+     *
+     * @param startingPoint the starting point of the robot
+     */
     public CoordinateSet(StartingPoint startingPoint) {
         coordinates.put(KeyPoints.ORIGIN, new Coordinate(0, 0, 0));
         switch (startingPoint) {
@@ -141,11 +161,17 @@ public class CoordinateSet {
         }
     }
 
+    /**
+     * Retrieve a single Coordinate object when supplied a key point.
+     *
+     * @param keyPoint the name of the coordinate to get
+     * @return a Coordinate object of the requested key point
+     */
     public Coordinate getCoordinate(KeyPoints keyPoint) {
         if (!coordinates.containsKey(keyPoint))
             throw new IllegalArgumentException(
                     "Keypoint '" +keyPoint +"' does not exist " +
-                            "(Check that it's been made in the  CoordinateSet)!"
+                            "(Check that it's been made in the CoordinateSet)!"
             );
         return coordinates.get(keyPoint);
     }
