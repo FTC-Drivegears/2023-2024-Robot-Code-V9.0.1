@@ -134,8 +134,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //            // Park
 //            moveTo(133, 111, Math.PI / 2);
 //        }
-
-        stop();
+//
+//        stop();
     }
 
     // Side Processes
@@ -178,6 +178,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("timer", timer.milliseconds());
             telemetry.addData("raising", raising);
             telemetry.addData("running", running);
+            telemetry.addData("liftPos", multiMotorSubsystem.getPosition());
+            telemetry.addData("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
@@ -189,6 +191,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 multiMotorCommand.LiftUpPositional(true, level);
                 if (level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
                     multiMotorSubsystem.reset();
+                    multiMotorSubsystem.getPidUp().integralReset();
                     running = false;
                 }
             }
@@ -260,8 +263,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(!multiMotorSubsystem.isPositionReached(950));
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
-        waitTime(2000);
+        waitTime(1000);
         level = 1;
+        while(!multiMotorSubsystem.isPositionReached(450));
+        waitTime(250);
 
         //drop off
         outputCommand.openGate();
@@ -279,7 +284,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
         waitTime(1700);
         //retract lift
         level = 0;
-        while(!multiMotorSubsystem.isPositionReached(0));
+        while (running && !isStopRequested());
+        multiMotorSubsystem.reset();
+
         //lift mode gets stopped in the thread afterwards
 
     }
