@@ -77,65 +77,65 @@ public class AutonomousFrontBlue extends LinearOpMode {
         String position = "left";
 
         //Spike Drop-off
-//        moveToCheckpoint(71.5, 0, 0);
-//        switch (position) {
-//            case "left":
-//                moveTo(107.76, 19.99, 0);
-//                break;
-//            case "middle":
-//                moveTo(120.36, -12.48, 0);
-//                break;
-//            case "right":
-//                moveTo(69.48, -22, 2.11);
-//                break;
-//        }
-//        releaseIntakePixel();
-//
-//        //Middle Back
-//        moveToCheckpoint(133, 31, Math.PI / 2);
-//
-//        //Middle Front
-//        moveToCheckpoint(80.5, 49, Math.PI / 2);
-//
-//        // Detecting April Tag Code
-//        //goToAprilTag = true;
-//        //sleep(1000);
-//        //
-//        //while(goToAprilTag && !isStopRequested()) {
-//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-//        //    }
-//        //    while(!mecanumCommand.isPositionReached(true, true)){}
-//        //}
-//
-//        // Pixel Board Drop-off
-//        switch (position) {
-//            case "left":
-//                moveTo(66, 80, Math.PI / 2);
-//                break;
-//            case "middle":
-//                moveTo(76, 80, Math.PI / 2);
-//                break;
-//            case "right":
-//                moveTo(90, 80, Math.PI / 2);
-//                break;
-//        }
+        moveToCheckpoint(71.5, 0, 0);
+        switch (position) {
+            case "left":
+                moveTo(107.76, 19.99, 0);
+                break;
+            case "middle":
+                moveTo(120.36, -12.48, 0);
+                break;
+            case "right":
+                moveTo(69.48, -22, 2.11);
+                break;
+        }
+        releaseIntakePixel();
+
+        //Middle Back
+        moveToCheckpoint(133, 31, Math.PI / 2);
+
+        //Middle Front
+        moveToCheckpoint(80.5, 49, Math.PI / 2);
+
+        // Detecting April Tag Code
+        //goToAprilTag = true;
+        //sleep(1000);
+        //
+        //while(goToAprilTag && !isStopRequested()) {
+        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+        //    }
+        //    while(!mecanumCommand.isPositionReached(true, true)){}
+        //}
+
+        // Pixel Board Drop-off
+        switch (position) {
+            case "left":
+                moveTo(66, 80, Math.PI / 2);
+                break;
+            case "middle":
+                moveTo(76, 80, Math.PI / 2);
+                break;
+            case "right":
+                moveTo(90, 80, Math.PI / 2);
+                break;
+        }
         dropPixel();
 
 //         Parking
-//        if (parkPlace.equalsIgnoreCase("left")) {
-//            // Checkpoint
-//            moveToCheckpoint(9, 80, Math.PI / 2);
-//            // Park
-//            moveTo(9, 111, Math.PI / 2);
-//        } else {
-//            // Checkpoint
-//            moveToCheckpoint(133, 80, Math.PI / 2);
-//            // Park
-//            moveTo(133, 111, Math.PI / 2);
-//        }
-//
-//        stop();
+        if (parkPlace.equalsIgnoreCase("left")) {
+            // Checkpoint
+            moveToCheckpoint(9, 80, Math.PI / 2);
+            // Park
+            moveTo(9, 111, Math.PI / 2);
+        } else {
+            // Checkpoint
+            moveToCheckpoint(133, 80, Math.PI / 2);
+            // Park
+            moveTo(133, 111, Math.PI / 2);
+        }
+
+        stop();
     }
 
     // Side Processes
@@ -189,11 +189,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(opModeIsActive()){
             if(running) {
                 multiMotorCommand.LiftUpPositional(true, level);
-                if (level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
-                    multiMotorSubsystem.reset();
-                    multiMotorSubsystem.getPidUp().integralReset();
-                    running = false;
-                }
+            }
+            if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                multiMotorSubsystem.reset();
+                multiMotorSubsystem.getPidUp().integralReset();
+                running = false;
             }
         }
     }

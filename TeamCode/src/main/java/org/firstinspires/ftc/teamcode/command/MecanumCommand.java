@@ -449,7 +449,7 @@ public class MecanumCommand {
     }
 
     public boolean isPositionPassed(){
-        return getXDifference() < 6 && getYDifference() < 6 && getThetaDifference() < 0.3;
+        return getXDifference() < 8 && getYDifference() < 8 && getThetaDifference() < 0.3;
     }
 
     public boolean isPositionReached(boolean xtol, boolean ytol){
