@@ -74,7 +74,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         waitForStart();
         startThreads();
 
-        String position = "left";
+        String position = "right";
 
         //Spike Drop-off
         moveToCheckpoint(71.5, 0, 0);
@@ -83,7 +83,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 moveTo(107.76, 19.99, 0);
                 break;
             case "middle":
-                moveTo(120.36, -12.48, 0);
+                moveTo(124.36, -12.48, 0);
                 break;
             case "right":
                 moveTo(69.48, -22, 2.11);
