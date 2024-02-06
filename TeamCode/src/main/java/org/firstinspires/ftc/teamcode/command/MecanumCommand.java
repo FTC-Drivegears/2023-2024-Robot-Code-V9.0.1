@@ -57,7 +57,7 @@ public class MecanumCommand {
     private static double kiy = 0.08;
     private static double kptheta = 2.5;
     private static double kdtheta = 0;
-    private static double kitheta = 0.5;
+    private static double kitheta = 1;
     private double ex = 0;
     private double ey = 0;
     private double etheta = 0;
