@@ -189,11 +189,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(opModeIsActive()){
             if(running) {
                 multiMotorCommand.LiftUpPositional(true, level);
-            }
-            if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
-                multiMotorSubsystem.reset();
-                multiMotorSubsystem.getPidUp().integralReset();
-                running = false;
+                if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                    multiMotorSubsystem.reset();
+                    multiMotorSubsystem.getPidUp().integralReset();
+                    running = false;
+                }
             }
         }
     }
