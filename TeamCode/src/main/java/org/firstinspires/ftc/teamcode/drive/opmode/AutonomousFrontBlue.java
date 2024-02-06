@@ -196,7 +196,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 }
             }
             else{
-                multiMotorSubsystem.reset();
+//                multiMotorSubsystem.reset();
                 multiMotorSubsystem.getPidUp().integralReset();
             }
         }
@@ -264,12 +264,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         timer.reset();
 
 
-        while(!multiMotorSubsystem.isPositionReached(950));
+        while(!multiMotorSubsystem.isPositionReached(900));
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
         waitTime(1000);
         level = 1;
-        while(!multiMotorSubsystem.isPositionReached(450));
+        while(!multiMotorSubsystem.isPositionReached(400));
         waitTime(250);
 
         //drop off
@@ -282,7 +282,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         waitTime(1500);
 
         level = 5;
-        while(!multiMotorSubsystem.isPositionReached(950));
+        while(!multiMotorSubsystem.isPositionReached(900));
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         waitTime(1700);
