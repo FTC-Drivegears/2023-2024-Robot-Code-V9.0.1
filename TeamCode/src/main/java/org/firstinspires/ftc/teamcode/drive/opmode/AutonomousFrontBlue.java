@@ -197,6 +197,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             }
             else{
                 multiMotorSubsystem.reset();
+                multiMotorSubsystem.getPidUp().integralReset();
             }
         }
     }
