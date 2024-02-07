@@ -142,44 +142,45 @@ public class MecanumCommand {
         mecanumSubsystem.turnOffInternalPID();
     }
 
-    public void pidProcess(){
+    public void pidProcess() {
         ex = globalXController.outputPositionalIntegralControl(xFinal, gyroOdometry.x);
         ey = -globalYController.outputPositionalIntegralControl(yFinal, gyroOdometry.y);
         etheta = -globalThetaController.outputPositionalIntegralControl(thetaFinal, gyroOdometry.theta);
 
-        if(isXReached()){
+        if (isXReached()) {
             globalXController.integralReset();
         }
-        if(isYReached()){
+        if (isYReached()) {
             globalYController.integralReset();
         }
-        if(isThetaReached()){
+        if (isThetaReached()) {
             globalThetaController.integralReset();
         }
 
-        if(isXPassed()){
+        if (isXPassed()) {
             globalXController.activateIntegral();
-        }
-        else{
+        } else {
             globalXController.deactivateIntegral();
         }
-        if(isYPassed()){
+
+        if (isYPassed()) {
             globalYController.activateIntegral();
-        }
-        else{
+        } else {
             globalYController.deactivateIntegral();
         }
-        if(isThetaPassed()){
+
+        if (isThetaPassed()) {
             globalThetaController.activateIntegral();
-        }
-        else{
+        } else {
             globalThetaController.deactivateIntegral();
         }
-        if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
-            double max = Math.max(Math.abs(ex), Math.abs(ey));
-            ex = ex / max * velocity;
-            ey = ey / max * velocity;
-            etheta = etheta / max * velocity;
+
+        double max = Math.max(Math.abs(ex), Math.abs(ey));
+        if (max > velocity) {
+            double scalar = velocity / max;
+            ex *= scalar;
+            ey *= scalar;
+            etheta *= scalar;
         }
         moveGlobalPartial(true, ex, ey, etheta);
     }
