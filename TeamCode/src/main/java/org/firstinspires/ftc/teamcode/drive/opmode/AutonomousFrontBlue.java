@@ -77,67 +77,62 @@ public class AutonomousFrontBlue extends LinearOpMode {
         String position = "right";
 
         //Spike Drop-off
-//        moveToCheckpoint(71.5, 0, 0);
-//        switch (position) {
-//            case "left":
-//                moveTo(107.76, 19.99, 0);
-//                break;
-//            case "middle":
-//                moveTo(124.36, -12.48, 0);
-//                break;
-//            case "right":
-//                moveTo(69.48, -22, 2.11);
-//                break;
-//        }
-//        releaseIntakePixel();
-//
-//        //Middle Back
-//        moveToCheckpoint(133, 31, Math.PI / 2);
-//
-//        //Middle Front
-//        moveToCheckpoint(80.5, 49, Math.PI / 2);
-//
-//        // Detecting April Tag Code
-//        //goToAprilTag = true;
-//        //sleep(1000);
-//        //
-//        //while(goToAprilTag && !isStopRequested()) {
-//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-//        //    }
-//        //    while(!mecanumCommand.isPositionReached(true, true)){}
-//        //}
-//
-//        // Pixel Board Drop-off
-//        switch (position) {
-//            case "left":
-//                moveTo(66, 80, Math.PI / 2);
-//                break;
-//            case "middle":
-//                moveTo(76, 80, Math.PI / 2);
-//                break;
-//            case "right":
-//                moveTo(90, 80, Math.PI / 2);
-//                break;
-//        }
-//        dropPixel();
-//
-////         Parking
-//        if (parkPlace.equalsIgnoreCase("left")) {
-//            // Checkpoint
-//            moveToCheckpoint(9, 80, Math.PI / 2);
-//            // Park
-//            moveTo(9, 111, Math.PI / 2);
-//        } else {
-//            // Checkpoint
-//            moveToCheckpoint(133, 80, Math.PI / 2);
-//            // Park
-//            moveTo(133, 111, Math.PI / 2);
-//        }
+        moveToCheckpoint(71.5, 0, 0);
+        switch (position) {
+            case "left":
+                moveTo(107.76, 19.99, 0);
+                break;
+            case "middle":
+                moveTo(124.36, -12.48, 0);
+                break;
+            case "right":
+                moveTo(69.48, -22, 2.11);
+                break;
+        }
+        releaseIntakePixel();
 
-        while(opModeIsActive() && !isStopRequested()) {
-            dropPixel();
-            sleep(5000);
+        //Middle Back
+        moveToCheckpoint(133, 31, Math.PI / 2);
+
+        //Middle Front
+        moveToCheckpoint(80.5, 49, Math.PI / 2);
+
+        // Detecting April Tag Code
+        //goToAprilTag = true;
+        //sleep(1000);
+        //
+        //while(goToAprilTag && !isStopRequested()) {
+        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+        //    }
+        //    while(!mecanumCommand.isPositionReached(true, true)){}
+        //}
+
+        // Pixel Board Drop-off
+        switch (position) {
+            case "left":
+                moveTo(66, 80, Math.PI / 2);
+                break;
+            case "middle":
+                moveTo(76, 80, Math.PI / 2);
+                break;
+            case "right":
+                moveTo(90, 80, Math.PI / 2);
+                break;
+        }
+        dropPixel();
+
+//         Parking
+        if (parkPlace.equalsIgnoreCase("left")) {
+            // Checkpoint
+            moveToCheckpoint(9, 80, Math.PI / 2);
+            // Park
+            moveTo(9, 111, Math.PI / 2);
+        } else {
+            // Checkpoint
+            moveToCheckpoint(133, 80, Math.PI / 2);
+            // Park
+            moveTo(133, 111, Math.PI / 2);
         }
         stop();
     }
@@ -251,7 +246,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
 
     private void startThreads() {
-        Executor executor = Executors.newFixedThreadPool(5);
+        Executor executor = Executors.newFixedThreadPool(6);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
@@ -293,7 +288,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(!multiMotorSubsystem.isPositionReached(950));
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        waitTime(1300);
+        waitTime(1000);
         //retract lift
         level = 0;
         while(!multiMotorSubsystem.isPositionReached(0) && !(multiMotorSubsystem.getMainPower() == 0) && multiMotorSubsystem.getPosition() < 10);
