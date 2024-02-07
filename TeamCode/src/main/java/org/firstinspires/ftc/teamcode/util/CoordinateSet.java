@@ -54,6 +54,7 @@ public class CoordinateSet {
      * @param startingPoint the starting point of the robot
      */
     public CoordinateSet(StartingPoint startingPoint) {
+        coordinates = new HashMap<>();
         coordinates.put(KeyPoints.ORIGIN, new Coordinate(0, 0, 0));
         switch (startingPoint) {
             case FRONT_BLUE:
