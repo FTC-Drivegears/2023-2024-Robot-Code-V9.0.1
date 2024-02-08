@@ -56,6 +56,8 @@ public class ThompsonsTests extends LinearOpMode {
         startThreads();
         status = "Initialized";
 
+
+
         for (int i = 30; i > 0; i--) {
             status = "Test Complete - Closing in " +i +" seconds";
             sleep(1000);

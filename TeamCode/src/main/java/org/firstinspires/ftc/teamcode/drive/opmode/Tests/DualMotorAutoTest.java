@@ -28,18 +28,16 @@ public class DualMotorAutoTest extends LinearOpMode {
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
         waitForStart();
-        CompletableFuture.runAsync(this::liftProcess);
+//        CompletableFuture.runAsync(this::liftProcess);
         CompletableFuture.runAsync(this::runTelemetry);
 
         while(opModeIsActive()) {
             elapsedTime.reset();
-            while (elapsedTime.milliseconds() < 5000) {
-                level = 1;
-            }
+            multiMotorCommand.LiftUp(true, 1);
+            while(elapsedTime.milliseconds() < 5000);
             elapsedTime.reset();
-            while (elapsedTime.milliseconds() < 5000) {
-                level = 2;
-            }
+            multiMotorCommand.LiftUp(true, 2);
+            while(elapsedTime.milliseconds() < 5000);
             elapsedTime.reset();
 //            level = 0;
         }
