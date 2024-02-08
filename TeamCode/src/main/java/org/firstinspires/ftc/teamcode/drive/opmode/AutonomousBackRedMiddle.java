@@ -324,4 +324,8 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         intakeCommand.stopIntake();
     }
 
+    public void pickupPixels(){
+
+    }
+
 }
