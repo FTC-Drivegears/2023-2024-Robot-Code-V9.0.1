@@ -64,13 +64,17 @@ public class MultiMotorCommand {
 
         switch(level){
             case 0:
+//                interval1 = new Interval(1000, 3400, -2000);
+//                interval2 = new Interval(500, 1000, -700);
+//                interval3 = new Interval(90, 500, -100);
+//                interval4 = new Interval(5, 90, -50);
+//                interval5 = new Interval(-400, 5, 0);
                 interval1 = new Interval(1000, 3400, -2000);
-                interval2 = new Interval(500, 1000, -700);
-                interval3 = new Interval(90, 500, -100);
-                interval4 = new Interval(5, 90, -50);
-                interval5 = new Interval(-400, 5, 0);
+                interval2 = new Interval(500, 1000, -1500);
+                interval3 = new Interval(-5, 500, -500);
+                interval4 = new Interval(-400, -5, 0);
                 if(run) {
-                    multiMotorSubsystem.LiftCascadeProcess(0, interval1, interval2, interval3, interval4, interval5);
+                    multiMotorSubsystem.LiftCascadeProcess(-5, interval1, interval2, interval3, interval4);
                 }
                 break;
             case 1:
@@ -83,10 +87,10 @@ public class MultiMotorCommand {
                 }
                 break;
             case 2:
-                interval1 = new Interval(-400, 850, 2000);
-                interval2 = new Interval(850, 1075, 1700);
-                interval3 = new Interval(1075, 1190, 900);
-                interval4 = new Interval(1190, 5000, 0);
+                interval1 = new Interval(-400, 900, 2000);
+                interval2 = new Interval(900, 1075, 1700);
+                interval3 = new Interval(1075, 1150, 900);
+                interval4 = new Interval(1150, 5000, 0);
                 if(run) {
                     multiMotorSubsystem.LiftCascadeProcess(1200, interval1, interval2, interval3, interval4);
                 }

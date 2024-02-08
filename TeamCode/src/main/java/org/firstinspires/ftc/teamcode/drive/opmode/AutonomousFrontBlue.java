@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -36,6 +38,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
+    private List<LynxModule> allHubs; //GET ALL LYNX MODULES
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
@@ -62,6 +65,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for(LynxModule hub : allHubs){
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        } //BULK READS
+
         instantiateSubsystems();
         readyRobot();
 
@@ -77,78 +85,65 @@ public class AutonomousFrontBlue extends LinearOpMode {
         String position = "right";
 
         //Spike Drop-off
-        moveToCheckpoint(71.5, 0, 0);
-        switch (position) {
-            case "left":
-                moveTo(107.76, 19.99, 0);
-                break;
-            case "middle":
-                moveTo(124.36, -12.48, 0);
-                break;
-            case "right":
-                moveTo(69.48, -22, 2.11);
-                break;
-        }
-        releaseIntakePixel();
-
-        //Middle Back
-        moveToCheckpoint(133, 31, Math.PI / 2);
-
-        //Middle Front
-        multiMotorSubsystem.reset();
-        //set dropoff level
-        level = 5;
-
-        //activate lift mode in raising
-        running = true;
-
-        //activate raising (go to level 5, raising level)
-        timer.reset();
-
-
-        while(!multiMotorSubsystem.isPositionReached(950));
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-        waitTime(1000);
-        moveToCheckpoint(80.5, 49, Math.PI / 2);
-
-        // Detecting April Tag Code
-        //goToAprilTag = true;
-        //sleep(1000);
-        //
-        //while(goToAprilTag && !isStopRequested()) {
-        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-        //    }
-        //    while(!mecanumCommand.isPositionReached(true, true)){}
-        //}
-
-        // Pixel Board Drop-off
-        switch (position) {
-            case "left":
-                moveTo(66, 80, Math.PI / 2);
-                break;
-            case "middle":
-                moveTo(76, 80, Math.PI / 2);
-                break;
-            case "right":
-                moveTo(90, 80, Math.PI / 2);
-                break;
-        }
+//        moveToCheckpoint(71.5, 0, 0);
+//        switch (position) {
+//            case "left":
+//                moveTo(107.76, 19.99, 0);
+//                break;
+//            case "middle":
+//                moveTo(124.36, -12.48, 0);
+//                break;
+//            case "right":
+//                moveTo(69.48, -22, 2.11);
+//                break;
+//        }
+//        releaseIntakePixel();
+//
+//        //Middle Back
+//        moveToCheckpoint(133, 31, Math.PI / 2);
+//
+//        //Middle Front
+//
+//        moveToCheckpoint(80.5, 49, Math.PI / 2);
+//
+//        // Detecting April Tag Code
+//        //goToAprilTag = true;
+//        //sleep(1000);
+//        //
+//        //while(goToAprilTag && !isStopRequested()) {
+//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+//        //    }
+//        //    while(!mecanumCommand.isPositionReached(true, true)){}
+//        //}
+//
+//        // Pixel Board Drop-off
+//        switch (position) {
+//            case "left":
+//                moveTo(66, 80, Math.PI / 2);
+//                break;
+//            case "middle":
+//                moveTo(76, 80, Math.PI / 2);
+//                break;
+//            case "right":
+//                moveTo(90, 80, Math.PI / 2);
+//                break;
+//        }
         dropPixel();
 
 //         Parking
-        if (parkPlace.equalsIgnoreCase("left")) {
-            // Checkpoint
-            moveToCheckpoint(9, 80, Math.PI / 2);
-            // Park
-            moveTo(9, 111, Math.PI / 2);
-        } else {
-            // Checkpoint
-            moveToCheckpoint(133, 80, Math.PI / 2);
-            // Park
-            moveTo(133, 111, Math.PI / 2);
-        }
+//        if (parkPlace.equalsIgnoreCase("left")) {
+//            // Checkpoint
+//            moveToCheckpoint(9, 80, Math.PI / 2);
+//            // Park
+//            moveTo(9, 111, Math.PI / 2);
+//        } else {
+//            // Checkpoint
+//            moveToCheckpoint(133, 80, Math.PI / 2);
+//            // Park
+//            moveTo(133, 111, Math.PI / 2);
+//        }
+        sleep(5000);
         stop();
     }
 
@@ -205,17 +200,14 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
     public void liftProcess() {
         while(opModeIsActive() && !isStopRequested()){
-            if(running) {
-                multiMotorCommand.LiftUpPositional(true, level);
-                if (level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+//            if(running) {
+                multiMotorCommand.LiftUp(running, level);
+                if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                    level = /*-1*/0;
                     multiMotorSubsystem.reset();
                     running = false;
                 }
-            }
-            else{
-                multiMotorSubsystem.moveLift(0);
-                multiMotorSubsystem.getPidUp().integralReset();
-            }
+//            }
         }
     }
 
@@ -261,9 +253,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
 
     private void startThreads() {
-        Executor executor = Executors.newFixedThreadPool(6);
+        Executor executor = Executors.newFixedThreadPool(4);
         CompletableFuture.runAsync(this::updateOdometry, executor);
-        CompletableFuture.runAsync(this::updateTelemetry, executor);
+//        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
@@ -289,6 +281,21 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
     private void dropPixel() {
         currentState = "dropping";
+        multiMotorSubsystem.reset();
+        //set dropoff level
+        level = 5;
+
+        //activate lift mode in raising
+        running = true;
+
+        //activate raising (go to level 5, raising level)
+        timer.reset();
+
+
+        while(!multiMotorSubsystem.isPositionReached(950));
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        waitTime(1000);
         level = 1;
         while(!multiMotorSubsystem.isPositionReached(450));
         waitTime(250);

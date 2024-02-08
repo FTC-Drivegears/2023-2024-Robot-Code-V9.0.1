@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
 import org.firstinspires.ftc.teamcode.command.MultiMotorCommand;
 import org.firstinspires.ftc.teamcode.command.OutputCommand;
+import org.firstinspires.ftc.teamcode.drive.opmode.COTeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 
@@ -112,10 +113,10 @@ public class DualMotorPowerTest extends LinearOpMode {
     public void liftProcess(){
         while(opModeIsActive()){
             multiMotorCommand.LiftUp(true, level);
-            if(level == 0) {
-                if ((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
-                    multiMotorSubsystem.reset();
-                }
+            if(level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                level = /*-1*/0;
+                multiMotorSubsystem.reset();
+                multiMotorSubsystem.moveLift(0);
             }
         }
     }

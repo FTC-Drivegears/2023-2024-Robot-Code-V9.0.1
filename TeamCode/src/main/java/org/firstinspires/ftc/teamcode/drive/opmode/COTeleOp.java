@@ -308,12 +308,12 @@ public class COTeleOp extends LinearOpMode {
     public void LiftProcess(){
         while(opModeIsActive()){
             if(raising){
-                multiMotorCommand.LiftUpPositional(running, raiseLevel);
+                multiMotorCommand.LiftUp(running, raiseLevel);
             }
             else {
-                multiMotorCommand.LiftUpPositional(running, level);
+                multiMotorCommand.LiftUp(running, level);
             }
-            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
                 pixelCounter = 0;
                 level = /*-1*/0;
                 multiMotorSubsystem.reset();
