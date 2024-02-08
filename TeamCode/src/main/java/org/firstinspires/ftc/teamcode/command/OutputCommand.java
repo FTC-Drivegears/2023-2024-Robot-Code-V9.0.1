@@ -94,11 +94,8 @@ public class OutputCommand {
     }
 
     public void tiltToIdle(){
-<<<<<<< HEAD
         //leftTilt.setPosition(0.125);
         //rightTilt.setPosition(0.125);
-=======
->>>>>>> d513a9fd6226f7953964984611228943dd6f1b97
         leftTilt.setPosition(0.05);
         rightTilt.setPosition(0.05);
     }
