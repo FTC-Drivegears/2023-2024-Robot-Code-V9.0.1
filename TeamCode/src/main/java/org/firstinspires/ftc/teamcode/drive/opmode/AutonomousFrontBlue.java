@@ -281,14 +281,22 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.intakeIn(0.5);
         //move to front
         moveToCheckpoint(80.5, 49, Math.PI / 2);
+        sleep(400);
+
+        // Couch out pixels that are stuck
+        intakeCommand.intakeRollerOut();
+        sleep(100);
+        intakeCommand.intakeIn(0.5);
+        sleep(400);
+
         //stop intake
         intakeCommand.stopIntake();
         //raise intake
         intakeCommand.raiseIntake();
         //move back and release excess pixels
-        moveToCheckpoint(133, 31, Math.PI / 2);
         intakeCommand.intakeOut(0.5);
-        waitTime(1000);
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        waitTime(300);
     }
     private void raisingLift() {
         currentState = "raising lift";
