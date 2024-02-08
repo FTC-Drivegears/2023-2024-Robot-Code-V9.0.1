@@ -23,7 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-@Autonomous(name="Autonomous Back Red Middle ")
+@Autonomous(name="Autonomous Back Blue Middle ")
 public class AutonomousBackBlueMiddle extends LinearOpMode {
     private MecanumSubsystem mecanumSubsystem;
     private MecanumCommand mecanumCommand;
@@ -74,7 +74,7 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         waitForStart();
         startThreads();
 
-        String position = "middle";
+        String position = "right";
 
         //Spike Drop-off
         moveToCheckpoint(71.5, 0, 0);
@@ -92,13 +92,14 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         releaseIntakePixel();
 
 
-        moveToCheckpoint(129, 43.5, -Math.PI / 2);
+        moveToCheckpoint(129, -43.5, Math.PI / 2);
 
 
-        moveToCheckpoint(129, 60.8, -Math.PI / 2);
+        moveToCheckpoint(129, -54.8, Math.PI / 2);
+        pickupPixels();
 //middle
-        moveToCheckpoint(130, 8, -Math.PI / 2);
-        moveToCheckpoint(130, -130, -Math.PI / 2);
+        moveToCheckpoint(130, -8, Math.PI / 2);
+        moveToCheckpoint(130, 130, Math.PI / 2);
 
         // Detecting April Tag Code
         //goToAprilTag = true;
@@ -110,19 +111,19 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         //    }
         //    while(!mecanumCommand.isPositionReached(true, true)){}
         //}
-
         // Pixel Board Drop-off
-        moveToCheckpoint(127, -181.2, -Math.PI / 2);
-        moveToCheckpoint(60, -194.56, -Math.PI / 2);
+
+        moveToCheckpoint(127, 181.2, Math.PI / 2);
+        moveToCheckpoint(60, 194.56, Math.PI / 2);
         switch (position) {
             case "left":
-                moveTo(80, -220, -Math.PI / 2);
+                moveTo(53, 213, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(73, -220, -Math.PI / 2);
+                moveTo(69, 213, Math.PI / 2);
                 break;
             case "right":
-                moveTo(57, -220, -Math.PI / 2);
+                moveTo(80, 213, Math.PI / 2);
                 break;
         }
         dropPixel();
@@ -130,14 +131,14 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
 //         Parking
         if (parkPlace.equalsIgnoreCase("left")) {
             // Checkpoint
-            moveToCheckpoint(9, -210, Math.PI / 2);
+            moveToCheckpoint(9, 210, -Math.PI / 2);
             // Park
-            moveTo(9, -250, Math.PI / 2);
+            moveTo(9, 250, -Math.PI / 2);
         } else {
             // Checkpoint
-            moveToCheckpoint(133, -210, Math.PI / 2);
+            moveToCheckpoint(133, 210, -Math.PI / 2);
             // Park
-            moveTo(133, -250, Math.PI / 2);
+            moveTo(133, 250, -Math.PI / 2);
         }
 
         stop();
@@ -325,7 +326,12 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
     }
 
     public void pickupPixels(){
-
+        intakeCommand.lowerIntake();
+        intakeCommand.intakeIn(1);
+        timer.reset();
+        while(timer.milliseconds() < 1000);
+        intakeCommand.raiseIntake();
+        intakeCommand.stopIntake();
     }
 
 }

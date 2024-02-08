@@ -136,6 +136,17 @@ public class AutonomousFrontRed extends LinearOpMode {
                 break;
         }
         dropPixel();
+        moveToCheckpoint(71.5, 0, -Math.PI / 2);
+        moveToCheckpoint(71.5, 135, -Math.PI / 2);
+        moveToCheckpoint(95.5, 185, -Math.PI / 2);
+        pickupPixels();
+
+        moveToCheckpoint(71.5, 135, -Math.PI / 2);
+        moveToCheckpoint(71.5, 0, -Math.PI / 2);
+        moveTo(90, -80, -Math.PI / 2);
+        dropPixel();
+
+
 
 //         Parking
         if (parkPlace.equalsIgnoreCase("left")) {
@@ -312,5 +323,12 @@ public class AutonomousFrontRed extends LinearOpMode {
         intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
     }
-
+    public void pickupPixels(){
+        intakeCommand.lowerIntake();
+        intakeCommand.intakeIn(1);
+        timer.reset();
+        while(timer.milliseconds() < 1000);
+        intakeCommand.raiseIntake();
+        intakeCommand.stopIntake();
+    }
 }

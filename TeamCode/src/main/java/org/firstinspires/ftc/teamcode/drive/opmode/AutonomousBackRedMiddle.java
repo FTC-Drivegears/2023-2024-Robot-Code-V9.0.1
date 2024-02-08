@@ -74,7 +74,7 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         waitForStart();
         startThreads();
 
-        String position = "middle";
+        String position = "left";
 
         //Spike Drop-off
         moveToCheckpoint(71.5, 0, 0);
@@ -95,7 +95,8 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
         moveToCheckpoint(129, 43.5, -Math.PI / 2);
 
 
-        moveToCheckpoint(129, 60.8, -Math.PI / 2);
+        moveToCheckpoint(129, 55.8, -Math.PI / 2);
+        pickupPixels();
 //middle
         moveToCheckpoint(130, 8, -Math.PI / 2);
         moveToCheckpoint(130, -130, -Math.PI / 2);
@@ -325,7 +326,12 @@ public class AutonomousBackRedMiddle extends LinearOpMode {
     }
 
     public void pickupPixels(){
-
+        intakeCommand.lowerIntake();
+        intakeCommand.intakeIn(1);
+        timer.reset();
+        while(timer.milliseconds() < 1000);
+        intakeCommand.raiseIntake();
+        intakeCommand.stopIntake();
     }
 
 }

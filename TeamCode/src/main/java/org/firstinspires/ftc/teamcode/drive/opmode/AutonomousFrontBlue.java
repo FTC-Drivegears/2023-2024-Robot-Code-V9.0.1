@@ -84,65 +84,76 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         String position = "right";
 
-        //Spike Drop-off
-//        moveToCheckpoint(71.5, 0, 0);
-//        switch (position) {
-//            case "left":
-//                moveTo(107.76, 19.99, 0);
-//                break;
-//            case "middle":
-//                moveTo(124.36, -12.48, 0);
-//                break;
-//            case "right":
-//                moveTo(69.48, -22, 2.11);
-//                break;
-//        }
-//        releaseIntakePixel();
-//
-//        //Middle Back
-//        moveToCheckpoint(133, 31, Math.PI / 2);
-//
-//        //Middle Front
-//
-//        moveToCheckpoint(80.5, 49, Math.PI / 2);
-//
-//        // Detecting April Tag Code
-//        //goToAprilTag = true;
-//        //sleep(1000);
-//        //
-//        //while(goToAprilTag && !isStopRequested()) {
-//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-//        //    }
-//        //    while(!mecanumCommand.isPositionReached(true, true)){}
-//        //}
-//
-//        // Pixel Board Drop-off
-//        switch (position) {
-//            case "left":
-//                moveTo(66, 80, Math.PI / 2);
-//                break;
-//            case "middle":
-//                moveTo(76, 80, Math.PI / 2);
-//                break;
-//            case "right":
-//                moveTo(90, 80, Math.PI / 2);
-//                break;
-//        }
-        dropPixel();
+      //  Spike Drop-off
+        moveToCheckpoint(71.5, 0, 0);
+        switch (position) {
+            case "left":
+                moveTo(107.76, 19.99, 0);
+                break;
+            case "middle":
+                moveTo(124.36, -12.48, 0);
+                break;
+            case "right":
+                moveTo(69.48, -22, 2.11);
+                break;
+        }
+        releaseIntakePixel();
 
-//         Parking
-//        if (parkPlace.equalsIgnoreCase("left")) {
-//            // Checkpoint
-//            moveToCheckpoint(9, 80, Math.PI / 2);
-//            // Park
-//            moveTo(9, 111, Math.PI / 2);
-//        } else {
-//            // Checkpoint
-//            moveToCheckpoint(133, 80, Math.PI / 2);
-//            // Park
-//            moveTo(133, 111, Math.PI / 2);
-//        }
+        //Middle Back
+        moveToCheckpoint(133, 31, Math.PI / 2);
+
+        //Middle Front
+
+        moveToCheckpoint(80.5, 49, Math.PI / 2);
+
+        // Detecting April Tag Code
+        //goToAprilTag = true;
+        //sleep(1000);
+        //
+        //while(goToAprilTag && !isStopRequested()) {
+        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+        //    }
+        //    while(!mecanumCommand.isPositionReached(true, true)){}
+        //}
+
+        // Pixel Board Drop-off
+        switch (position) {
+            case "left":
+                moveTo(66, 80, Math.PI / 2);
+                break;
+            case "middle":
+                moveTo(76, 80, Math.PI / 2);
+                break;
+            case "right":
+                moveTo(90, 80, Math.PI / 2);
+                break;
+        }
+//        dropPixel();
+        moveToCheckpoint(71.5, 0, Math.PI / 2);
+        moveToCheckpoint(71.5, -135, Math.PI / 2);
+        moveToCheckpoint(95.5, -185, Math.PI / 2);
+ //       pickupPixels();
+
+        moveToCheckpoint(71.5, -135, Math.PI / 2);
+        moveToCheckpoint(71.5, 0, Math.PI / 2);
+        moveTo(90, 80, Math.PI / 2);
+  //      dropPixel();
+
+
+
+         //Parking
+        if (parkPlace.equalsIgnoreCase("left")) {
+            // Checkpoint
+            moveToCheckpoint(9, 80, Math.PI / 2);
+            // Park
+            moveTo(9, 111, Math.PI / 2);
+        } else {
+            // Checkpoint
+            moveToCheckpoint(133, 80, Math.PI / 2);
+            // Park
+            moveTo(133, 111, Math.PI / 2);
+        }
         sleep(5000);
         stop();
     }
@@ -345,5 +356,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
     }
-
+    public void pickupPixels(){
+        intakeCommand.lowerIntake();
+        intakeCommand.intakeIn(1);
+        timer.reset();
+        while(timer.milliseconds() < 1000);
+        intakeCommand.raiseIntake();
+        intakeCommand.stopIntake();
+    }
 }
