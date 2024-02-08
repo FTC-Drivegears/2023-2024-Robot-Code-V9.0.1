@@ -111,7 +111,7 @@ public class DualMotorPowerTest extends LinearOpMode {
 
     public void liftProcess(){
         while(opModeIsActive()){
-            multiMotorCommand.LiftUpPositional(true, level);
+            multiMotorCommand.LiftUp(true, level);
             if(level == 0) {
                 if ((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
                     multiMotorSubsystem.reset();

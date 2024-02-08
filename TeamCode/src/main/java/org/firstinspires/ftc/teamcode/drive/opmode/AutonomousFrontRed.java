@@ -80,7 +80,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         moveToCheckpoint(71.5, 0, 0);
         switch (position) {
             case "left":
-                moveTo(73.48, 17, -Math.PI/2);
+                moveTo(69, 17, -2.11);
                 break;
             case "middle":
                 moveTo(120.26, 2.02, 0);
@@ -92,10 +92,25 @@ public class AutonomousFrontRed extends LinearOpMode {
         releaseIntakePixel();
 
         //Middle Back
-        moveToCheckpoint(120, -42.61, -Math.PI / 2);
+//        moveToCheckpoint(120, -42.61, -Math.PI / 2);
 
         //Middle Front
-        moveToCheckpoint(64, -59, -Math.PI / 2);
+        mecanumCommand.setFinalPosition(true, 30, 64, -59, -Math.PI/2);
+        multiMotorSubsystem.reset();
+        //set dropoff level
+        level = 5;
+
+        //activate lift mode in raising
+        running = true;
+
+        //activate raising (go to level 5, raising level)
+        timer.reset();
+
+
+        while(!multiMotorSubsystem.isPositionReached(1000) || timer.milliseconds() < 1500);
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        while (!mecanumCommand.isPositionReached(true, true) && !isStopRequested()) ;
 
         // Detecting April Tag Code
         //goToAprilTag = true;
@@ -111,13 +126,13 @@ public class AutonomousFrontRed extends LinearOpMode {
         // Pixel Board Drop-off
         switch (position) {
             case "left":
-                moveTo(80, -82, -Math.PI / 2);
+                moveTo(76, -81, -Math.PI / 2);
                 break;
             case "middle":
-                moveTo(68, -82, -Math.PI / 2);
+                moveTo(68, -81, -Math.PI / 2);
                 break;
             case "right":
-                moveTo(52, -82, -Math.PI / 2);
+                moveTo(52, -81, -Math.PI / 2);
                 break;
         }
         dropPixel();
@@ -137,14 +152,6 @@ public class AutonomousFrontRed extends LinearOpMode {
 
         stop();
     }
-
-    // Side Processes
-    public void pidProcess(){
-        while (opModeIsActive()) {
-            mecanumCommand.pidProcess();
-        }
-    }
-
     public void updateOdometry() {
         while (opModeIsActive()) {
             imu.gyroProcess();
@@ -186,17 +193,16 @@ public class AutonomousFrontRed extends LinearOpMode {
         }
     }
     public void liftProcess() {
-        while(opModeIsActive()){
+        while(opModeIsActive() && !isStopRequested()){
             if(running) {
                 multiMotorCommand.LiftUpPositional(true, level);
                 if (level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
                     multiMotorSubsystem.reset();
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = false;
                 }
             }
             else{
-//                multiMotorSubsystem.reset();
+                multiMotorSubsystem.moveLift(0);
                 multiMotorSubsystem.getPidUp().integralReset();
             }
         }
@@ -205,6 +211,7 @@ public class AutonomousFrontRed extends LinearOpMode {
     public void motorProcess(){
         while (opModeIsActive()) {
             mecanumSubsystem.motorProcess();
+            mecanumCommand.pidProcess();
         }
     }
 
@@ -244,32 +251,19 @@ public class AutonomousFrontRed extends LinearOpMode {
     }
 
     private void startThreads() {
-        Executor executor = Executors.newFixedThreadPool(6);
-        CompletableFuture.runAsync(this::updateOdometry, executor);
-        CompletableFuture.runAsync(this::updateTelemetry, executor);
-        CompletableFuture.runAsync(this::liftProcess, executor);
-        CompletableFuture.runAsync(this::pidProcess, executor);
-        CompletableFuture.runAsync(this::motorProcess, executor);
+//        Executor executor = Executors.newFixedThreadPool(6);
+        CompletableFuture.runAsync(this::updateOdometry);
+//        CompletableFuture.runAsync(this::updateTelemetry, executor);
+        CompletableFuture.runAsync(this::liftProcess);
+//        CompletableFuture.runAsync(this::pidProcess, executor);
+        CompletableFuture.runAsync(this::motorProcess);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
     private void dropPixel() {
         currentState = "dropping";
-        //set dropoff level
-        level = 5;
-
-        //activate lift mode in raising
-        running = true;
-
-        //activate raising (go to level 5, raising level)
-        timer.reset();
-
-
-        while(!multiMotorSubsystem.isPositionReached(900));
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-        waitTime(1000);
         level = 1;
-        while(!multiMotorSubsystem.isPositionReached(400));
+        timer.reset();
+        while(!multiMotorSubsystem.isPositionReached(450) || timer.milliseconds() < 2500);
         waitTime(250);
 
         //drop off
@@ -281,15 +275,15 @@ public class AutonomousFrontRed extends LinearOpMode {
         outputCommand.outputWheelStop();
         waitTime(1500);
 
+        timer.reset();
         level = 5;
-        while(!multiMotorSubsystem.isPositionReached(900));
+        while(!multiMotorSubsystem.isPositionReached(1000) || timer.milliseconds() < 2500);
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        waitTime(1700);
+        waitTime(2000);
         //retract lift
         level = 0;
-        while (running && !isStopRequested());
-        multiMotorSubsystem.reset();
+        while(!multiMotorSubsystem.isPositionReached(0) && !(multiMotorSubsystem.getMainPower() == 0) && multiMotorSubsystem.getPosition() < 10);
 
         //lift mode gets stopped in the thread afterwards
 

@@ -19,7 +19,7 @@ public class OutputCommand {
     private Servo leftTilt;
     private Servo rightTilt;
 
-    private CRServo droneShooter;
+    private Servo droneShooter;
     private Servo gate;
     private IntakeCommand intakeCommand;
     private TimerList timers = new TimerList();
@@ -30,14 +30,14 @@ public class OutputCommand {
         leftArm = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_ARM);
         rightArm = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_ARM);
         leftTilt = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_TILT);
-        droneShooter = hardwareMap.get(CRServo.class, Specifications.DRONE_LAUNCHER);
+        droneShooter = hardwareMap.get(Servo.class, Specifications.DRONE_LAUNCHER);
         rightTilt = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_TILT);
         gate = hardwareMap.get(Servo.class, Specifications.PIXEL_GATE);
         intakeCommand = new IntakeCommand(hardwareMap);
 
         leftArm.setDirection(Servo.Direction.REVERSE);
         rightArm.setDirection(Servo.Direction.FORWARD);
-        droneShooter.setDirection(CRServo.Direction.FORWARD);
+        droneShooter.setDirection(Servo.Direction.FORWARD);
 
         leftTilt.setDirection(Servo.Direction.FORWARD);
         rightTilt.setDirection(Servo.Direction.REVERSE);
@@ -54,14 +54,14 @@ public class OutputCommand {
     }
 
     public void droneToShoot(){
-        droneShooter.setPower(0.7);
+        droneShooter.setPosition(1);
     }
     public void droneToNotShoot(){
-        droneShooter.setPower(-0.7);
+        droneShooter.setPosition(0);
     }
 
     public void droneToIdle(){
-        droneShooter.setPower(0);
+        droneShooter.setPosition(0.5);
     }
     public void openGate(){
         gate.setPosition(0.445);
@@ -84,8 +84,8 @@ public class OutputCommand {
     }
     public void armToIdle(){
         //TODO: Find value
-        leftArm.setPosition(0.285);
-        rightArm.setPosition(0.285);
+        leftArm.setPosition(0.29);
+        rightArm.setPosition(0.29);
     }
 
     public void armToBoard(){

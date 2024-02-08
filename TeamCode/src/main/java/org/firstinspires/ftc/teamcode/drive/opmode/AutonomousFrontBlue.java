@@ -95,6 +95,21 @@ public class AutonomousFrontBlue extends LinearOpMode {
         moveToCheckpoint(133, 31, Math.PI / 2);
 
         //Middle Front
+        multiMotorSubsystem.reset();
+        //set dropoff level
+        level = 5;
+
+        //activate lift mode in raising
+        running = true;
+
+        //activate raising (go to level 5, raising level)
+        timer.reset();
+
+
+        while(!multiMotorSubsystem.isPositionReached(950));
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        waitTime(1000);
         moveToCheckpoint(80.5, 49, Math.PI / 2);
 
         // Detecting April Tag Code
@@ -254,23 +269,26 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::motorProcess, executor);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
+    private void pickupStack(){
+//move to stack
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        //lower intake
+        intakeCommand.halfIntake();
+        //intake
+        intakeCommand.intakeIn(0.5);
+        //move to front
+        moveToCheckpoint(80.5, 49, Math.PI / 2);
+        //stop intake
+        intakeCommand.stopIntake();
+        //raise intake
+        intakeCommand.raiseIntake();
+        //move back and release excess pixels
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        intakeCommand.intakeOut(0.5);
+        waitTime(1000);
+    }
     private void dropPixel() {
         currentState = "dropping";
-        multiMotorSubsystem.reset();
-        //set dropoff level
-        level = 5;
-
-        //activate lift mode in raising
-        running = true;
-
-        //activate raising (go to level 5, raising level)
-        timer.reset();
-
-
-        while(!multiMotorSubsystem.isPositionReached(950));
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-        waitTime(1000);
         level = 1;
         while(!multiMotorSubsystem.isPositionReached(450));
         waitTime(250);
