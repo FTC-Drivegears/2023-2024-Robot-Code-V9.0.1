@@ -268,7 +268,8 @@ public class ThompsonsTests extends LinearOpMode {
         while (!mecanumCommand.isPositionPassed() && !isStopRequested()) ;
     }
 
-    private void dropPixel(int level) {
+    private void raiseLift(int level) {
+
         // Lift Slider to ready position
         this.level = 5;
 
@@ -283,11 +284,8 @@ public class ThompsonsTests extends LinearOpMode {
 
         // Wait until in position before dropping the pixel
         while (!multiMotorSubsystem.isPositionReached());
-        outputCommand.openGate();
-
-        // Wait until the pixel has (probably) fallen out before resetting
-        sleep(300);
-        outputCommand.closeGate();
+    }
+    private void lowerLift(int level) {
         outputCommand.armToIdle();
         outputCommand.tiltToIdle();
         this.level = 5;
@@ -295,8 +293,15 @@ public class ThompsonsTests extends LinearOpMode {
         // Wait until the arm has retracted enough before lowering the slider to 0
         while (outputCommand.getLeftArmPosition() > .8);
         this.level = 0;
-
     }
+    private void dropPixel(int level) {
+        outputCommand.openGate();
+
+        // Wait until the pixel has (probably) fallen out before resetting
+        sleep(300);
+        outputCommand.closeGate();
+    }
+
     private void releaseIntakePixel() {
         //release pixel
         intakeCommand.lowerIntake();
@@ -327,4 +332,7 @@ public class ThompsonsTests extends LinearOpMode {
 //        //    }
 //        //    while(!mecanumCommand.isPositionReached(true, true)){}
     }
+    /*
+    To do, split the drop code into 3 methods: raiseLift, dropPixel, lowerLift
+     */
 }
