@@ -266,6 +266,12 @@ public class COTeleOp extends LinearOpMode {
             else if(gamepad2.dpad_down){
                 intakeCommand.lowerIntake();
             }
+            if(gamepad2.dpad_left){
+                outputCommand.hangArmUp(1);
+            }
+            else if(gamepad2.dpad_right){
+                outputCommand.hangArmDown(1);
+            }
 //            else if(gamepad2.dpad_right){
 //                outputCommand.droneToShoot();
 //            }

@@ -14,6 +14,7 @@ import java.util.Timer;
 public class OutputCommand {
 
     //Assuming lift is at the front of robot and intake at back
+    private SingleMotorSubsystem hang;
     private Servo leftArm;
     private Servo rightArm;
     private Servo leftTilt;
@@ -27,6 +28,7 @@ public class OutputCommand {
 
 
     public OutputCommand(HardwareMap hardwareMap) {
+        hang = new SingleMotorSubsystem(hardwareMap, Specifications.HANG_MOTOR);
         leftArm = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_ARM);
         rightArm = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_ARM);
         leftTilt = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_TILT);
@@ -104,6 +106,12 @@ public class OutputCommand {
         //rightTilt.setPosition(0.955);
         leftTilt.setPosition(0.95);
         rightTilt.setPosition(0.95);
+    }
+    public void hangArmUp(double power) {
+        hang.motorTurnPurePower(true, Math.abs(power));
+    }
+    public void hangArmDown(double power) {
+        hang.motorTurnPurePower(true, -Math.abs(power));
     }
 
     public double getGatePosition(){

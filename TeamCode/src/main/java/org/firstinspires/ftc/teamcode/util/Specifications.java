@@ -27,6 +27,7 @@ public class Specifications {
     public static double MAX_VEL = MAX_ANGULAR_VEL*WHEEL_RADIUS;
     public static double MIN_VEL = -MAX_VEL;
     public static final String INTAKE_MOTOR = "intakeMotor";
+    public static final String HANG_MOTOR = "rightEncoder";
     public static final String INTAKE_SERVO = "intakeLinkage";
     public static final String INTAKE_ROLLER = "intakeRoller";
     public static final String EXTENSION_MOTOR_MAIN = "extension1";
