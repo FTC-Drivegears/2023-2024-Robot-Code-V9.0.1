@@ -10,11 +10,13 @@ import org.firstinspires.ftc.teamcode.command.IntakeCommand;
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
 import org.firstinspires.ftc.teamcode.command.MultiMotorCommand;
 import org.firstinspires.ftc.teamcode.command.OutputCommand;
-import org.firstinspires.ftc.teamcode.subsystems.AprilCamSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IMUSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
+import org.firstinspires.ftc.teamcode.util.Coordinate;
+import org.firstinspires.ftc.teamcode.util.CoordinateSet;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,24 +25,26 @@ import java.util.concurrent.Executors;
 
 @Autonomous(name="Thompson's Tests")
 public class ThompsonsTests extends LinearOpMode {
-    private MecanumSubsystem mecanumSubsystem;
-    private MecanumCommand mecanumCommand;
-    private IMUSubsystem imu;
-    private OdometrySubsystem odometrySubsystem;
+
+    // Systems, Commands, and Utils
+    private CoordinateSet coordinateSet;
     private GyroOdometry gyroOdometry;
+    private IMUSubsystem imu;
     private IntakeCommand intakeCommand;
-//    private WebcamSubsystem webcamSubsystem;
-    private OutputCommand outputCommand;
-    private MultiMotorSubsystem multiMotorSubsystem;
+    private MecanumCommand mecanumCommand;
+    private MecanumSubsystem mecanumSubsystem;
     private MultiMotorCommand multiMotorCommand;
+    private MultiMotorSubsystem multiMotorSubsystem;
+    private OdometrySubsystem odometrySubsystem;
+    private OutputCommand outputCommand;
+    private WebcamSubsystem webcamSubsystem;
+
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
     private int level = -1;
-    private String position = "initalized";
-
     private boolean running = false;
-    private String status = "Uninitialized";
+    private String parkPlace = "left";
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -48,38 +52,128 @@ public class ThompsonsTests extends LinearOpMode {
         readyRobot();
 
         double propPosition = 0;
-        while(opModeInInit()){
+        while(opModeInInit() && !isStopRequested()){
             //TODO: determine which Xprop positions make left, middle, right
 //            propPosition = webcamSubsystem.getXProp();
         }
 
-        level = 5;
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-        level = 0;
-
         waitForStart();
         startThreads();
 
-        status = "level = 1";
-        level = 1;
-        sleep(3000);
+        String position = webcamSubsystem.findSpikePosition();
 
-        status = "level = 2";
-        level = 2;
-        sleep(3000);
+        //Spike Drop-off
+        moveToCheckpoint(CoordinateSet.KeyPoints.SPIKE_CHECKPOINT);
+        switch (position) {
+            case "left":
+                moveTo(CoordinateSet.KeyPoints.SPIKE_LEFT);
+                break;
+            case "middle":
+                moveTo(CoordinateSet.KeyPoints.SPIKE_MIDDLE);
+                break;
+            case "right":
+                moveTo(CoordinateSet.KeyPoints.SPIKE_RIGHT);
+                break;
+        }
+        releaseIntakePixel();
 
-        status = "level = 3";
-        level = 3;
-        sleep(3000);
 
-        status = "level = 4";
-        level = 4;
-        sleep(3000);
+        // Pixel Stack
+        moveToCheckpoint(CoordinateSet.KeyPoints.PIXEL_STACK_CHECKPOINT);
+        moveTo(CoordinateSet.KeyPoints.PIXEL_STACK);
+        intakePixel();
 
-        status = "Completed Op";
-        sleep(10000);
 
+        //Middle Back
+        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
+
+        //Middle Front
+        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
+
+
+        // Detecting April Tag Code
+        //goToAprilTag = true;
+        //sleep(1000);
+        //
+        //while(goToAprilTag && !isStopRequested()) {
+        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+        //    }
+        //    while(!mecanumCommand.isPositionReached(true, true)){}
+        //}
+
+
+        // April Tag Backups
+        switch (position) {
+            case "left":
+                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_LEFT);
+                break;
+            case "middle":
+                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_MIDDLE);
+                break;
+            case "right":
+                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_RIGHT);
+                break;
+        }
+        dropPixel(1);
+
+
+        //Middle Back
+        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
+
+        //Middle Front
+        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
+
+
+        // Pixel Stack
+        moveToCheckpoint(CoordinateSet.KeyPoints.PIXEL_STACK_CHECKPOINT);
+        moveTo(CoordinateSet.KeyPoints.PIXEL_STACK);
+        intakePixel();
+
+
+        //Middle Back
+        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
+
+        //Middle Front
+        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
+
+        // April Tag Backups
+        switch (position) {
+            case "left":
+                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_LEFT);
+                break;
+            case "middle":
+                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_MIDDLE);
+                break;
+            case "right":
+                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_RIGHT);
+                break;
+        }
+        dropPixel(1);
+
+
+//         Parking
+        if (parkPlace.equalsIgnoreCase("left")) {
+            // Checkpoint
+            moveToCheckpoint(CoordinateSet.KeyPoints.PARKING_LEFT_CHECKPOINT);
+            // Park
+            moveTo(CoordinateSet.KeyPoints.PARKING_LEFT);
+        } else {
+            // Checkpoint
+            moveToCheckpoint(CoordinateSet.KeyPoints.PARKING_RIGHT_CHECKPOINT);
+            // Park
+            moveTo(CoordinateSet.KeyPoints.PARKING_RIGHT);
+        }
+
+        stop();
+    }
+
+    public void updateTelemetry() {
+        while (opModeIsActive()) {
+            telemetry.addData("spike location", webcamSubsystem.findSpikePosition());
+            telemetry.addData("april tags", webcamSubsystem.getDetections());
+            telemetry.update();
+        }
     }
 
     public void pidProcess(){
@@ -92,33 +186,6 @@ public class ThompsonsTests extends LinearOpMode {
         while (opModeIsActive()) {
             imu.gyroProcess();
             gyroOdometry.process();
-        }
-    }
-
-    public void updateTelemetry() {
-        while (opModeIsActive()) {
-            packet.put("x", gyroOdometry.x);
-            packet.put("y", gyroOdometry.y);
-            packet.put("theta", gyroOdometry.theta);
-            packet.put("xReached", mecanumCommand.isXReached());
-            packet.put("yReached", mecanumCommand.isYReached());
-            packet.put("errorX", mecanumCommand.globalXController.getError()*0.04);
-            packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
-            packet.put("errorY", mecanumCommand.globalYController.getError()*0.04);
-            packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
-
-            telemetry.addData("x", gyroOdometry.x);
-            telemetry.addData("y", gyroOdometry.y);
-            telemetry.addData("theta", gyroOdometry.theta);
-            telemetry.addData("lift power",
-                    multiMotorSubsystem.getPidUp().outputPositional(1000,
-                            multiMotorSubsystem.getPosition()
-                    )
-            );
-            telemetry.addData("status", status);
-
-            dashboard.sendTelemetryPacket(packet);
-            telemetry.update();
         }
     }
     public void liftProcess() {
@@ -146,7 +213,12 @@ public class ThompsonsTests extends LinearOpMode {
         }
     }
 
+    /**
+     * Create the required subsystems.
+     */
     private void instantiateSubsystems() {
+
+        coordinateSet = new CoordinateSet(CoordinateSet.StartingPoint.BACK_RED);
         imu = new IMUSubsystem(hardwareMap);
         mecanumSubsystem = new MecanumSubsystem(hardwareMap);
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
@@ -156,13 +228,15 @@ public class ThompsonsTests extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-        //aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
         timer = new ElapsedTime();
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
     }
 
+    /**
+     * Put robot in a ready position.
+     */
     private void readyRobot() {
         imu.resetAngle();
         odometrySubsystem.reset();
@@ -182,111 +256,47 @@ public class ThompsonsTests extends LinearOpMode {
         CompletableFuture.runAsync(this::motorProcess, executor);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
-    private void dropPixel() {
-
-        status = "Moving to dropoff level 1";
-        //set dropoff level
-        level = 1;
-
-        while (!multiMotorSubsystem.isPositionReached() && !isStopRequested());
-
-        status = "Activating lift mode in raising";
-
-        //activate lift mode in raising
-        running = true;
-
-        //activate raising (go to level 5, raising level)
-        timer.reset();
-
-        //wait 1500 ms for the lift to raise
-        while(timer.milliseconds() < 5000){}
-
-        status = "Extending arm/tilt";
-        //swing out arm and tilt
-        timer.reset();
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-
-        while(timer.milliseconds() < 5000){}
-
-
-        status = "Dropping Pixel";
-//        raising = false;
-
-        //drop off
-        timer.reset();
-        outputCommand.openGate();
-        while(timer.milliseconds() < 5000){}
-
-        timer.reset();
-        outputCommand.closeGate();
-        outputCommand.outputWheelIn();
-        while(timer.milliseconds() < 5000){}
-
-        status = "Retracting Lift";
-        //retract lift
-        timer.reset();
-        outputCommand.tiltToIdle();
-        outputCommand.armToIdle();
-        while(timer.milliseconds() < 5000){}
-        multiMotorSubsystem.getPidUp().integralReset();
-        level = 0;
-        //lift mode gets stopped in the thread afterwards
-
-
-        //set dropoff level
-        while(opModeIsActive() && !isStopRequested()) {
-            level = 5;
-        }
-
-        //activate lift mode in raising
-        running = true;
-        level = 5;
-
-        /*
-        Design idea: in subsystems, write functions that return Threads.
-        We can run the join() methods to wait for them
-         */
-        while (opModeIsActive() && !isStopRequested()
-                && !multiMotorSubsystem.isPositionReached()
-        );
-
-        //swing out arm and tilt
-        timer.reset();
-        outputCommand.armToBoard();
-        outputCommand.tiltToBoard();
-        while(timer.milliseconds() < 500);
-        level = 1;
-
-        //drop off
-        timer.reset();
-        outputCommand.openGate();
-        while(timer.milliseconds() < 250){}
-        outputCommand.closeGate();
-        outputCommand.outputWheelIn();
-        while(timer.milliseconds() < 750){}
-
-        //retract lift
-        timer.reset();
-        outputCommand.tiltToIdle();
-        outputCommand.armToIdle();
-        while(timer.milliseconds() < 1000){}
-        multiMotorSubsystem.getPidUp().integralReset();
-        level = 0;
-        //lift mode gets stopped in the thread afterwards
-
-    }
-
-    private void moveTo(double x, double y, double theta) {
-        mecanumCommand.setFinalPosition(true, 30, x, y, theta);
+    private void moveTo(CoordinateSet.KeyPoints keyPoint) {
+        Coordinate co = coordinateSet.getCoordinate(keyPoint);
+        mecanumCommand.setFinalPosition(true, 30, co.getX(), co.getY(), co.getTheta());
         while (!mecanumCommand.isPositionReached(true, true) && !isStopRequested()) ;
     }
 
-    private void moveToCheckpoint(double x, double y, double theta) {
-        mecanumCommand.setFinalPosition(true, 30, x, y, theta);
+    private void moveToCheckpoint(CoordinateSet.KeyPoints keyPoint) {
+        Coordinate co = coordinateSet.getCoordinate(keyPoint);
+        mecanumCommand.setFinalPosition(true, 30, co.getX(), co.getY(), co.getTheta());
         while (!mecanumCommand.isPositionPassed() && !isStopRequested()) ;
     }
 
+    private void dropPixel(int level) {
+        // Lift Slider to ready position
+        this.level = 5;
+
+        // Wait until slider is high enough before bringing out the arm
+        while (!multiMotorSubsystem.isPositionReached());
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+
+        // Wait until the arm is far enough before moving the arm to its desired position
+        while (outputCommand.getLeftArmPosition() < .7);
+        this.level = level;
+
+        // Wait until in position before dropping the pixel
+        while (!multiMotorSubsystem.isPositionReached());
+        outputCommand.openGate();
+
+        // Wait until the pixel has (probably) fallen out before resetting
+        sleep(300);
+        outputCommand.closeGate();
+        outputCommand.armToIdle();
+        outputCommand.tiltToIdle();
+        this.level = 5;
+
+        // Wait until the arm has retracted enough before lowering the slider to 0
+        while (outputCommand.getLeftArmPosition() > .8);
+        this.level = 0;
+
+    }
     private void releaseIntakePixel() {
         //release pixel
         intakeCommand.lowerIntake();
@@ -305,5 +315,17 @@ public class ThompsonsTests extends LinearOpMode {
         intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
         intakeCommand.intakeRollerStop();
+    }
+
+    private void detectAprilTag() {
+//        //goToAprilTag = true;
+//        //sleep(1000);
+//        //
+//        //while(goToAprilTag && !isStopRequested()) {
+//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+//        //    }
+//        //    while(!mecanumCommand.isPositionReached(true, true)){}
+
     }
 }

@@ -49,10 +49,10 @@ public class MecanumCommand {
 
 
     //TODO: can still tune teeny tiny bit
-    private static double kpx = 0.045;
+    private static double kpx = 0.06;
     private static double kdx = 0.00;
     private static double kix = 0.08;
-    private static double kpy = 0.045;
+    private static double kpy = 0.06;
     private static double kdy = 0.00;
     private static double kiy = 0.08;
     private static double kptheta = 2.5;
@@ -142,44 +142,45 @@ public class MecanumCommand {
         mecanumSubsystem.turnOffInternalPID();
     }
 
-    public void pidProcess(){
+    public void pidProcess() {
         ex = globalXController.outputPositionalIntegralControl(xFinal, gyroOdometry.x);
         ey = -globalYController.outputPositionalIntegralControl(yFinal, gyroOdometry.y);
         etheta = -globalThetaController.outputPositionalIntegralControl(thetaFinal, gyroOdometry.theta);
 
-        if(isXReached()){
+        if (isXReached()) {
             globalXController.integralReset();
         }
-        if(isYReached()){
+        if (isYReached()) {
             globalYController.integralReset();
         }
-        if(isThetaReached()){
+        if (isThetaReached()) {
             globalThetaController.integralReset();
         }
 
-        if(isXPassed()){
+        if (isXPassed()) {
             globalXController.activateIntegral();
-        }
-        else{
+        } else {
             globalXController.deactivateIntegral();
         }
-        if(isYPassed()){
+
+        if (isYPassed()) {
             globalYController.activateIntegral();
-        }
-        else{
+        } else {
             globalYController.deactivateIntegral();
         }
-        if(isThetaPassed()){
+
+        if (isThetaPassed()) {
             globalThetaController.activateIntegral();
-        }
-        else{
+        } else {
             globalThetaController.deactivateIntegral();
         }
-        if (Math.abs(ex) > velocity || Math.abs(ey) > velocity){
-            double max = Math.max(Math.abs(ex), Math.abs(ey));
-            ex = ex / max * velocity;
-            ey = ey / max * velocity;
-            etheta = etheta / max * velocity;
+
+        double max = Math.max(Math.abs(ex), Math.abs(ey));
+        if (max > velocity) {
+            double scalar = velocity / max;
+            ex *= scalar;
+            ey *= scalar;
+            etheta *= scalar;
         }
         moveGlobalPartial(true, ex, ey, etheta);
     }
@@ -449,7 +450,7 @@ public class MecanumCommand {
     }
 
     public boolean isPositionPassed(){
-        return getXDifference() < 6 && getYDifference() < 6 && getThetaDifference() < 0.3;
+        return getXDifference() < 8 && getYDifference() < 8 && getThetaDifference() < 0.3;
     }
 
     public boolean isPositionReached(boolean xtol, boolean ytol){

@@ -19,7 +19,7 @@ public class OutputCommand {
     private Servo leftTilt;
     private Servo rightTilt;
 
-    private CRServo droneShooter;
+    private Servo droneShooter;
     private Servo gate;
     private IntakeCommand intakeCommand;
     private TimerList timers = new TimerList();
@@ -30,14 +30,14 @@ public class OutputCommand {
         leftArm = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_ARM);
         rightArm = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_ARM);
         leftTilt = hardwareMap.get(Servo.class, Specifications.LEFT_OUTPUT_TILT);
-        droneShooter = hardwareMap.get(CRServo.class, Specifications.DRONE_LAUNCHER);
+        droneShooter = hardwareMap.get(Servo.class, Specifications.DRONE_LAUNCHER);
         rightTilt = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_TILT);
         gate = hardwareMap.get(Servo.class, Specifications.PIXEL_GATE);
         intakeCommand = new IntakeCommand(hardwareMap);
 
         leftArm.setDirection(Servo.Direction.REVERSE);
         rightArm.setDirection(Servo.Direction.FORWARD);
-        droneShooter.setDirection(CRServo.Direction.FORWARD);
+        droneShooter.setDirection(Servo.Direction.FORWARD);
 
         leftTilt.setDirection(Servo.Direction.FORWARD);
         rightTilt.setDirection(Servo.Direction.REVERSE);
@@ -54,14 +54,14 @@ public class OutputCommand {
     }
 
     public void droneToShoot(){
-        droneShooter.setPower(0.7);
+        droneShooter.setPosition(1);
     }
     public void droneToNotShoot(){
-        droneShooter.setPower(-0.7);
+        droneShooter.setPosition(0);
     }
 
     public void droneToIdle(){
-        droneShooter.setPower(0);
+        droneShooter.setPosition(0.5);
     }
     public void openGate(){
         gate.setPosition(0.445);
@@ -94,12 +94,19 @@ public class OutputCommand {
     }
 
     public void tiltToIdle(){
-        leftTilt.setPosition(0.125);
-        rightTilt.setPosition(0.125);
+<<<<<<< HEAD
+        //leftTilt.setPosition(0.125);
+        //rightTilt.setPosition(0.125);
+=======
+>>>>>>> d513a9fd6226f7953964984611228943dd6f1b97
+        leftTilt.setPosition(0.05);
+        rightTilt.setPosition(0.05);
     }
     public void tiltToBoard(){
-        leftTilt.setPosition(0.955);
-        rightTilt.setPosition(0.955);
+        //leftTilt.setPosition(0.955);
+        //rightTilt.setPosition(0.955);
+        leftTilt.setPosition(0.95);
+        rightTilt.setPosition(0.95);
     }
 
     public double getGatePosition(){

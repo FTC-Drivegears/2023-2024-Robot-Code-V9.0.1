@@ -131,9 +131,9 @@ public class COTeleOp extends LinearOpMode {
 
             //setting levels for running lift
             if (state == RUNNING_STATE.LIFT_STOP) {
+                multiMotorSubsystem.getPidUp().integralReset();
                 //set lift level
                 if (gamepad1.a) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -142,7 +142,6 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.b) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -151,7 +150,6 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.y) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -160,7 +158,6 @@ public class COTeleOp extends LinearOpMode {
                     timerList.resetTimer("armTilt");
                     pixelCounter = 0;
                 } else if (gamepad1.x) {
-                    multiMotorSubsystem.getPidUp().integralReset();
                     running = true;
                     timerList.resetTimer("raiseLift");
                     raising = true;
@@ -191,14 +188,13 @@ public class COTeleOp extends LinearOpMode {
                 }
                 if((gamepad2.b || gamepad1.right_trigger > 0.5) && timerList.checkTimePassed("armTilt", 1000)){
                     timerList.resetTimer("liftTimer");
-                    lowestLiftValue = Integer.MAX_VALUE;
                     state = RUNNING_STATE.RETRACT_LIFT;
                 }
             }
 
             if(state == RUNNING_STATE.DROP){
                 raising = false;
-                if(!timerList.checkTimePassed("pixelDrop", 750)) {
+                if(!timerList.checkTimePassed("pixelDrop", 500)) {
                     if (timerList.checkTimePassed("pixelDrop", 250)) {
                         outputCommand.closeGate();
                         outputCommand.outputWheelIn();
@@ -212,9 +208,7 @@ public class COTeleOp extends LinearOpMode {
             if(state == RUNNING_STATE.RETRACT_LIFT){
                 outputCommand.tiltToIdle();
                 outputCommand.armToIdle();
-//                lowestLiftValue = Math.max(Math.min(lowestLiftValue, multiMotorSubsystem.getPosition()), 5);
                 if(timerList.checkTimePassed("liftTimer", 1700)){
-                    multiMotorSubsystem.getPidUp().integralReset();
                     raising = false;
                     level = 0;
                 }
@@ -314,16 +308,17 @@ public class COTeleOp extends LinearOpMode {
     public void LiftProcess(){
         while(opModeIsActive()){
             if(raising){
-                multiMotorCommand.LiftUpPositional(running, raiseLevel);
+                multiMotorCommand.LiftUp(running, raiseLevel);
             }
             else {
-                multiMotorCommand.LiftUpPositional(running, level);
+                multiMotorCommand.LiftUp(running, level);
             }
-            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+            if(running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
                 pixelCounter = 0;
                 level = /*-1*/0;
                 multiMotorSubsystem.reset();
                 state = RUNNING_STATE.LIFT_STOP;
+                multiMotorSubsystem.getPidUp().integralReset();
             }
         }
     }

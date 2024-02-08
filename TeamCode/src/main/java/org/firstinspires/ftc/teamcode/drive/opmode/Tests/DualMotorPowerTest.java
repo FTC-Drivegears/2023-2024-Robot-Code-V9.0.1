@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.command.MecanumCommand;
 import org.firstinspires.ftc.teamcode.command.MultiMotorCommand;
 import org.firstinspires.ftc.teamcode.command.OutputCommand;
+import org.firstinspires.ftc.teamcode.drive.opmode.COTeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 
@@ -90,7 +91,7 @@ public class DualMotorPowerTest extends LinearOpMode {
             packet.put("intervalValue", multiMotorSubsystem.getIntervalValue());
             packet.put("lastErrorValue", multiMotorSubsystem.getLastErrorValue());
             packet.put("controlleroutput", multiMotorSubsystem.getCascadeOutput());
-            packet.put("outputPositionalValue", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
+//            packet.put("outputPositionalValue", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
             packet.put("outputVelocityValue", multiMotorSubsystem.getCascadeVelocity());
             packet.put("level", level);
             packet.put("Target Position", targetPosition);
@@ -111,11 +112,11 @@ public class DualMotorPowerTest extends LinearOpMode {
 
     public void liftProcess(){
         while(opModeIsActive()){
-            multiMotorCommand.LiftUpPositional(true, level);
-            if(level == 0) {
-                if ((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
-                    multiMotorSubsystem.reset();
-                }
+            multiMotorCommand.LiftUp(true, level);
+            if(level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
+                level = /*-1*/0;
+                multiMotorSubsystem.reset();
+                multiMotorSubsystem.moveLift(0);
             }
         }
     }

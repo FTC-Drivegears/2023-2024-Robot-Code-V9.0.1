@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -36,6 +38,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
+    private List<LynxModule> allHubs; //GET ALL LYNX MODULES
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
@@ -43,7 +46,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     //54, 24, 0
     //57, -22, -0.832
     //38, 80, -1.58
-    private int level = -1;
+    private int level = 5;
     private String position = "initalized";
     private double targetX = 0;
     private double targetY = 0;
@@ -57,10 +60,16 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private String parkPlace = "left";
     private boolean running = false;
     private boolean raising = false;
+    private String currentState = "";
 
 
     @Override
     public void runOpMode() throws InterruptedException {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for(LynxModule hub : allHubs){
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+        } //BULK READS
+
         instantiateSubsystems();
         readyRobot();
 
@@ -73,7 +82,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         waitForStart();
         startThreads();
 
-        String position = "left";
+        String position = "right";
 
         //Spike Drop-off
 //        moveToCheckpoint(71.5, 0, 0);
@@ -82,7 +91,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //                moveTo(107.76, 19.99, 0);
 //                break;
 //            case "middle":
-//                moveTo(120.36, -12.48, 0);
+//                moveTo(124.36, -12.48, 0);
 //                break;
 //            case "right":
 //                moveTo(69.48, -22, 2.11);
@@ -94,6 +103,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        moveToCheckpoint(133, 31, Math.PI / 2);
 //
 //        //Middle Front
+//
 //        moveToCheckpoint(80.5, 49, Math.PI / 2);
 //
 //        // Detecting April Tag Code
@@ -110,18 +120,18 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        // Pixel Board Drop-off
 //        switch (position) {
 //            case "left":
-//                moveTo(66, 85, Math.PI / 2);
+//                moveTo(66, 80, Math.PI / 2);
 //                break;
 //            case "middle":
-//                moveTo(76, 85, Math.PI / 2);
+//                moveTo(76, 80, Math.PI / 2);
 //                break;
 //            case "right":
-//                moveTo(90, 85, Math.PI / 2);
+//                moveTo(90, 80, Math.PI / 2);
 //                break;
 //        }
         dropPixel();
 
-        // Parking
+//         Parking
 //        if (parkPlace.equalsIgnoreCase("left")) {
 //            // Checkpoint
 //            moveToCheckpoint(9, 80, Math.PI / 2);
@@ -133,26 +143,26 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //            // Park
 //            moveTo(133, 111, Math.PI / 2);
 //        }
-
+        sleep(5000);
         stop();
     }
 
     // Side Processes
     public void pidProcess(){
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             mecanumCommand.pidProcess();
         }
     }
 
     public void updateOdometry() {
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             imu.gyroProcess();
             gyroOdometry.process();
         }
     }
 
     public void updateTelemetry() {
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             packet.put("x", gyroOdometry.x);
             packet.put("y", gyroOdometry.y);
             packet.put("theta", gyroOdometry.theta);
@@ -162,6 +172,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
             packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
             packet.put("errorY", mecanumCommand.globalYController.getError());
             packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
+            packet.put("currentState", currentState);
+            packet.put("level", level);
+            packet.put("raising", raising);
+            packet.put("running", running);
+            packet.put("liftPos", multiMotorSubsystem.getPosition());
+            packet.put("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
 
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
@@ -175,29 +191,34 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("timer", timer.milliseconds());
             telemetry.addData("raising", raising);
             telemetry.addData("running", running);
+            telemetry.addData("liftPos", multiMotorSubsystem.getPosition());
+            telemetry.addData("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
 
             dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
     }
     public void liftProcess() {
-        while(opModeIsActive() && running){
-            multiMotorCommand.LiftUpPositional(true, level);
-            if(level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)){
-                multiMotorSubsystem.reset();
-                running = false;
-            }
+        while(opModeIsActive() && !isStopRequested()){
+//            if(running) {
+                multiMotorCommand.LiftUp(running, level);
+                if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                    level = /*-1*/0;
+                    multiMotorSubsystem.reset();
+                    running = false;
+                }
+//            }
         }
     }
 
     public void motorProcess(){
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             mecanumSubsystem.motorProcess();
         }
     }
 
     public void tagDetectionProcess(){
-        while(opModeIsActive()) {
+        while(opModeIsActive() && !isStopRequested()) {
             aprilCamSubsystem.runDetections();
         }
     }
@@ -232,20 +253,37 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
 
     private void startThreads() {
-        Executor executor = Executors.newFixedThreadPool(6);
+        Executor executor = Executors.newFixedThreadPool(4);
         CompletableFuture.runAsync(this::updateOdometry, executor);
-        CompletableFuture.runAsync(this::updateTelemetry, executor);
+//        CompletableFuture.runAsync(this::updateTelemetry, executor);
         CompletableFuture.runAsync(this::liftProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
+    private void pickupStack(){
+//move to stack
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        //lower intake
+        intakeCommand.halfIntake();
+        //intake
+        intakeCommand.intakeIn(0.5);
+        //move to front
+        moveToCheckpoint(80.5, 49, Math.PI / 2);
+        //stop intake
+        intakeCommand.stopIntake();
+        //raise intake
+        intakeCommand.raiseIntake();
+        //move back and release excess pixels
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        intakeCommand.intakeOut(0.5);
+        waitTime(1000);
+    }
     private void dropPixel() {
-
+        currentState = "dropping";
+        multiMotorSubsystem.reset();
         //set dropoff level
-        while(opModeIsActive() && !isStopRequested()) {
-            level = 5;
-        }
+        level = 5;
 
         //activate lift mode in raising
         running = true;
@@ -253,34 +291,39 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //activate raising (go to level 5, raising level)
         timer.reset();
 
-        //wait 1500 ms for the lift to raise
-        while(timer.milliseconds() < 1500){}
 
-        //swing out arm and tilt
-        timer.reset();
+        while(!multiMotorSubsystem.isPositionReached(950));
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
-
-        while(timer.milliseconds() < 1600){}
+        waitTime(1000);
         level = 1;
+        while(!multiMotorSubsystem.isPositionReached(450));
+        waitTime(250);
 
         //drop off
-        timer.reset();
         outputCommand.openGate();
-        while(timer.milliseconds() < 250){}
+        waitTime(250);
         outputCommand.closeGate();
         outputCommand.outputWheelIn();
-        while(timer.milliseconds() < 750){}
+        waitTime(500);
+        outputCommand.outputWheelStop();
+        waitTime(1500);
 
-        //retract lift
-        timer.reset();
+        level = 5;
+        while(!multiMotorSubsystem.isPositionReached(950));
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        while(timer.milliseconds() < 1000){}
-        multiMotorSubsystem.getPidUp().integralReset();
+        waitTime(1000);
+        //retract lift
         level = 0;
+        while(!multiMotorSubsystem.isPositionReached(0) && !(multiMotorSubsystem.getMainPower() == 0) && multiMotorSubsystem.getPosition() < 10);
+
         //lift mode gets stopped in the thread afterwards
 
+    }
+    private void waitTime(double milliseconds){
+        timer.reset();
+        while(timer.milliseconds() < milliseconds && !isStopRequested()){}
     }
 
     private void moveTo(double x, double y, double theta) {

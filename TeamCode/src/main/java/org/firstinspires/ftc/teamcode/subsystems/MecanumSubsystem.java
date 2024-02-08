@@ -48,22 +48,20 @@ public class MecanumSubsystem extends Specifications{
 
     //async process for motor control
     public void motorProcess(){
-        if (Math.abs(lfvelMain + lfvelAdjustment1 + lfvelAdjustment2) > MAX_ANGULAR_VEL || Math.abs(lbvelMain + lbvelAdjustment1 + lbvelAdjustment2) > MAX_ANGULAR_VEL || Math.abs(rfvelMain + rfvelAdjustment1 + rfvelAdjustment2) > MAX_ANGULAR_VEL || Math.abs(rbvelMain + rbvelAdjustment1 + rbvelAdjustment2) > MAX_ANGULAR_VEL){
-            lfvel = (lfvelMain + lfvelAdjustment1 + lfvelAdjustment2);
-            lbvel = (lbvelMain + lbvelAdjustment1 + lbvelAdjustment2);
-            rfvel = (rfvelMain + rfvelAdjustment1 + rfvelAdjustment2);
-            rbvel = (rbvelMain + rbvelAdjustment1 + rbvelAdjustment2);
-            double max = Math.max(Math.abs(lfvel), Math.max(Math.abs(lbvel), Math.max(Math.abs(rfvel), Math.abs(rbvel))));
-            lfvel = lfvel/max*MAX_ANGULAR_VEL;
-            lbvel = lbvel/max*MAX_ANGULAR_VEL;
-            rfvel = rfvel/max*MAX_ANGULAR_VEL;
-            rbvel = rbvel/max*MAX_ANGULAR_VEL;
-        } else {
-            lfvel = lfvelMain + lfvelAdjustment1 + lfvelAdjustment2;
-            lbvel = lbvelMain + lbvelAdjustment1 + lbvelAdjustment2;
-            rfvel = rfvelMain + rfvelAdjustment1 + rfvelAdjustment2;
-            rbvel = rbvelMain + rbvelAdjustment1 + rbvelAdjustment2;
+        lfvel = lfvelMain + lfvelAdjustment1;
+        lbvel = lbvelMain + lbvelAdjustment1;
+        rfvel = rfvelMain + rfvelAdjustment1;
+        rbvel = rbvelMain + rbvelAdjustment1;
+
+        double max = Math.max(Math.abs(lfvel), Math.max(Math.abs(lbvel), Math.max(Math.abs(rfvel), Math.abs(rbvel))));
+        if (max > MAX_ANGULAR_VEL) {
+            double scalar = MAX_ANGULAR_VEL / max;
+            lfvel *= scalar;
+            lbvel *= scalar;
+            rfvel *= scalar;
+            rbvel *= scalar;
         }
+
         rightForward.setVelocity(rfvel, AngleUnit.RADIANS);
         leftBack.setVelocity(lbvel, AngleUnit.RADIANS);
         rightBack.setVelocity(rbvel, AngleUnit.RADIANS);
