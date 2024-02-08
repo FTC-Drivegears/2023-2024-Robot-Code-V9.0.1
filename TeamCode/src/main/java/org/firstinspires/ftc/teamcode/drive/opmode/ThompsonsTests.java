@@ -45,125 +45,125 @@ public class ThompsonsTests extends LinearOpMode {
     private int level = -1;
     private boolean running = false;
     private String parkPlace = "left";
+    private String status = "Uninitialized";
 
     @Override
     public void runOpMode() throws InterruptedException {
         instantiateSubsystems();
         readyRobot();
 
-        double propPosition = 0;
-        while(opModeInInit() && !isStopRequested()){
-            //TODO: determine which Xprop positions make left, middle, right
-//            propPosition = webcamSubsystem.getXProp();
-        }
-
         waitForStart();
         startThreads();
+        status = "Initialized";
 
-        String position = webcamSubsystem.findSpikePosition();
-
-        //Spike Drop-off
-        moveToCheckpoint(CoordinateSet.KeyPoints.SPIKE_CHECKPOINT);
-        switch (position) {
-            case "left":
-                moveTo(CoordinateSet.KeyPoints.SPIKE_LEFT);
-                break;
-            case "middle":
-                moveTo(CoordinateSet.KeyPoints.SPIKE_MIDDLE);
-                break;
-            case "right":
-                moveTo(CoordinateSet.KeyPoints.SPIKE_RIGHT);
-                break;
+        for (int i = 30; i > 0; i--) {
+            status = "Test Complete - Closing in " +i +" seconds";
+            sleep(1000);
         }
-        releaseIntakePixel();
-
-
-        // Pixel Stack
-        moveToCheckpoint(CoordinateSet.KeyPoints.PIXEL_STACK_CHECKPOINT);
-        moveTo(CoordinateSet.KeyPoints.PIXEL_STACK);
-        intakePixel();
-
-
-        //Middle Back
-        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
-
-        //Middle Front
-        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
-
-
-        // Detecting April Tag Code
-        //goToAprilTag = true;
-        //sleep(1000);
-        //
-        //while(goToAprilTag && !isStopRequested()) {
-        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-        //    }
-        //    while(!mecanumCommand.isPositionReached(true, true)){}
-        //}
-
-
-        // April Tag Backups
-        switch (position) {
-            case "left":
-                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_LEFT);
-                break;
-            case "middle":
-                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_MIDDLE);
-                break;
-            case "right":
-                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_RIGHT);
-                break;
-        }
-        dropPixel(1);
-
-
-        //Middle Back
-        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
-
-        //Middle Front
-        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
-
-
-        // Pixel Stack
-        moveToCheckpoint(CoordinateSet.KeyPoints.PIXEL_STACK_CHECKPOINT);
-        moveTo(CoordinateSet.KeyPoints.PIXEL_STACK);
-        intakePixel();
-
-
-        //Middle Back
-        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
-
-        //Middle Front
-        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
-
-        // April Tag Backups
-        switch (position) {
-            case "left":
-                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_LEFT);
-                break;
-            case "middle":
-                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_MIDDLE);
-                break;
-            case "right":
-                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_RIGHT);
-                break;
-        }
-        dropPixel(1);
-
-
-//         Parking
-        if (parkPlace.equalsIgnoreCase("left")) {
-            // Checkpoint
-            moveToCheckpoint(CoordinateSet.KeyPoints.PARKING_LEFT_CHECKPOINT);
-            // Park
-            moveTo(CoordinateSet.KeyPoints.PARKING_LEFT);
-        } else {
-            // Checkpoint
-            moveToCheckpoint(CoordinateSet.KeyPoints.PARKING_RIGHT_CHECKPOINT);
-            // Park
-            moveTo(CoordinateSet.KeyPoints.PARKING_RIGHT);
-        }
+//        String position = webcamSubsystem.findSpikePosition();
+//
+//        //Spike Drop-off
+//        moveToCheckpoint(CoordinateSet.KeyPoints.SPIKE_CHECKPOINT);
+//        switch (position) {
+//            case "left":
+//                moveTo(CoordinateSet.KeyPoints.SPIKE_LEFT);
+//                break;
+//            case "middle":
+//                moveTo(CoordinateSet.KeyPoints.SPIKE_MIDDLE);
+//                break;
+//            case "right":
+//                moveTo(CoordinateSet.KeyPoints.SPIKE_RIGHT);
+//                break;
+//        }
+//        releaseIntakePixel();
+//
+//
+//        // Pixel Stack
+//        moveToCheckpoint(CoordinateSet.KeyPoints.PIXEL_STACK_CHECKPOINT);
+//        moveTo(CoordinateSet.KeyPoints.PIXEL_STACK);
+//        intakePixel();
+//
+//
+//        //Middle Back
+//        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
+//
+//        //Middle Front
+//        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
+//
+//
+//        // Detecting April Tag Code
+//        //goToAprilTag = true;
+//        //sleep(1000);
+//        //
+//        //while(goToAprilTag && !isStopRequested()) {
+//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+//        //    }
+//        //    while(!mecanumCommand.isPositionReached(true, true)){}
+//        //}
+//
+//
+//        // April Tag Backups
+//        switch (position) {
+//            case "left":
+//                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_LEFT);
+//                break;
+//            case "middle":
+//                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_MIDDLE);
+//                break;
+//            case "right":
+//                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_RIGHT);
+//                break;
+//        }
+//        dropPixel(1);
+//
+//
+//        //Middle Back
+//        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
+//
+//        //Middle Front
+//        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
+//
+//
+//        // Pixel Stack
+//        moveToCheckpoint(CoordinateSet.KeyPoints.PIXEL_STACK_CHECKPOINT);
+//        moveTo(CoordinateSet.KeyPoints.PIXEL_STACK);
+//        intakePixel();
+//
+//
+//        //Middle Back
+//        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_BACK);
+//
+//        //Middle Front
+//        moveToCheckpoint(CoordinateSet.KeyPoints.MIDDLE_FRONT);
+//
+//        // April Tag Backups
+//        switch (position) {
+//            case "left":
+//                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_LEFT);
+//                break;
+//            case "middle":
+//                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_MIDDLE);
+//                break;
+//            case "right":
+//                moveTo(CoordinateSet.KeyPoints.APRIL_TAG_RIGHT);
+//                break;
+//        }
+//        dropPixel(1);
+//
+//
+////         Parking
+//        if (parkPlace.equalsIgnoreCase("left")) {
+//            // Checkpoint
+//            moveToCheckpoint(CoordinateSet.KeyPoints.PARKING_LEFT_CHECKPOINT);
+//            // Park
+//            moveTo(CoordinateSet.KeyPoints.PARKING_LEFT);
+//        } else {
+//            // Checkpoint
+//            moveToCheckpoint(CoordinateSet.KeyPoints.PARKING_RIGHT_CHECKPOINT);
+//            // Park
+//            moveTo(CoordinateSet.KeyPoints.PARKING_RIGHT);
+//        }
 
         stop();
     }
@@ -326,6 +326,5 @@ public class ThompsonsTests extends LinearOpMode {
 //        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
 //        //    }
 //        //    while(!mecanumCommand.isPositionReached(true, true)){}
-
     }
 }

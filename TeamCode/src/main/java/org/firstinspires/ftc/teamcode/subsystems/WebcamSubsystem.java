@@ -42,7 +42,7 @@ public class WebcamSubsystem extends Specifications {
     private final AprilTagProcessor APRIL_TAG_PROCESSOR;
 
     /**
-     * Createss a usable WebcamSubSystem object
+     * Creates a usable WebcamSubSystem object
      * @param hardwareMap
      * @param pipelineName
      */
