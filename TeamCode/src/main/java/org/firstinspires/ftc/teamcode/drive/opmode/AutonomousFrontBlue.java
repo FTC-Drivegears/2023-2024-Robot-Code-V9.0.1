@@ -290,8 +290,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.intakeOut(0.5);
         waitTime(1000);
     }
-    private void dropPixel() {
-        currentState = "dropping";
+    private void raisingLift() {
+        currentState = "raising lift";
         multiMotorSubsystem.reset();
         //set dropoff level
         level = 5;
@@ -311,6 +311,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(!multiMotorSubsystem.isPositionReached(450));
         waitTime(250);
 
+
+    }
+    private void dropPixel() {
+        currentState = "dropping pixel";
         //drop off
         outputCommand.openGate();
         waitTime(250);
@@ -319,6 +323,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
         waitTime(500);
         outputCommand.outputWheelStop();
         waitTime(1500);
+
+    }
+    public void lowerLift() {
+        currentState = "lowering lift";
 
         level = 5;
         while(!multiMotorSubsystem.isPositionReached(950));
