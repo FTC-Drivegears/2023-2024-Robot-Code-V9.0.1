@@ -41,7 +41,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private List<LynxModule> allHubs; //GET ALL LYNX MODULES
     FtcDashboard dashboard;
     TelemetryPacket packet;
-    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000};
+    int[] liftPositions = {0, 400, 1200, 2200, 4500, 1000};
     private ElapsedTime timer;
     //67, -3, 0
     //54, 24, 0
@@ -103,15 +103,15 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        status = "lowering lift";
 //        lowerLift();
 
-        String position = "left";
+        String position = "middle";
 
       //  Spike Drop-off
         switch (position) {
             case "left":
-                moveTo(90, 12, 0);
+                moveTo(95, 12, 0);
                 break;
             case "middle":
-                moveTo(124.36, -12.48, 0);
+                moveTo(118, -12.48, 0);
                 break;
             case "right":
                 moveToCheckpoint(71.5, 0, 0);
@@ -120,18 +120,23 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
         releaseIntakePixel();
 
+        if (position.equalsIgnoreCase("left")
+                || position.equalsIgnoreCase("middle")) {
+            moveToCheckpoint(118, 50, Math.PI / 2);
+        }
+
         // Pixel Board Drop-off
-        mecanumCommand.setFinalPosition(true, 30, 66, 87, Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 72, 70, Math.PI/2);
         raisingLift();
         switch (position) {
             case "left":
-                moveTo(66, 85, Math.PI / 2);
+                moveTo(66, 84, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(76, 85, Math.PI / 2);
+                moveTo(76, 84, Math.PI / 2);
                 break;
             case "right":
-                moveTo(85, 85, Math.PI / 2);
+                moveTo(85, 84, Math.PI / 2);
                 break;
         }
         dropPixel();
@@ -145,27 +150,28 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //Middle Front
 //        moveToCheckpoint(80.5, 49, Math.PI / 2);
 
-        moveTo(22, 50, Math.PI / 2);
-        moveTo(22, -140, Math.PI / 2);
+        moveTo(22.5, 0, Math.PI / 2);
+        moveTo(22.5, -40, Math.PI / 2);
+        moveTo(22.5, -140, Math.PI / 2);
 
         moveToCheckpoint(48, -187, 2);
         pickupPixels();
 
-        moveTo(13, -140, Math.PI / 2);
-        moveToCheckpoint(13, 0, Math.PI / 2);
-
+        moveTo(22.5, -140, Math.PI / 2);
+        moveTo(22.5, -105, Math.PI / 2);
+        moveTo(22.5, 0, Math.PI/2);
 
         // Pixel Board Drop-off
         raisingLift();
         switch (position) {
             case "left":
-                moveTo(66, 85, Math.PI / 2);
+                moveTo(66, 84, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(76, 85, Math.PI / 2);
+                moveTo(76, 84, Math.PI / 2);
                 break;
             case "right":
-                moveTo(85, 85, Math.PI / 2);
+                moveTo(85, 84, Math.PI / 2);
                 break;
         }
         dropPixel();
@@ -338,11 +344,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
         timer.reset();
-        while(timer.milliseconds() < 500 && !isStopRequested()){
+        while(timer.milliseconds() < 600 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         level = 1;
-        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
+        timer.reset();
+        while((!multiMotorSubsystem.isPositionReached(liftPositions[level]) || timer.milliseconds() < 1500) && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
 //        timer.reset();
@@ -353,12 +360,19 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
     private void dropPixel() {
         currentState = "dropping pixel";
+
+        outputCommand.outputWheelIn();
+        timer.reset();
+        while(timer.milliseconds() < 250 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        outputCommand.outputWheelStop();
         //drop off
         outputCommand.openGate();
 
         timer.reset();
         level = 1;
-        while(timer.milliseconds() < 250 && !isStopRequested()){
+        while(timer.milliseconds() < 1000 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         outputCommand.closeGate();
@@ -368,10 +382,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
             multiMotorCommand.LiftUpPositional(true, level);
         }
         outputCommand.outputWheelStop();
-        timer.reset();
-        while(timer.milliseconds() < 1500 && !isStopRequested()){
-            multiMotorCommand.LiftUpPositional(true, level);
-        }
     }
     public void lowerLift() {
         currentState = "lowering lift";
@@ -413,7 +423,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.halfIntake();
+        intakeCommand.lowerIntake();
         intakeCommand.intakeOut(0.65);
         timer.reset();
         while(timer.milliseconds() < 1500);
