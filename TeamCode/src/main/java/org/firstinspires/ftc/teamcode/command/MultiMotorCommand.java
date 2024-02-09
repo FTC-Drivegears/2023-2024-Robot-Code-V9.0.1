@@ -23,8 +23,8 @@ public class MultiMotorCommand {
             case 1:
                 //TODO: deceleration intervals
                 if(run) {
-                    multiMotorSubsystem.LiftPositionalProcess(400);
-                    targetPosition = 400;
+                    multiMotorSubsystem.LiftPositionalProcess(450);
+                    targetPosition = 450;
                 }
                 break;
             case 2:
@@ -47,6 +47,10 @@ public class MultiMotorCommand {
             case 5:
                 multiMotorSubsystem.LiftPositionalProcess(1000);
                 targetPosition = 1000;
+                break;
+            case 6:
+                multiMotorSubsystem.LiftPositionalProcess(300);
+                targetPosition = 300;
                 break;
             default:
 //                multiMotorSubsystem.moveLift(0);
