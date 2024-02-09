@@ -58,7 +58,7 @@ public class AutonomousFrontRed extends LinearOpMode {
     private boolean running = false;
     private boolean raising = false;
     private String currentState = "";
-    int[] liftPositions = {0, 400, 1200, 2200, 4500, 1000};
+    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 300};
 
 
     @Override
@@ -407,7 +407,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         while(timer.milliseconds() < 500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
-        level = 1;
+        level = 6;
         while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
@@ -423,7 +423,7 @@ public class AutonomousFrontRed extends LinearOpMode {
         outputCommand.openGate();
 
         timer.reset();
-        level = 1;
+        level = 6;
         while(timer.milliseconds() < 250 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }

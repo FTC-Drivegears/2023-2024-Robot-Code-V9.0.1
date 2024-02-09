@@ -41,7 +41,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private List<LynxModule> allHubs; //GET ALL LYNX MODULES
     FtcDashboard dashboard;
     TelemetryPacket packet;
-    int[] liftPositions = {0, 400, 1200, 2200, 4500, 1000};
+    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 300};
     private ElapsedTime timer;
     //67, -3, 0
     //54, 24, 0
@@ -347,7 +347,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         while(timer.milliseconds() < 600 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
-        level = 1;
+        level = 6;
         timer.reset();
         while((!multiMotorSubsystem.isPositionReached(liftPositions[level]) || timer.milliseconds() < 1500) && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
@@ -371,7 +371,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.openGate();
 
         timer.reset();
-        level = 1;
+        level = 6;
         while(timer.milliseconds() < 1000 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
