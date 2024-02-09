@@ -58,6 +58,7 @@ public class AutonomousFrontRed extends LinearOpMode {
     private boolean running = false;
     private boolean raising = false;
     private String currentState = "";
+    int[] liftPositions = {0, 400, 1200, 2200, 4500, 1000};
 
 
     @Override
@@ -75,6 +76,94 @@ public class AutonomousFrontRed extends LinearOpMode {
         startThreads();
 
         String position = "left";
+
+        switch (position) {
+            case "left":
+                moveToCheckpoint(71.5, 0, 0);
+                moveTo(69, 17, -2.11);
+                break;
+            case "middle":
+                moveTo(120.26, 2.02, 0);
+                break;
+            case "right":
+                moveTo(108.9, -26.5, 0);
+                break;
+        }
+        releaseIntakePixel();
+
+        // Pixel Board Drop-off
+        mecanumCommand.setFinalPosition(true, 30, 64, -59, -Math.PI/2);
+        raisingLift();
+        switch (position) {
+            case "left":
+                moveTo(76, -81, -Math.PI / 2);
+                break;
+            case "middle":
+                moveTo(68, -81, -Math.PI / 2);
+                break;
+            case "right":
+                moveTo(52, -81, -Math.PI / 2);
+                break;
+        }
+        dropPixel();
+        moveToCheckpoint(76, -72, -Math.PI / 2);
+        lowerLift();
+
+
+        //Middle Back
+//        moveToCheckpoint(133, 31, Math.PI / 2);
+
+        //Middle Front
+//        moveToCheckpoint(80.5, 49, Math.PI / 2);
+
+        moveTo(22, -50, -Math.PI / 2);
+        moveTo(22, 140, -Math.PI / 2);
+
+        moveToCheckpoint(48, -187, 2);
+        pickupPixels();
+
+        moveTo(13, 140, Math.PI / 2);
+        moveToCheckpoint(13, 0, Math.PI / 2);
+
+
+        // Pixel Board Drop-off
+        raisingLift();
+        switch (position) {
+            case "left":
+                moveTo(76, -81, -Math.PI / 2);
+                break;
+            case "middle":
+                moveTo(68, -81, -Math.PI / 2);
+                break;
+            case "right":
+                moveTo(52, -81, -Math.PI / 2);
+                break;
+        }
+        dropPixel();
+        moveToCheckpoint(76, -72, -Math.PI / 2);
+        lowerLift();
+
+        //Parking
+        if (parkPlace.equalsIgnoreCase("left")) {
+            // Checkpoint
+            moveToCheckpoint(9, -80, -Math.PI / 2);
+            // Park
+            moveTo(9, -111, -Math.PI / 2);
+        } else {
+            // Checkpoint
+            moveToCheckpoint(133, -80, -Math.PI / 2);
+            // Park
+            moveTo(133, -111, -Math.PI / 2);
+        }
+
+
+
+
+
+
+
+        // Old code
+
 
         //Spike Drop-off
         moveToCheckpoint(71.5, 0, 0);
@@ -163,15 +252,22 @@ public class AutonomousFrontRed extends LinearOpMode {
 
         stop();
     }
+    // Side Processes
+    public void pidProcess(){
+        while (opModeIsActive() && !isStopRequested()) {
+            mecanumCommand.pidProcess();
+        }
+    }
+
     public void updateOdometry() {
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             imu.gyroProcess();
             gyroOdometry.process();
         }
     }
 
     public void updateTelemetry() {
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             packet.put("x", gyroOdometry.x);
             packet.put("y", gyroOdometry.y);
             packet.put("theta", gyroOdometry.theta);
@@ -183,6 +279,10 @@ public class AutonomousFrontRed extends LinearOpMode {
             packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
             packet.put("currentState", currentState);
             packet.put("level", level);
+            packet.put("raising", raising);
+            packet.put("running", running);
+            packet.put("liftPos", multiMotorSubsystem.getPosition());
+            packet.put("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
 
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
@@ -205,29 +305,25 @@ public class AutonomousFrontRed extends LinearOpMode {
     }
     public void liftProcess() {
         while(opModeIsActive() && !isStopRequested()){
-            if(running) {
-                multiMotorCommand.LiftUpPositional(true, level);
-                if (level == 0 && running && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 5) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
-                    multiMotorSubsystem.reset();
-                    running = false;
-                }
+//            if(running) {
+            multiMotorCommand.LiftUp(running, level);
+            if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                level = /*-1*/0;
+                multiMotorSubsystem.reset();
+                running = false;
             }
-            else{
-                multiMotorSubsystem.moveLift(0);
-                multiMotorSubsystem.getPidUp().integralReset();
-            }
+//            }
         }
     }
 
     public void motorProcess(){
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
             mecanumSubsystem.motorProcess();
-            mecanumCommand.pidProcess();
         }
     }
 
     public void tagDetectionProcess(){
-        while(opModeIsActive()) {
+        while(opModeIsActive() && !isStopRequested()) {
             aprilCamSubsystem.runDetections();
         }
     }
@@ -262,39 +358,106 @@ public class AutonomousFrontRed extends LinearOpMode {
     }
 
     private void startThreads() {
-//        Executor executor = Executors.newFixedThreadPool(6);
-        CompletableFuture.runAsync(this::updateOdometry);
-//        CompletableFuture.runAsync(this::updateTelemetry, executor);
-        CompletableFuture.runAsync(this::liftProcess);
-//        CompletableFuture.runAsync(this::pidProcess, executor);
-        CompletableFuture.runAsync(this::motorProcess);
+        Executor executor = Executors.newFixedThreadPool(5);
+        CompletableFuture.runAsync(this::updateOdometry, executor);
+        CompletableFuture.runAsync(this::updateTelemetry, executor);
+//        CompletableFuture.runAsync(this::liftProcess, executor);
+        CompletableFuture.runAsync(this::pidProcess, executor);
+        CompletableFuture.runAsync(this::motorProcess, executor);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
-    private void dropPixel() {
-        currentState = "dropping";
-        level = 1;
-        timer.reset();
-        while(!multiMotorSubsystem.isPositionReached(450) || timer.milliseconds() < 2500);
-        waitTime(250);
+    private void pickupStack(){
+        //move to stack
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        //lower intake
+        intakeCommand.halfIntake();
+        //intake
+        intakeCommand.intakeIn(0.5);
+        //move to front
+        moveToCheckpoint(80.5, 49, Math.PI / 2);
+        sleep(400);
 
+        // Couch out pixels that are stuck
+        intakeCommand.intakeRollerOut();
+        sleep(100);
+        intakeCommand.intakeIn(0.5);
+        sleep(400);
+
+        //stop intake
+        intakeCommand.stopIntake();
+        //raise intake
+        intakeCommand.raiseIntake();
+        //move back and release excess pixels
+        intakeCommand.intakeOut(0.5);
+        moveToCheckpoint(133, 31, Math.PI / 2);
+        waitTime(300);
+    }
+    private void raisingLift() {
+        currentState = "raising lift";
+        multiMotorSubsystem.reset();
+        //set dropoff level
+        level = 5;
+        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+
+        outputCommand.armToBoard();
+        outputCommand.tiltToBoard();
+        timer.reset();
+        while(timer.milliseconds() < 500 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        level = 1;
+        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+//        timer.reset();
+//        while(timer.milliseconds() < 1000 && !isStopRequested()){
+//            multiMotorCommand.LiftUpPositional(true, level);
+//        }
+
+    }
+    private void dropPixel() {
+        currentState = "dropping pixel";
         //drop off
         outputCommand.openGate();
-        waitTime(250);
-        outputCommand.closeGate();
-        outputCommand.outputWheelIn();
-        waitTime(500);
-        outputCommand.outputWheelStop();
-        waitTime(1500);
 
         timer.reset();
+        level = 1;
+        while(timer.milliseconds() < 250 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        outputCommand.closeGate();
+        outputCommand.outputWheelIn();
+        timer.reset();
+        while(timer.milliseconds() < 500 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        outputCommand.outputWheelStop();
+        timer.reset();
+        while(timer.milliseconds() < 1500 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+    }
+    public void lowerLift() {
+        currentState = "lowering lift";
+
         level = 5;
-        while(!multiMotorSubsystem.isPositionReached(1000) || timer.milliseconds() < 2500);
+        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        waitTime(2000);
+        timer.reset();
+        while(timer.milliseconds() < 1000 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
         //retract lift
         level = 0;
-        while(!multiMotorSubsystem.isPositionReached(0) && !(multiMotorSubsystem.getMainPower() == 0) && multiMotorSubsystem.getPosition() < 10);
+        while(!((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5))) {
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        multiMotorSubsystem.moveLift(0);
 
         //lift mode gets stopped in the thread afterwards
 
@@ -316,12 +479,12 @@ public class AutonomousFrontRed extends LinearOpMode {
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.lowerIntake();
-        intakeCommand.intakeOut(0.5);
+        intakeCommand.halfIntake();
+        intakeCommand.intakeOut(0.65);
         timer.reset();
-        while(timer.milliseconds() < 1000);
-        intakeCommand.raiseIntake();
+        while(timer.milliseconds() < 1500);
         intakeCommand.stopIntake();
+        intakeCommand.raiseIntake();
     }
     public void pickupPixels(){
         intakeCommand.lowerIntake();
