@@ -364,12 +364,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(0.7);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,70, 195, -2);
+        mecanumCommand.setFinalPosition(true, 30,40, -170, 2);
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 5, 150, -Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 55, -187, 2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();
