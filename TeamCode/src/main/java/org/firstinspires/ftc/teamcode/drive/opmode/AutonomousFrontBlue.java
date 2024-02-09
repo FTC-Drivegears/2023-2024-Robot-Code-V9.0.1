@@ -388,7 +388,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
         //retract lift
         level = 0;
-        while(!((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5))) {
+        while(!((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) && !isStopRequested()) {
             multiMotorCommand.LiftUpPositional(true, level);
         }
         multiMotorSubsystem.moveLift(0);
@@ -416,7 +416,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.halfIntake();
         intakeCommand.intakeOut(0.65);
         timer.reset();
-        while(timer.milliseconds() < 1500);
+        while(timer.milliseconds() < 1500 && !isStopRequested());
         intakeCommand.stopIntake();
         intakeCommand.raiseIntake();
     }
@@ -424,7 +424,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(1);
         timer.reset();
-        while(timer.milliseconds() < 1000);
+        while(timer.milliseconds() < 1000 && !isStopRequested());
         intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
     }
