@@ -41,7 +41,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private List<LynxModule> allHubs; //GET ALL LYNX MODULES
     FtcDashboard dashboard;
     TelemetryPacket packet;
-    int[] liftPositions = {0, 45, 1000, 2200, 4500, 950};
+    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000};
     private ElapsedTime timer;
     //67, -3, 0
     //54, 24, 0
@@ -157,10 +157,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        }
 //        sleep(5000);
         raisingLift();
-        sleep(5000);
-//        dropPixel();
 //        sleep(5000);
-//        lowerLift();
+        dropPixel();
+//        sleep(5000);
+        lowerLift();
 //        sleep(5000);
         stop();
     }
@@ -335,16 +335,19 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //drop off
         outputCommand.openGate();
 
+        timer.reset();
         level = 1;
         while(timer.milliseconds() < 250 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         outputCommand.closeGate();
         outputCommand.outputWheelIn();
+        timer.reset();
         while(timer.milliseconds() < 500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         outputCommand.outputWheelStop();
+        timer.reset();
         while(timer.milliseconds() < 1500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
@@ -358,14 +361,16 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
+        timer.reset();
         while(timer.milliseconds() < 1000 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         //retract lift
         level = 0;
-        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !(multiMotorSubsystem.getMainPower() == 0) && !isStopRequested()) {
+        while(!((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5))) {
             multiMotorCommand.LiftUpPositional(true, level);
         }
+        multiMotorSubsystem.moveLift(0);
 
         //lift mode gets stopped in the thread afterwards
 

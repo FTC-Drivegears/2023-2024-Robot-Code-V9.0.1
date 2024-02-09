@@ -24,7 +24,7 @@ public class MultiMotorSubsystem extends Specifications {
     private ElapsedTime safetyTimer; //used to make sure the lift doesn't get stuck at the bottom
     private PIDCore pidUp; //the pid used for going upward
     private double kpUp = 0.00381; //k: constant
-    private double kiUp = (double) 1 /800;
+    private double kiUp = (double) 1 /450;
     private double kdUp = 0;
     private PIDCore pidDown; //the pid used for going downward
     private double kpDown = 0.008;
@@ -47,7 +47,7 @@ public class MultiMotorSubsystem extends Specifications {
     private int encoderI; //I: initial
     private int encoderF; //F: final
     public boolean test = false;
-    private int uncertainty = 10;
+    private int uncertainty = 20;
     private double m = 0.3;
     private double c = 0.1;
     private double downThreshold = -0.3;

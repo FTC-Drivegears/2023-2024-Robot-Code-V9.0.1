@@ -233,11 +233,11 @@ public class COTeleOp extends LinearOpMode {
 
             if(gamepad1.dpad_left) {
                 autoCentering = true;
-                gridAutoCentering.setTargetAngle(-Math.PI);
+                gridAutoCentering.setTargetAngle(-Math.PI/2);
             }
             else if(gamepad1.dpad_right){
                 autoCentering = true;
-                gridAutoCentering.setTargetAngle(Math.PI);
+                gridAutoCentering.setTargetAngle(Math.PI/2);
             }
             else if(gamepad1.dpad_up){
                 autoCentering = true;
