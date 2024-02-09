@@ -66,10 +66,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        allHubs = hardwareMap.getAll(LynxModule.class);
-        for(LynxModule hub : allHubs){
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        } //BULK READS
 
         instantiateSubsystems();
         readyRobot();
@@ -112,7 +108,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
       //  Spike Drop-off
         switch (position) {
             case "left":
-                moveTo(110, 14, 0);
+                moveTo(90, 12, 0);
                 break;
             case "middle":
                 moveTo(124.36, -12.48, 0);
@@ -125,6 +121,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         releaseIntakePixel();
 
         // Pixel Board Drop-off
+        mecanumCommand.setFinalPosition(true, 30, 66, 87, Math.PI/2);
         raisingLift();
         switch (position) {
             case "left":
@@ -148,8 +145,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //Middle Front
 //        moveToCheckpoint(80.5, 49, Math.PI / 2);
 
-        moveTo(13, 50, Math.PI / 2);
-        moveToCheckpoint(13, -140, Math.PI / 2);
+        moveTo(22, 50, Math.PI / 2);
+        moveTo(22, -140, Math.PI / 2);
 
         moveToCheckpoint(48, -187, 2);
         pickupPixels();
@@ -386,7 +383,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         timer.reset();
-        while(timer.milliseconds() < 500 && !isStopRequested()){
+        while(timer.milliseconds() < 1000 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         //retract lift
@@ -416,10 +413,10 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.lowerIntake();
-        intakeCommand.intakeOut(0.5);
+        intakeCommand.halfIntake();
+        intakeCommand.intakeOut(0.65);
         timer.reset();
-        while(timer.milliseconds() < 1000);
+        while(timer.milliseconds() < 1500);
         intakeCommand.stopIntake();
         intakeCommand.raiseIntake();
     }
