@@ -400,9 +400,11 @@ public class COTeleOp extends LinearOpMode {
     }
 
     public void autoCenterProcess(){
-        gridAutoCentering.process(autoCentering);
-        if(Math.abs(gridAutoCentering.getTargetAngle() - gyroOdometry.theta) < 0.05 || Math.abs(gamepad1.right_stick_x) > 0.1){
-            autoCentering = false;
+        while(opModeIsActive() && !isStopRequested()) {
+            gridAutoCentering.process(autoCentering);
+            if (Math.abs(gridAutoCentering.getTargetAngle() - gyroOdometry.theta) < 0.05 || Math.abs(gamepad1.right_stick_x) > 0.1) {
+                autoCentering = false;
+            }
         }
     }
 

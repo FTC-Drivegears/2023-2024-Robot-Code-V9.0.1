@@ -46,7 +46,7 @@ public class GridAutoCentering {
         derivative = (error - lastError) / timer.time();
         lastError = error;
         if (Math.abs(error) > 0.005 && run){
-            mecanumSubsystem.partialMoveAdjustment1(true, 0, 0, (error * Kp) + (derivative * Kd)/* + (integralSum * Ki)*/);
+            mecanumSubsystem.partialMoveAdjustment1(true, 0, 0, -((error * Kp) + (derivative * Kd))/* + (integralSum * Ki)*/);
         } else {
             mecanumSubsystem.partialMoveAdjustment1(true, 0, 0, 0);
         }
