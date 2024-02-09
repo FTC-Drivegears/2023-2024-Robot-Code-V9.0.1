@@ -77,6 +77,7 @@ public class AutonomousBackBlueSide extends LinearOpMode {
 
         String position = "middle";
 
+        //spike drop off
         switch (position) {
             case "left":
                 moveToCheckpoint(71.5, 0, 0);
@@ -91,23 +92,34 @@ public class AutonomousBackBlueSide extends LinearOpMode {
         }
         releaseIntakePixel();
 
+        //pickup pixel from stack
+        moveToCheckpoint(129, -43.5, Math.PI/2);
+        pickupPixels();
+
+        //TODO: move to the side of the field and navigate through, thompson find these coordinates
+
         // Pixel Board Drop-off
-        mecanumCommand.setFinalPosition(true, 30, 64, -59, -Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 60, 194.56, Math.PI/2);
         raisingLift();
         switch (position) {
             case "left":
-                moveTo(81, -84.5, -Math.PI / 2);
+                moveTo(53, 213, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(67, -84.5, -Math.PI / 2);
+                moveTo(69, 213, Math.PI / 2);
                 break;
             case "right":
-                moveTo(52, -84.5, -Math.PI / 2);
+                moveTo(80, 213, Math.PI / 2);
                 break;
         }
         dropPixel();
-        moveToCheckpoint(76, -72, -Math.PI / 2);
-        mecanumCommand.setFinalPosition(true, 30, 10, 0, -Math.PI/2);
+
+        //at this point 2 + 1 is finished
+
+        //pickup pixel from stacko
+
+        //TODO: find coordinates here to navigate through side
+        mecanumCommand.setFinalPosition(true, 30, 60, 194.56, Math.PI/2);
         lowerLift();
 
 
@@ -117,14 +129,17 @@ public class AutonomousBackBlueSide extends LinearOpMode {
         //Middle Front
 //        moveToCheckpoint(80.5, 49, Math.PI / 2);
 
+        //TODO: change these side coordiantes
         moveTo(12, 0, -Math.PI / 2);
         moveTo(12, 50, -Math.PI / 2);
         moveTo(12, 80, -Math.PI / 2);
         moveTo(12, 150, -Math.PI / 2);
 
-        moveToCheckpoint(55, 187, -2);
+        //these are likely fine
+        moveToCheckpoint(129, -43.5, Math.PI/2);
         pickupPixels();
 
+        //TODO: these are side coordinates
         moveTo(12, 150, -Math.PI / 2);
         moveTo(12, 110, -Math.PI/2);
         moveTo(12, 70, -Math.PI/2);
@@ -132,34 +147,34 @@ public class AutonomousBackBlueSide extends LinearOpMode {
 
 
         // Pixel Board Drop-off
-        switch (position) {
-            case "left":
-                mecanumCommand.setFinalPosition(true, 30,76, -81, -Math.PI / 2);
-                break;
-            case "middle":
-                mecanumCommand.setFinalPosition(true, 30, 68, -81, -Math.PI / 2);
-                break;
-            case "right":
-                mecanumCommand.setFinalPosition(true, 30, 52, -81, -Math.PI / 2);
-                break;
-        }
+//        switch (position) {
+//            case "left":
+//                moveTo(53, 213, Math.PI / 2);
+//                break;
+//            case "middle":
+//                moveTo(69, 213, Math.PI / 2);
+//                break;
+//            case "right":
+//                moveTo(80, 213, Math.PI / 2);
+//                break;
+//        }
         raisingLift();
-        moveTo(68, -81, -Math.PI / 2);
+        moveTo(69, 213, Math.PI / 2);
         dropPixel();
-        moveToCheckpoint(76, -72, -Math.PI / 2);
+        moveToCheckpoint(76, -72, Math.PI / 2);
         lowerLift();
 
         //Parking
         if (parkPlace.equalsIgnoreCase("left")) {
             // Checkpoint
-            moveToCheckpoint(9, -80, -Math.PI / 2);
+            moveToCheckpoint(9, 210, -Math.PI / 2);
             // Park
-            moveTo(9, -111, -Math.PI / 2);
+            moveTo(9, 250, -Math.PI / 2);
         } else {
             // Checkpoint
-            moveToCheckpoint(133, -80, -Math.PI / 2);
+            moveToCheckpoint(133, 210, -Math.PI / 2);
             // Park
-            moveTo(133, -111, -Math.PI / 2);
+            moveTo(133, 250, -Math.PI / 2);
         }
         stop();
     }
@@ -376,12 +391,12 @@ public class AutonomousBackBlueSide extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(0.7);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,70, 195, -2);
+        mecanumCommand.setFinalPosition(true, 30,129, -43.5,Math.PI/2 );
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 5, 150, -Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 129, -25, Math.PI/2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.drive.opmode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -20,28 +19,25 @@ import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-@Autonomous(name="Autonomous Front Blue")
-public class AutonomousFrontBlue extends LinearOpMode {
+@Autonomous(name="Autonomous Back Red Side")
+public class AutonomousBackRedSide extends LinearOpMode {
     private MecanumSubsystem mecanumSubsystem;
     private MecanumCommand mecanumCommand;
     private IMUSubsystem imu;
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
     private IntakeCommand intakeCommand;
-   //private WebcamSubsystem webcamSubsystem;
+    //private WebcamSubsystem webcamSubsystem;
     private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
-    private List<LynxModule> allHubs; //GET ALL LYNX MODULES
     FtcDashboard dashboard;
     TelemetryPacket packet;
-    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 250};
     private ElapsedTime timer;
     //67, -3, 0
     //54, 24, 0
@@ -62,11 +58,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private boolean running = false;
     private boolean raising = false;
     private String currentState = "";
-    private String status = "Uninitialized";
+    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 250};
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-
         instantiateSubsystems();
         readyRobot();
 
@@ -81,42 +77,51 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         String position = "middle";
 
-      //  Spike Drop-off
+        //spike drop off
         switch (position) {
             case "left":
-                moveTo(95, 12, 0);
+                moveTo(107.76, 19.99, 0);
                 break;
             case "middle":
-                moveTo(118, -12.48, 0);
+                moveTo(120.36, -12.48, 0);
                 break;
             case "right":
                 moveToCheckpoint(71.5, 0, 0);
-                moveTo(65, -19, 2.11);
+                moveTo(69.48, -22, 2.11);
                 break;
         }
         releaseIntakePixel();
 
-        if (position.equalsIgnoreCase("left")
-                || position.equalsIgnoreCase("middle")) {
-            moveToCheckpoint(118, 50, Math.PI / 2);
-        }
+        //pickup pixel from stack
+        moveToCheckpoint(129, 43.5, -Math.PI/2);
+        pickupPixels();
+
+        //TODO: move to the side of the field and navigate through, thompson find these coordinates
 
         // Pixel Board Drop-off
-        mecanumCommand.setFinalPosition(true, 30, 72, 70, Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 60, -194.56, -Math.PI/2);
         raisingLift();
         switch (position) {
             case "left":
-                moveTo(66, 84, Math.PI / 2);
+                moveTo(80, -220, -Math.PI / 2);
                 break;
             case "middle":
-                moveTo(76, 84, Math.PI / 2);
+                moveTo(73, -220, -Math.PI / 2);
                 break;
             case "right":
-                moveTo(85, 84, Math.PI / 2);
+                moveTo(57, -220, -Math.PI / 2);
                 break;
         }
         dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
+
+        //at this point 2 + 1 is finished
+
+        //pickup pixel from stack
+
+        moveTo(60, -194.56, -Math.PI/2);
+
+        //TODO: find coordinates here to navigate through side
+        mecanumCommand.setFinalPosition(true, 30, 10, 0, -Math.PI/2);
         lowerLift();
 
 
@@ -126,50 +131,55 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //Middle Front
 //        moveToCheckpoint(80.5, 49, Math.PI / 2);
 
-        moveTo(22.5, 0, Math.PI / 2);
-        moveTo(22.5, -40, Math.PI / 2);
-        moveTo(22.5, -140, Math.PI / 2);
+        //TODO: change these side coordiantes
+        moveTo(12, 0, -Math.PI / 2);
+        moveTo(12, 50, -Math.PI / 2);
+        moveTo(12, 80, -Math.PI / 2);
+        moveTo(12, 150, -Math.PI / 2);
 
-        moveToCheckpoint(48, -187, 2);
+        //these are likely fine
+        moveToCheckpoint(129, 43.5, -Math.PI/2);
         pickupPixels();
 
-        moveTo(22.5, -140, Math.PI / 2);
-        moveTo(22.5, -105, Math.PI / 2);
-        moveTo(22.5, 0, Math.PI/2);
+        //TODO: these are side coordinates
+        moveTo(12, 150, -Math.PI / 2);
+        moveTo(12, 110, -Math.PI/2);
+        moveTo(12, 70, -Math.PI/2);
+        moveToCheckpoint(10, 0, -Math.PI / 2);
 
-        // Pixel Board Drop-off
-        //switch (position) {
-        //            case "left":
-        //                moveTo(66, 84, Math.PI / 2);
-        //                break;
-        //            case "middle":
-        //                moveTo(76, 84, Math.PI / 2);
-        //                break;
-        //            case "right":
-        //                moveTo(85, 84, Math.PI / 2);
-        //                break;
-        //        }
-        mecanumCommand.setFinalPosition(true, 30, 76, 84, Math.PI/2);
+
+//        // Pixel Board Drop-off
+//        switch (position) {
+//            case "left":
+//                mecanumCommand.setFinalPosition(true, 30,76, -81, -Math.PI / 2);
+//                break;
+//            case "middle":
+//                mecanumCommand.setFinalPosition(true, 30, 68, -81, -Math.PI / 2);
+//                break;
+//            case "right":
+//                mecanumCommand.setFinalPosition(true, 30, 52, -81, -Math.PI / 2);
+//                break;
+//        }
         raisingLift();
-        moveTo(76, 84, Math.PI / 2);
+        moveTo(73, -220, -Math.PI/2);
         dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
+        moveToCheckpoint(60, -194.56, -Math.PI/2);
         lowerLift();
 
         //Parking
         if (parkPlace.equalsIgnoreCase("left")) {
             // Checkpoint
-            moveToCheckpoint(9, 80, Math.PI / 2);
+            moveToCheckpoint(9, -210, Math.PI / 2);
             // Park
-            moveTo(9, 111, Math.PI / 2);
+            moveTo(9, -250, Math.PI / 2);
         } else {
             // Checkpoint
-            moveToCheckpoint(133, 80, Math.PI / 2);
+            moveToCheckpoint(133, -210, Math.PI / 2);
             // Park
-            moveTo(133, 111, Math.PI / 2);
+            moveTo(133, -250, Math.PI / 2);
         }
+        stop();
     }
-
     // Side Processes
     public void pidProcess(){
         while (opModeIsActive() && !isStopRequested()) {
@@ -221,10 +231,28 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.update();
         }
     }
+    public void liftProcess() {
+        while(opModeIsActive() && !isStopRequested()){
+//            if(running) {
+            multiMotorCommand.LiftUp(running, level);
+            if (level == 0 && (multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) {
+                level = /*-1*/0;
+                multiMotorSubsystem.reset();
+                running = false;
+            }
+//            }
+        }
+    }
 
     public void motorProcess(){
         while (opModeIsActive() && !isStopRequested()) {
             mecanumSubsystem.motorProcess();
+        }
+    }
+
+    public void tagDetectionProcess(){
+        while(opModeIsActive() && !isStopRequested()) {
+            aprilCamSubsystem.runDetections();
         }
     }
 
@@ -264,7 +292,6 @@ public class AutonomousFrontBlue extends LinearOpMode {
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
     }
-
     private void raisingLift() {
         currentState = "raising lift";
         multiMotorSubsystem.reset();
@@ -340,22 +367,22 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
     private void waitTime(double milliseconds){
         timer.reset();
-        while(timer.milliseconds() < milliseconds && !isStopRequested()){}
+        while(!isStopRequested() && timer.milliseconds() < milliseconds){}
     }
 
     private void moveTo(double x, double y, double theta) {
         mecanumCommand.setFinalPosition(true, 30, x, y, theta);
-        while (!mecanumCommand.isPositionReached(true, true) && !isStopRequested()) ;
+        while (!isStopRequested() && !mecanumCommand.isPositionReached(true, true)) ;
     }
 
     private void moveToCheckpoint(double x, double y, double theta) {
         mecanumCommand.setFinalPosition(true, 30, x, y, theta);
-        while (!mecanumCommand.isPositionPassed() && !isStopRequested()) ;
+        while (!isStopRequested() && !mecanumCommand.isPositionPassed()) ;
     }
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.lowerIntake();
+        intakeCommand.halfIntake();
         intakeCommand.intakeOut(0.65);
         timer.reset();
         while(timer.milliseconds() < 1500);
@@ -366,12 +393,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(0.7);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,40, -170, 2);
+        mecanumCommand.setFinalPosition(true, 30,129, 43.5,-Math.PI/2);
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 55, -187, 2);
+        mecanumCommand.setFinalPosition(true, 30, 129, 25, -Math.PI/2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();

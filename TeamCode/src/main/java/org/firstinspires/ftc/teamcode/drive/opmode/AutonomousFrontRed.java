@@ -132,17 +132,18 @@ public class AutonomousFrontRed extends LinearOpMode {
 
 
         // Pixel Board Drop-off
-        switch (position) {
-            case "left":
-                mecanumCommand.setFinalPosition(true, 30,76, -81, -Math.PI / 2);
-                break;
-            case "middle":
-                mecanumCommand.setFinalPosition(true, 30, 68, -81, -Math.PI / 2);
-                break;
-            case "right":
-                mecanumCommand.setFinalPosition(true, 30, 52, -81, -Math.PI / 2);
-                break;
-        }
+//        switch (position) {
+//            case "left":
+//                mecanumCommand.setFinalPosition(true, 30,76, -81, -Math.PI / 2);
+//                break;
+//            case "middle":
+//                mecanumCommand.setFinalPosition(true, 30, 68, -81, -Math.PI / 2);
+//                break;
+//            case "right":
+//                mecanumCommand.setFinalPosition(true, 30, 52, -81, -Math.PI / 2);
+//                break;
+//        }
+        mecanumCommand.setFinalPosition(true, 30, 68, -81, -Math.PI / 2);
         raisingLift();
         moveTo(68, -81, -Math.PI / 2);
         dropPixel();
