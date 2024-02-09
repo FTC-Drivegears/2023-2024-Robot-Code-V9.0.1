@@ -269,13 +269,11 @@ public class AutonomousFrontRed extends LinearOpMode {
     }
 
     private void startThreads() {
-        Executor executor = Executors.newFixedThreadPool(5);
+        Executor executor = Executors.newFixedThreadPool(4);
         CompletableFuture.runAsync(this::updateOdometry, executor);
         CompletableFuture.runAsync(this::updateTelemetry, executor);
-//        CompletableFuture.runAsync(this::liftProcess, executor);
         CompletableFuture.runAsync(this::pidProcess, executor);
         CompletableFuture.runAsync(this::motorProcess, executor);
-        //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
     private void raisingLift() {
         currentState = "raising lift";
