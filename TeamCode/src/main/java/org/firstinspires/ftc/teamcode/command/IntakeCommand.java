@@ -32,7 +32,7 @@ public class IntakeCommand {
     }
 
     public void lowerIntake() {
-        intakeServo.setPosition(0.45);
+        intakeServo.setPosition(0.4);
     }
     public void halfIntake(){intakeServo.setPosition(0.2);}
     public void intakeRollerIn(){

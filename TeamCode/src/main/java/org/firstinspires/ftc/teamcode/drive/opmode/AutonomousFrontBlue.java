@@ -62,7 +62,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private boolean running = false;
     private boolean raising = false;
     private String currentState = "";
-
+    private String status = "Uninitialized";
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -83,70 +83,99 @@ public class AutonomousFrontBlue extends LinearOpMode {
         waitForStart();
         startThreads();
 
-        String position = "right";
+
+//        status = "Picking up pixels";
+//        pickupPixels();
+//        status = "Raising lift";
+//        raisingLift();
+//
+//        status = "droping pixel";
+//        dropPixel();
+//
+//        status = "lowering lift";
+//        lowerLift();
+//
+//        status = "Picking up pixels";
+//        pickupPixels();
+//        status = "Raising lift";
+//        raisingLift();
+//
+//        status
+//        status = "droping pixel";
+//        dropPixel();
+//
+//        status = "lowering lift";
+//        lowerLift();
+
+        String position = "left";
 
       //  Spike Drop-off
-        moveToCheckpoint(71.5, 0, 0);
         switch (position) {
             case "left":
-                moveTo(107.76, 19.99, 0);
+                moveTo(110, 14, 0);
                 break;
             case "middle":
                 moveTo(124.36, -12.48, 0);
                 break;
             case "right":
-                moveTo(69.48, -22, 2.11);
+                moveToCheckpoint(71.5, 0, 0);
+                moveTo(65, -19, 2.11);
                 break;
         }
         releaseIntakePixel();
 
-        //Middle Back
-//        moveToCheckpoint(133, 31, Math.PI / 2);
-
-        //Middle Front
-
-//        moveToCheckpoint(80.5, 49, Math.PI / 2);
-
-        // Detecting April Tag Code
-        //goToAprilTag = true;
-        //sleep(1000);
-        //
-        //while(goToAprilTag && !isStopRequested()) {
-        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-        //    }
-        //    while(!mecanumCommand.isPositionReached(true, true)){}
-        //}
-
-        raisingLift();
         // Pixel Board Drop-off
+        raisingLift();
         switch (position) {
             case "left":
-                moveTo(66, 80, Math.PI / 2);
+                moveTo(66, 85, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(76, 80, Math.PI / 2);
+                moveTo(76, 85, Math.PI / 2);
                 break;
             case "right":
-                moveTo(90, 80, Math.PI / 2);
+                moveTo(85, 85, Math.PI / 2);
                 break;
         }
         dropPixel();
         moveToCheckpoint(76, 72, Math.PI / 2);
         lowerLift();
-//        moveToCheckpoint(71.5, 0, Math.PI / 2);
-//        moveToCheckpoint(71.5, -135, Math.PI / 2);
-//        moveToCheckpoint(95.5, -185, Math.PI / 2);
- //       pickupPixels();
-
-//        moveToCheckpoint(71.5, -135, Math.PI / 2);
-//        moveToCheckpoint(71.5, 0, Math.PI / 2);
-//        moveTo(90, 80, Math.PI / 2);
-  //      dropPixel();
 
 
+        //Middle Back
+//        moveToCheckpoint(133, 31, Math.PI / 2);
 
-         //Parking
+        //Middle Front
+//        moveToCheckpoint(80.5, 49, Math.PI / 2);
+
+        moveTo(13, 50, Math.PI / 2);
+        moveToCheckpoint(13, -140, Math.PI / 2);
+
+        moveToCheckpoint(48, -187, 2);
+        pickupPixels();
+
+        moveTo(13, -140, Math.PI / 2);
+        moveToCheckpoint(13, 0, Math.PI / 2);
+
+
+        // Pixel Board Drop-off
+        raisingLift();
+        switch (position) {
+            case "left":
+                moveTo(66, 85, Math.PI / 2);
+                break;
+            case "middle":
+                moveTo(76, 85, Math.PI / 2);
+                break;
+            case "right":
+                moveTo(85, 85, Math.PI / 2);
+                break;
+        }
+        dropPixel();
+        moveToCheckpoint(76, 72, Math.PI / 2);
+        lowerLift();
+
+        //Parking
         if (parkPlace.equalsIgnoreCase("left")) {
             // Checkpoint
             moveToCheckpoint(9, 80, Math.PI / 2);
@@ -312,17 +341,17 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
         timer.reset();
-        while(timer.milliseconds() < 1000 && !isStopRequested()){
+        while(timer.milliseconds() < 500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         level = 1;
         while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
-        timer.reset();
-        while(timer.milliseconds() < 1000 && !isStopRequested()){
-            multiMotorCommand.LiftUpPositional(true, level);
-        }
+//        timer.reset();
+//        while(timer.milliseconds() < 1000 && !isStopRequested()){
+//            multiMotorCommand.LiftUpPositional(true, level);
+//        }
 
     }
     private void dropPixel() {
@@ -357,7 +386,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         timer.reset();
-        while(timer.milliseconds() < 1000 && !isStopRequested()){
+        while(timer.milliseconds() < 500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         //retract lift
@@ -391,8 +420,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.intakeOut(0.5);
         timer.reset();
         while(timer.milliseconds() < 1000);
-        intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
+        intakeCommand.raiseIntake();
     }
     public void pickupPixels(){
         intakeCommand.lowerIntake();
