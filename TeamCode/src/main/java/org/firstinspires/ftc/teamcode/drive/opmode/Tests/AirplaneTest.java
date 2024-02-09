@@ -9,16 +9,16 @@ public class AirplaneTest extends LinearOpMode {
     private Servo shooterServo;
     @Override
     public void runOpMode(){
-        shooterServo = hardwareMap.get(Servo.class, "leftHang");
+        shooterServo = hardwareMap.get(Servo.class, "droneShooter");
         shooterServo.setDirection(Servo.Direction.REVERSE);
 
         waitForStart();
 
         while(opModeIsActive()){
             if(gamepad1.a)
-                shooterServo.setPosition(0);
+                shooterServo.setPosition(.75);
             else if(gamepad1.b)
-                shooterServo.setPosition(0.5);
+                shooterServo.setPosition(1.25);
         }
     }
 }

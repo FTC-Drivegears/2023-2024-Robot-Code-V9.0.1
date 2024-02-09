@@ -143,9 +143,9 @@ public class AutonomousFrontRed extends LinearOpMode {
 //                mecanumCommand.setFinalPosition(true, 30, 52, -81, -Math.PI / 2);
 //                break;
 //        }
-        mecanumCommand.setFinalPosition(true, 30, 68, -81, -Math.PI / 2);
+        mecanumCommand.setFinalPosition(true, 30, 68, -75, -Math.PI / 2);
         raisingLift();
-        moveTo(68, -81, -Math.PI / 2);
+        moveTo(67, -84.5, -Math.PI / 2);
         dropPixel();
         moveToCheckpoint(76, -72, -Math.PI / 2);
         lowerLift();
@@ -367,22 +367,23 @@ public class AutonomousFrontRed extends LinearOpMode {
     private void releaseIntakePixel() {
         //release pixel
         intakeCommand.halfIntake();
-        intakeCommand.intakeOut(0.65);
+        while(timer.milliseconds() < 250);
+        intakeCommand.intakeOut(0.5);
         timer.reset();
         while(timer.milliseconds() < 1500);
         intakeCommand.stopIntake();
         intakeCommand.raiseIntake();
     }
     public void pickupPixels(){
+        moveToCheckpoint(70, 195, -2);
         intakeCommand.lowerIntake();
-        intakeCommand.intakeIn(0.7);
+        intakeCommand.intakeIn(1);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,70, 195, -2);
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 5, 150, -Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 12, 150, -Math.PI/2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();
