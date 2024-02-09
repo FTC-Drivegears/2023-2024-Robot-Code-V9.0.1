@@ -23,7 +23,7 @@ public class MultiMotorSubsystem extends Specifications {
     private ElapsedTime mainTimer;
     private ElapsedTime safetyTimer; //used to make sure the lift doesn't get stuck at the bottom
     private PIDCore pidUp; //the pid used for going upward
-    private double kpUp = 0.00381; //k: constant
+    private double kpUp = 0.0035; //k: constant
     private double kiUp = (double) 1 /450;
     private double kdUp = 0;
     private PIDCore pidDown; //the pid used for going downward
