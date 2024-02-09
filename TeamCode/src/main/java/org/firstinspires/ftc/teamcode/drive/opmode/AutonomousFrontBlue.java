@@ -101,11 +101,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
         releaseIntakePixel();
 
         //Middle Back
-        moveToCheckpoint(133, 31, Math.PI / 2);
+//        moveToCheckpoint(133, 31, Math.PI / 2);
 
         //Middle Front
 
-        moveToCheckpoint(80.5, 49, Math.PI / 2);
+//        moveToCheckpoint(80.5, 49, Math.PI / 2);
 
         // Detecting April Tag Code
         //goToAprilTag = true;
@@ -118,6 +118,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         //    while(!mecanumCommand.isPositionReached(true, true)){}
         //}
 
+        raisingLift();
         // Pixel Board Drop-off
         switch (position) {
             case "left":
@@ -130,15 +131,17 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 moveTo(90, 80, Math.PI / 2);
                 break;
         }
-//        dropPixel();
-        moveToCheckpoint(71.5, 0, Math.PI / 2);
-        moveToCheckpoint(71.5, -135, Math.PI / 2);
-        moveToCheckpoint(95.5, -185, Math.PI / 2);
+        dropPixel();
+        moveToCheckpoint(76, 72, Math.PI / 2);
+        lowerLift();
+//        moveToCheckpoint(71.5, 0, Math.PI / 2);
+//        moveToCheckpoint(71.5, -135, Math.PI / 2);
+//        moveToCheckpoint(95.5, -185, Math.PI / 2);
  //       pickupPixels();
 
-        moveToCheckpoint(71.5, -135, Math.PI / 2);
-        moveToCheckpoint(71.5, 0, Math.PI / 2);
-        moveTo(90, 80, Math.PI / 2);
+//        moveToCheckpoint(71.5, -135, Math.PI / 2);
+//        moveToCheckpoint(71.5, 0, Math.PI / 2);
+//        moveTo(90, 80, Math.PI / 2);
   //      dropPixel();
 
 
