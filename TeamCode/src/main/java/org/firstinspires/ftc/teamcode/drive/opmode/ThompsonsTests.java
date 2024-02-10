@@ -172,9 +172,6 @@ public class ThompsonsTests extends LinearOpMode {
 
     public void updateTelemetry() {
         while (opModeIsActive()) {
-            telemetry.addData("spike location", webcamSubsystem.findSpikePosition());
-            telemetry.addData("april tags", webcamSubsystem.getDetections());
-            telemetry.update();
         }
     }
 

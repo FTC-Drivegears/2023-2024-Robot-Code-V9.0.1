@@ -130,18 +130,6 @@ public class WebcamSubsystem extends Specifications {
         return CONTOUR_PROCESSOR;
     }
 
-    /**
-     * Identifies what spike location the game piece is on.
-     *
-     * @return a String indication the location of the game piece
-     */
-    public String findSpikePosition() {
-        // For reference, camera is 864 pixels wide
-        double center = CONTOUR_PROCESSOR.largestContourCenter().x;
-        return center < 288 ? "left"
-                : center < 576 ? "middle"
-                : "right";
-    }
 
     //returns list of all april tag detections
 
