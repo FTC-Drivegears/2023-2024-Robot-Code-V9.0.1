@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.List;
@@ -39,6 +40,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
     private List<LynxModule> allHubs; //GET ALL LYNX MODULES
+    private WebcamSubsystem webcamSubsystem;
     FtcDashboard dashboard;
     TelemetryPacket packet;
     int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 250};
@@ -48,7 +50,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     //57, -22, -0.832
     //38, 80, -1.58
     private int level = 5;
-    private String position = "initalized";
+    private String position = "middle";
     private double targetX = 0;
     private double targetY = 0;
 
@@ -68,18 +70,17 @@ public class AutonomousFrontBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         instantiateSubsystems();
-//        readyRobot();
+        readyRobot();
 //
 //        double propPosition = 0;
         while(opModeInInit() && !isStopRequested()){
-            //TODO: determine which Xprop positions make left, middle, right
-//            propPosition = webcamSubsystem.getXProp();
+            position = findSpikePosition();
         }
 
         waitForStart();
         startThreads();
 
-        String position = "middle";
+//        String position = "middle";
 
       //  Spike Drop-off
         switch (position) {
@@ -116,7 +117,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 break;
         }
         dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
+        mecanumCommand.setFinalPosition(true, 30, 76, 72, Math.PI/2);
+//        moveToCheckpoint(76, 72, Math.PI / 2);
         lowerLift();
 
 
@@ -240,7 +242,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-//        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
 //        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
 //        dashboard = FtcDashboard.getInstance();
@@ -355,7 +357,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.lowerIntake();
+        intakeCommand.raiseIntake();
         intakeCommand.intakeOut(0.65);
         timer.reset();
         while(timer.milliseconds() < 1500);
@@ -366,14 +368,23 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(0.7);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,40, -170, 2);
+        mecanumCommand.setFinalPosition(true, 30,50, -185, 2);
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 55, -187, 2);
+        mecanumCommand.setFinalPosition(true, 30, 60, -195, 2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();
+    }
+    public String findSpikePosition() {
+        double center = webcamSubsystem.getXProp();
+
+        // TODO: Tune numbers so we can find the position of the spike
+        // For reference, camera is 864 pixels wide
+        return center < 288 ? "left"
+                : center < 576 ? "middle"
+                : "right";
     }
 }
