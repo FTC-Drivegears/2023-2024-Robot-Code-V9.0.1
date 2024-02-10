@@ -56,10 +56,10 @@ public class OutputCommand {
     }
 
     public void droneToShoot(){
-        droneShooter.setPosition(1);
+        droneShooter.setPosition(0);
     }
     public void droneToNotShoot(){
-        droneShooter.setPosition(0);
+        droneShooter.setPosition(0.165);
     }
 
     public void droneToIdle(){

@@ -112,6 +112,8 @@ public class COTeleOp extends LinearOpMode {
             outputCommand.armToIdle();
             outputCommand.tiltToIdle();
 
+            outputCommand.droneToNotShoot();
+
             pixelCounter = 0;
             timerList.resetTimer("colorLoop");
         }
@@ -266,12 +268,6 @@ public class COTeleOp extends LinearOpMode {
             else if(gamepad2.dpad_down){
                 intakeCommand.lowerIntake();
             }
-//            else if(gamepad2.dpad_right){
-//                outputCommand.droneToShoot();
-//            }
-//            else if(gamepad2.dpad_left){
-//                outputCommand.droneToNotShoot();
-//            }
             else if(gamepad2.right_trigger > 0.5){
                 intakeCommand.intakeIn(0.8);
             }
@@ -280,13 +276,14 @@ public class COTeleOp extends LinearOpMode {
             }
             else{
                 intakeCommand.stopIntake();
-                outputCommand.droneToIdle();
             }
             if(gamepad2.dpad_left){
                 outputCommand.hangArmUp(1);
             }
             else if(gamepad2.dpad_right){
                 outputCommand.hangArmDown(1);
+            } else if(gamepad2.left_bumper){
+                outputCommand.droneToShoot();
             }
             else {
                 outputCommand.hangArmUp(0);
@@ -303,7 +300,7 @@ public class COTeleOp extends LinearOpMode {
 //            }
 
             //TODO: auto center/change zero
-            updateTelemetry();
+//            updateTelemetry();
 //            lightProcess();
             mecanumCommand.moveGlobalPartial(true, gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
         }

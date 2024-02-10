@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.opmode;
+package org.firstinspires.ftc.teamcode.drive.opmode.Tests;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -25,15 +25,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-@Autonomous(name="Autonomous Front Blue")
-public class AutonomousFrontBlue extends LinearOpMode {
+@Autonomous(name="pixel drop test", group="tests")
+public class AutoPixeldrop extends LinearOpMode {
     private MecanumSubsystem mecanumSubsystem;
     private MecanumCommand mecanumCommand;
     private IMUSubsystem imu;
     private OdometrySubsystem odometrySubsystem;
     private GyroOdometry gyroOdometry;
     private IntakeCommand intakeCommand;
-   //private WebcamSubsystem webcamSubsystem;
+    //private WebcamSubsystem webcamSubsystem;
     private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
@@ -68,106 +68,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         instantiateSubsystems();
-//        readyRobot();
+        readyRobot();
 //
 //        double propPosition = 0;
-        while(opModeInInit() && !isStopRequested()){
-            //TODO: determine which Xprop positions make left, middle, right
-//            propPosition = webcamSubsystem.getXProp();
-        }
 
         waitForStart();
-        startThreads();
-
-        String position = "middle";
-
-      //  Spike Drop-off
-        switch (position) {
-            case "left":
-                moveTo(95, 12, 0);
-                break;
-            case "middle":
-                moveTo(118, -12.48, 0);
-                break;
-            case "right":
-                moveToCheckpoint(71.5, 0, 0);
-                moveTo(65, -19, 2.11);
-                break;
-        }
         releaseIntakePixel();
-
-        if (position.equalsIgnoreCase("left")
-                || position.equalsIgnoreCase("middle")) {
-            moveToCheckpoint(118, 50, Math.PI / 2);
-        }
-
-        // Pixel Board Drop-off
-        mecanumCommand.setFinalPosition(true, 30, 72, 70, Math.PI/2);
-        raisingLift();
-        switch (position) {
-            case "left":
-                moveTo(66, 84, Math.PI / 2);
-                break;
-            case "middle":
-                moveTo(76, 84, Math.PI / 2);
-                break;
-            case "right":
-                moveTo(85, 84, Math.PI / 2);
-                break;
-        }
-        dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
-        lowerLift();
-
-
-        //Middle Back
-//        moveToCheckpoint(133, 31, Math.PI / 2);
-
-        //Middle Front
-//        moveToCheckpoint(80.5, 49, Math.PI / 2);
-
-        moveTo(22.5, 0, Math.PI / 2);
-        moveTo(22.5, -40, Math.PI / 2);
-        moveTo(22.5, -140, Math.PI / 2);
-
-        moveToCheckpoint(48, -187, 2);
-        pickupPixels();
-
-        moveTo(22.5, -140, Math.PI / 2);
-        moveTo(22.5, -105, Math.PI / 2);
-        moveTo(22.5, 0, Math.PI/2);
-
-        // Pixel Board Drop-off
-        //switch (position) {
-        //            case "left":
-        //                moveTo(66, 84, Math.PI / 2);
-        //                break;
-        //            case "middle":
-        //                moveTo(76, 84, Math.PI / 2);
-        //                break;
-        //            case "right":
-        //                moveTo(85, 84, Math.PI / 2);
-        //                break;
-        //        }
-        mecanumCommand.setFinalPosition(true, 30, 76, 84, Math.PI/2);
-        raisingLift();
-        moveTo(76, 84, Math.PI / 2);
-        dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
-        lowerLift();
-
-        //Parking
-        if (parkPlace.equalsIgnoreCase("left")) {
-            // Checkpoint
-            moveToCheckpoint(9, 80, Math.PI / 2);
-            // Park
-            moveTo(9, 111, Math.PI / 2);
-        } else {
-            // Checkpoint
-            moveToCheckpoint(133, 80, Math.PI / 2);
-            // Park
-            moveTo(133, 111, Math.PI / 2);
-        }
     }
 
     // Side Processes
@@ -186,21 +92,21 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     public void updateTelemetry() {
         while (opModeIsActive() && !isStopRequested()) {
-//            packet.put("x", gyroOdometry.x);
-//            packet.put("y", gyroOdometry.y);
-//            packet.put("theta", gyroOdometry.theta);
-//            packet.put("xReached", mecanumCommand.isXReached());
-//            packet.put("yReached", mecanumCommand.isYReached());
-//            packet.put("errorX", mecanumCommand.globalXController.getError());
-//            packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
-//            packet.put("errorY", mecanumCommand.globalYController.getError());
-//            packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
-//            packet.put("currentState", currentState);
-//            packet.put("level", level);
-//            packet.put("raising", raising);
-//            packet.put("running", running);
-//            packet.put("liftPos", multiMotorSubsystem.getPosition());
-//            packet.put("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
+            packet.put("x", gyroOdometry.x);
+            packet.put("y", gyroOdometry.y);
+            packet.put("theta", gyroOdometry.theta);
+            packet.put("xReached", mecanumCommand.isXReached());
+            packet.put("yReached", mecanumCommand.isYReached());
+            packet.put("errorX", mecanumCommand.globalXController.getError());
+            packet.put("integralSumX", mecanumCommand.globalXController.getIntegralSum());
+            packet.put("errorY", mecanumCommand.globalYController.getError());
+            packet.put("integralSumY", mecanumCommand.globalYController.getIntegralSum());
+            packet.put("currentState", currentState);
+            packet.put("level", level);
+            packet.put("raising", raising);
+            packet.put("running", running);
+            packet.put("liftPos", multiMotorSubsystem.getPosition());
+            packet.put("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
 
             telemetry.addData("x", gyroOdometry.x);
             telemetry.addData("y", gyroOdometry.y);
@@ -217,7 +123,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             telemetry.addData("liftPos", multiMotorSubsystem.getPosition());
             telemetry.addData("pidoutput", multiMotorSubsystem.getPidUp().getOutputPositionalValue());
 
-//            dashboard.sendTelemetryPacket(packet);
+            dashboard.sendTelemetryPacket(packet);
             telemetry.update();
         }
     }
@@ -243,8 +149,8 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
 //        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
-//        dashboard = FtcDashboard.getInstance();
-//        packet = new TelemetryPacket();
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
     }
 
     private void readyRobot() {

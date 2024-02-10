@@ -85,7 +85,7 @@ public class WebcamSubsystem extends Specifications {
         VISION_PORTAL = new VisionPortal.Builder()
 //                .addProcessor(APRIL_TAG_PROCESSOR)
                 .addProcessor(CONTOUR_PROCESSOR)
-                .enableLiveView(true)
+//                .enableLiveView(true)
                 .setCamera(hardwareMap.get(CameraName.class, "Webcam 1"))
                 .setCameraResolution(new Size(864, 480))
                 .build();

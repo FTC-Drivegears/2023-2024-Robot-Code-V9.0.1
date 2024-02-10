@@ -18,12 +18,12 @@ public class CameraTest extends LinearOpMode {
     private TelemetryPacket packet;
     @Override
     public void runOpMode(){
-        camera = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+        camera = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_RED);
         dashboard = FtcDashboard.getInstance();
-        dashboard.startCameraStream(camera.webcam, 24);
         packet = new TelemetryPacket();
 
         waitForStart();
+        dashboard.startCameraStream(camera.webcam, 24);
         while(opModeIsActive()){
             dashboard.sendTelemetryPacket(packet);
             packet.put("x", camera.getContourProcessor().largestContourCenter().x);
@@ -34,6 +34,7 @@ public class CameraTest extends LinearOpMode {
             telemetry.addData("y", camera.getContourProcessor().largestContourCenter().y);
             telemetry.addData("area", camera.getContourProcessor().largestContourArea());
             telemetry.addData("Spike Position", findSpikePosition());
+            telemetry.update();
             sleep(20);
         }
     }

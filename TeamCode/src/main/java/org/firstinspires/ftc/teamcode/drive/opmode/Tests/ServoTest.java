@@ -18,7 +18,7 @@ public class ServoTest extends LinearOpMode {
     OutputCommand outputCommand;
     com.qualcomm.robotcore.hardware.Servo servo;
     Servo roller;
-    public static double pos1 = 0.46;
+    public static double pos1 = 0;
     public static double pos2 = 0.2;
     private FtcDashboard dash;
     private TelemetryPacket packet;
@@ -33,17 +33,17 @@ public class ServoTest extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()){
             if(gamepad1.a){
-//                outputCommand.openGate();
+//                outputCommand.droneToNotShoot();
                 roller.setPosition(pos1);
             }
             else if(gamepad1.b){
-                outputCommand.closeGate();
+//                outputCommand.droneToShoot();
                 roller.setPosition(pos2);
             }
 //            roller.setPower(gamepad1.right_trigger);
 //            telemetry.addData("pos",servo.getPosition());
             telemetry.update();
-            packet.put("servoPos", servo.getPosition());
+            packet.put("servoPos", roller.getPosition());
             dash.sendTelemetryPacket(packet);
         }
     }
