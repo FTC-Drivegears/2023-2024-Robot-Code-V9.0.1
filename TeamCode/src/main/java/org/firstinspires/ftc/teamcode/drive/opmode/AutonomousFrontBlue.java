@@ -68,9 +68,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
 
         instantiateSubsystems();
-        readyRobot();
-
-        double propPosition = 0;
+//        readyRobot();
+//
+//        double propPosition = 0;
         while(opModeInInit() && !isStopRequested()){
             //TODO: determine which Xprop positions make left, middle, right
 //            propPosition = webcamSubsystem.getXProp();
@@ -236,15 +236,15 @@ public class AutonomousFrontBlue extends LinearOpMode {
         odometrySubsystem = new OdometrySubsystem(hardwareMap);
         gyroOdometry = new GyroOdometry(odometrySubsystem, imu);
         mecanumCommand = new MecanumCommand(mecanumSubsystem, odometrySubsystem, gyroOdometry, this);
-        intakeCommand = new IntakeCommand(hardwareMap);
-        outputCommand = new OutputCommand(hardwareMap);
-        multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
-        multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-//        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
-        timer = new ElapsedTime();
-        dashboard = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
+//        intakeCommand = new IntakeCommand(hardwareMap);
+//        outputCommand = new OutputCommand(hardwareMap);
+//        multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
+//        multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
+//        //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+////        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+//        timer = new ElapsedTime();
+//        dashboard = FtcDashboard.getInstance();
+//        packet = new TelemetryPacket();
     }
 
     private void readyRobot() {
