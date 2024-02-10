@@ -65,13 +65,13 @@ public class WebcamSubsystem extends Specifications {
          */
         if(pipelineName == PipelineName.CONTOUR_BLUE){
             CONTOUR_PROCESSOR = new ContourProcessor(
-                    115, 234, 255,
-                    104, 130, 41
+                    138, 255, 255,
+                    87, 218, 143
             );
         } else {
             CONTOUR_PROCESSOR = new ContourProcessor(
-                    10, 255, 255,
-                    0, 119, 0
+                    38, 255, 255,
+                    0, 227, 102
             );
         }
 
