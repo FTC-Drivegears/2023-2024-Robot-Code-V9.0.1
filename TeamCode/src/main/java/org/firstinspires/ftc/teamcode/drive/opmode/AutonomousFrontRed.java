@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.concurrent.CompletableFuture;
@@ -36,6 +37,7 @@ public class AutonomousFrontRed extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
+    private WebcamSubsystem webcamSubsystem;
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
@@ -68,8 +70,10 @@ public class AutonomousFrontRed extends LinearOpMode {
 
         double propPosition = 0;
         while(opModeInInit() && !isStopRequested()){
-            //TODO: determine which Xprop positions make left, middle, right
-//            propPosition = webcamSubsystem.getXProp();
+            position = findSpikePosition();
+            telemetry.addData("position", findSpikePosition());
+            telemetry.addData("actualpos", webcamSubsystem.getXProp());
+            telemetry.update();
         }
 
         waitForStart();
@@ -252,11 +256,11 @@ public class AutonomousFrontRed extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_RED);
+//        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
-        dashboard = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
+//        dashboard = FtcDashboard.getInstance();
+//        packet = new TelemetryPacket();
     }
 
     private void readyRobot() {
@@ -380,12 +384,21 @@ public class AutonomousFrontRed extends LinearOpMode {
         intakeCommand.intakeIn(1);
         intakeCommand.intakeRollerIn();
         timer.reset();
-        while(timer.milliseconds() < 2500);
+        while(timer.milliseconds() < 2500 && !isStopRequested());
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
         mecanumCommand.setFinalPosition(true, 30, 12, 150, -Math.PI/2);
         timer.reset();
-        while(timer.milliseconds() < 1000);
+        while(timer.milliseconds() < 1000 && !isStopRequested());
         intakeCommand.stopIntake();
+    }
+    public String findSpikePosition() {
+        double center = webcamSubsystem.getXProp();
+
+        // TODO: Tune numbers so we can find the position of the spike
+        // For reference, the camera is 864 pixels wide
+        return center < 288 ? "left"
+                : center < 576 ? "middle"
+                : "right";
     }
 }

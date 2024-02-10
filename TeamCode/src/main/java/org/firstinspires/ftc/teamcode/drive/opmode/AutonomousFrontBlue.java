@@ -75,6 +75,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        double propPosition = 0;
         while(opModeInInit() && !isStopRequested()){
             position = findSpikePosition();
+            telemetry.addData("position", findSpikePosition());
+            telemetry.addData("actualpos", webcamSubsystem.getXProp());
+            telemetry.update();
 //            packet.put("position", findSpikePosition());
 //            packet.put("actualpos", webcamSubsystem.getXProp());
 //            dashboard.sendTelemetryPacket(packet);
@@ -110,55 +113,56 @@ public class AutonomousFrontBlue extends LinearOpMode {
         raisingLift();
         switch (position) {
             case "left":
-                moveTo(66, 84, Math.PI / 2);
+                moveTo(66, 82, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(76, 84, Math.PI / 2);
+                moveTo(76, 82, Math.PI / 2);
                 break;
             case "right":
-                moveTo(85, 84, Math.PI / 2);
+                moveTo(85, 82, Math.PI / 2);
                 break;
         }
         dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
+        mecanumCommand.setFinalPosition(true, 30, 76, 72, Math.PI/2);
         lowerLift();
-
-
-        //Middle Back
-//        moveToCheckpoint(133, 31, Math.PI / 2);
-
-        //Middle Front
-//        moveToCheckpoint(80.5, 49, Math.PI / 2);
-
-        moveTo(22.5, 0, Math.PI / 2);
-        moveTo(22.5, -40, Math.PI / 2);
-        moveTo(22.5, -140, Math.PI / 2);
-
-        moveToCheckpoint(48, -187, 2);
-        pickupPixels();
-
-        moveTo(22.5, -140, Math.PI / 2);
-        moveTo(22.5, -105, Math.PI / 2);
-        moveTo(22.5, 0, Math.PI/2);
-
-        // Pixel Board Drop-off
-        //switch (position) {
-        //            case "left":
-        //                moveTo(66, 84, Math.PI / 2);
-        //                break;
-        //            case "middle":
-        //                moveTo(76, 84, Math.PI / 2);
-        //                break;
-        //            case "right":
-        //                moveTo(85, 84, Math.PI / 2);
-        //                break;
-        //        }
-        mecanumCommand.setFinalPosition(true, 30, 76, 84, Math.PI/2);
-        raisingLift();
-        moveTo(76, 84, Math.PI / 2);
-        dropPixel();
-        moveToCheckpoint(76, 72, Math.PI / 2);
-        lowerLift();
+//        moveToCheckpoint(76, 72, Math.PI / 2);
+//
+//
+//        //Middle Back
+////        moveToCheckpoint(133, 31, Math.PI / 2);
+//
+//        //Middle Front
+////        moveToCheckpoint(80.5, 49, Math.PI / 2);
+//
+//        moveTo(22.5, 0, Math.PI / 2);
+//        moveTo(22.5, -40, Math.PI / 2);
+//        moveTo(22.5, -140, Math.PI / 2);
+//
+//        moveToCheckpoint(48, -187, 2);
+//        pickupPixels();
+//
+//        moveTo(22.5, -140, Math.PI / 2);
+//        moveTo(22.5, -105, Math.PI / 2);
+//        moveTo(22.5, 0, Math.PI/2);
+//
+//        // Pixel Board Drop-off
+//        //switch (position) {
+//        //            case "left":
+//        //                moveTo(66, 84, Math.PI / 2);
+//        //                break;
+//        //            case "middle":
+//        //                moveTo(76, 84, Math.PI / 2);
+//        //                break;
+//        //            case "right":
+//        //                moveTo(85, 84, Math.PI / 2);
+//        //                break;
+//        //        }
+//        mecanumCommand.setFinalPosition(true, 30, 76, 84, Math.PI/2);
+//        raisingLift();
+//        moveTo(76, 84, Math.PI / 2);
+//        dropPixel();
+//        moveToCheckpoint(76, 72, Math.PI / 2);
+//        lowerLift();
 
         //Parking
         if (parkPlace.equalsIgnoreCase("left")) {
@@ -172,7 +176,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             // Park
             moveTo(133, 111, Math.PI / 2);
         }
-        stop();
+//        stop();
     }
 
     // Side Processes
@@ -330,7 +334,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         timer.reset();
-        while(timer.milliseconds() < 1000 && !isStopRequested()){
+        while(timer.milliseconds() < 2500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         //retract lift
@@ -371,12 +375,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(0.7);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,40, -170, 2);
+        mecanumCommand.setFinalPosition(true, 30,60, -190, 2);
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 55, -187, 2);
+        mecanumCommand.setFinalPosition(true, 30, 75, -220, 2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();
@@ -386,8 +390,11 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         // TODO: Tune numbers so we can find the position of the spike
         // For reference, the camera is 864 pixels wide
-        return center < 288 ? "left"
-                : center < 576 ? "middle"
+        if(webcamSubsystem.getContourProcessor().largestContourArea() < 1700){
+            return "right";
+        }
+        return center < 550 ? "left"
+                : center < 800 ? "middle"
                 : "right";
     }
 }

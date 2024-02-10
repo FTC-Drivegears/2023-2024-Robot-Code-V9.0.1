@@ -53,8 +53,11 @@ public class CameraTest extends LinearOpMode {
 
         // TODO: Tune numbers so we can find the position of the spike
         // For reference, the camera is 864 pixels wide
-        return center < 300 ? "left"
-                : center < 600 ? "middle"
+        if(webcamSubsystem.getContourProcessor().largestContourArea() < 1300){
+            return "right";
+        }
+        return center < 550 ? "left"
+                : center < 800 ? "middle"
                 : "right";
     }
 
