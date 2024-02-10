@@ -38,9 +38,9 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private OutputCommand outputCommand;
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
+    private WebcamSubsystem webcamSubsystem;
     private AprilCamSubsystem aprilCamSubsystem;
     private List<LynxModule> allHubs; //GET ALL LYNX MODULES
-    private WebcamSubsystem webcamSubsystem;
     FtcDashboard dashboard;
     TelemetryPacket packet;
     int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 250};
@@ -50,7 +50,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     //57, -22, -0.832
     //38, 80, -1.58
     private int level = 5;
-    private String position = "middle";
+    private String position = "initalized";
     private double targetX = 0;
     private double targetY = 0;
 
@@ -75,12 +75,15 @@ public class AutonomousFrontBlue extends LinearOpMode {
 //        double propPosition = 0;
         while(opModeInInit() && !isStopRequested()){
             position = findSpikePosition();
+//            packet.put("position", findSpikePosition());
+//            packet.put("actualpos", webcamSubsystem.getXProp());
+//            dashboard.sendTelemetryPacket(packet);
         }
 
         waitForStart();
         startThreads();
 
-//        String position = "middle";
+//        String position = "left";
 
       //  Spike Drop-off
         switch (position) {
@@ -117,8 +120,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
                 break;
         }
         dropPixel();
-        mecanumCommand.setFinalPosition(true, 30, 76, 72, Math.PI/2);
-//        moveToCheckpoint(76, 72, Math.PI / 2);
+        moveToCheckpoint(76, 72, Math.PI / 2);
         lowerLift();
 
 
@@ -170,6 +172,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
             // Park
             moveTo(133, 111, Math.PI / 2);
         }
+        stop();
     }
 
     // Side Processes
@@ -243,7 +246,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-//        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+////        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
 //        dashboard = FtcDashboard.getInstance();
 //        packet = new TelemetryPacket();
@@ -357,7 +360,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.raiseIntake();
+        intakeCommand.lowerIntake();
         intakeCommand.intakeOut(0.65);
         timer.reset();
         while(timer.milliseconds() < 1500);
@@ -368,12 +371,12 @@ public class AutonomousFrontBlue extends LinearOpMode {
         intakeCommand.lowerIntake();
         intakeCommand.intakeIn(0.7);
         intakeCommand.intakeRollerIn();
-        mecanumCommand.setFinalPosition(true, 30,50, -185, 2);
+        mecanumCommand.setFinalPosition(true, 30,40, -170, 2);
         timer.reset();
         while(timer.milliseconds() < 2500);
         intakeCommand.raiseIntake();
         intakeCommand.intakeOut(1);
-        mecanumCommand.setFinalPosition(true, 30, 60, -195, 2);
+        mecanumCommand.setFinalPosition(true, 30, 55, -187, 2);
         timer.reset();
         while(timer.milliseconds() < 1000);
         intakeCommand.stopIntake();
@@ -382,7 +385,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         double center = webcamSubsystem.getXProp();
 
         // TODO: Tune numbers so we can find the position of the spike
-        // For reference, camera is 864 pixels wide
+        // For reference, the camera is 864 pixels wide
         return center < 288 ? "left"
                 : center < 576 ? "middle"
                 : "right";

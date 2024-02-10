@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MultiMotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OdometrySubsystem;
 //import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.WebcamSubsystem;
 import org.firstinspires.ftc.teamcode.util.GyroOdometry;
 
 import java.util.concurrent.CompletableFuture;
@@ -36,9 +37,11 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
     private MultiMotorSubsystem multiMotorSubsystem;
     private MultiMotorCommand multiMotorCommand;
     private AprilCamSubsystem aprilCamSubsystem;
+    private WebcamSubsystem webcamSubsystem;
     FtcDashboard dashboard;
     TelemetryPacket packet;
     private ElapsedTime timer;
+    int[] liftPositions = {0, 450, 1200, 2200, 4500, 1000, 250};
     //67, -3, 0
     //54, 24, 0
     //57, -22, -0.832
@@ -67,14 +70,15 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
 
         double propPosition = 0;
         while(opModeInInit() && !isStopRequested()){
-            //TODO: determine which Xprop positions make left, middle, right
-//            propPosition = webcamSubsystem.getXProp();
+            position = findSpikePosition();
+            telemetry.addData("pos", position);
+            telemetry.update();
         }
 
         waitForStart();
         startThreads();
 
-        String position = "right";
+//        String position = "right";
 
         //Spike Drop-off
         moveToCheckpoint(71.5, 0, 0);
@@ -92,54 +96,56 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         releaseIntakePixel();
 
 
-        moveToCheckpoint(129, -43.5, Math.PI / 2);
-
-
-        moveToCheckpoint(129, -54.8, Math.PI / 2);
-        pickupPixels();
-//middle
-        moveToCheckpoint(130, -8, Math.PI / 2);
-        moveToCheckpoint(130, 130, Math.PI / 2);
-
-        // Detecting April Tag Code
-        //goToAprilTag = true;
-        //sleep(1000);
-        //
-        //while(goToAprilTag && !isStopRequested()) {
-        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
-        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
-        //    }
-        //    while(!mecanumCommand.isPositionReached(true, true)){}
-        //}
-        // Pixel Board Drop-off
-
-        moveToCheckpoint(127, 181.2, Math.PI / 2);
-        moveToCheckpoint(60, 194.56, Math.PI / 2);
-        switch (position) {
-            case "left":
-                moveTo(53, 213, Math.PI / 2);
-                break;
-            case "middle":
-                moveTo(69, 213, Math.PI / 2);
-                break;
-            case "right":
-                moveTo(80, 213, Math.PI / 2);
-                break;
-        }
-        dropPixel();
+//        moveToCheckpoint(129, -43.5, Math.PI / 2);
+//
+//
+//        moveToCheckpoint(129, -54.8, Math.PI / 2);
+//        pickupPixels();
+////middle
+//        moveToCheckpoint(130, -8, Math.PI / 2);
+//        moveToCheckpoint(130, 130, Math.PI / 2);
+//
+//        // Detecting April Tag Code
+//        //goToAprilTag = true;
+//        //sleep(1000);
+//        //
+//        //while(goToAprilTag && !isStopRequested()) {
+//        //    if(aprilCamSubsystem.getHashmap().containsKey(aprilID)){
+//        //        mecanumCommand.setFinalPosition(true, 30, getTargetX(-8.0), getTargetY(-5.0), getTargetTheta());
+//        //    }
+//        //    while(!mecanumCommand.isPositionReached(true, true)){}
+//        //}
+//        // Pixel Board Drop-off
+//
+//        moveToCheckpoint(127, 181.2, Math.PI / 2);
+//        moveToCheckpoint(60, 194.56, Math.PI / 2);
+//        switch (position) {
+//            case "left":
+//                moveTo(53, 213, Math.PI / 2);
+//                break;
+//            case "middle":
+//                moveTo(69, 213, Math.PI / 2);
+//                break;
+//            case "right":
+//                moveTo(80, 213, Math.PI / 2);
+//                break;
+//        }
+//        raisingLift();
+//        dropPixel();
+//        lowerLift();
 
 //         Parking
-        if (parkPlace.equalsIgnoreCase("left")) {
-            // Checkpoint
-            moveToCheckpoint(9, 210, -Math.PI / 2);
-            // Park
-            moveTo(9, 250, -Math.PI / 2);
-        } else {
-            // Checkpoint
-            moveToCheckpoint(133, 210, -Math.PI / 2);
-            // Park
-            moveTo(133, 250, -Math.PI / 2);
-        }
+//        if (parkPlace.equalsIgnoreCase("left")) {
+//            // Checkpoint
+//            moveToCheckpoint(9, 210, -Math.PI / 2);
+//            // Park
+//            moveTo(9, 250, -Math.PI / 2);
+//        } else {
+//            // Checkpoint
+//            moveToCheckpoint(133, 210, -Math.PI / 2);
+//            // Park
+//            moveTo(133, 250, -Math.PI / 2);
+//        }
 
         stop();
     }
@@ -232,11 +238,11 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         outputCommand = new OutputCommand(hardwareMap);
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
-        //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+        webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
+//        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
-        dashboard = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
+//        dashboard = FtcDashboard.getInstance();
+//        packet = new TelemetryPacket();
     }
 
     private void readyRobot() {
@@ -258,44 +264,75 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         CompletableFuture.runAsync(this::motorProcess, executor);
         //CompletableFuture.runAsync(this::tagDetectionProcess);
     }
-    private void dropPixel() {
-        currentState = "dropping";
+    private void raisingLift() {
+        currentState = "raising lift";
+        multiMotorSubsystem.reset();
         //set dropoff level
         level = 5;
+        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
 
-        //activate lift mode in raising
-        running = true;
-
-        //activate raising (go to level 5, raising level)
-        timer.reset();
-
-
-        while(!multiMotorSubsystem.isPositionReached(900));
         outputCommand.armToBoard();
         outputCommand.tiltToBoard();
-        waitTime(1000);
-        level = 1;
-        while(!multiMotorSubsystem.isPositionReached(400));
-        waitTime(250);
+        timer.reset();
+        while(timer.milliseconds() < 600 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        level = 6;
+        timer.reset();
+        while((!multiMotorSubsystem.isPositionReached(liftPositions[level]) || timer.milliseconds() < 1500) && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+//        timer.reset();
+//        while(timer.milliseconds() < 1000 && !isStopRequested()){
+//            multiMotorCommand.LiftUpPositional(true, level);
+//        }
 
+    }
+    private void dropPixel() {
+        currentState = "dropping pixel";
+        timer.reset();
+        while(timer.milliseconds() < 250 && !isStopRequested()){
+            outputCommand.outputWheelIn();
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        outputCommand.outputWheelStop();
         //drop off
         outputCommand.openGate();
-        waitTime(250);
+
+        timer.reset();
+        level = 6;
+        while(timer.milliseconds() < 1000 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
         outputCommand.closeGate();
         outputCommand.outputWheelIn();
-        waitTime(500);
+        timer.reset();
+        while(timer.milliseconds() < 500 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
         outputCommand.outputWheelStop();
-        waitTime(1500);
+    }
+    public void lowerLift() {
+        currentState = "lowering lift";
 
         level = 5;
-        while(!multiMotorSubsystem.isPositionReached(900));
+        while(!multiMotorSubsystem.isPositionReached(liftPositions[level]) && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
-        waitTime(1700);
+        timer.reset();
+        while(timer.milliseconds() < 1000 && !isStopRequested()){
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
         //retract lift
         level = 0;
-        while (running && !isStopRequested());
-        multiMotorSubsystem.reset();
+        while(!((multiMotorSubsystem.getDerivativeValue() == 0 && multiMotorSubsystem.getPosition() < 40) || (multiMotorSubsystem.getDerivativeValue() < 0 && multiMotorSubsystem.getPosition() < -5)) && !isStopRequested()) {
+            multiMotorCommand.LiftUpPositional(true, level);
+        }
+        multiMotorSubsystem.moveLift(0);
 
         //lift mode gets stopped in the thread afterwards
 
@@ -317,7 +354,7 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
 
     private void releaseIntakePixel() {
         //release pixel
-        intakeCommand.lowerIntake();
+        intakeCommand.raiseIntake();
         intakeCommand.intakeOut(0.5);
         timer.reset();
         while(timer.milliseconds() < 1000);
@@ -332,6 +369,16 @@ public class AutonomousBackBlueMiddle extends LinearOpMode {
         while(timer.milliseconds() < 1000);
         intakeCommand.raiseIntake();
         intakeCommand.stopIntake();
+    }
+
+    public String findSpikePosition() {
+        double center = webcamSubsystem.getXProp();
+
+        // TODO: Tune numbers so we can find the position of the spike
+        // For reference, the camera is 864 pixels wide
+        return center < 300 ? "left"
+                : center < 600 ? "middle"
+                : "right";
     }
 
 }

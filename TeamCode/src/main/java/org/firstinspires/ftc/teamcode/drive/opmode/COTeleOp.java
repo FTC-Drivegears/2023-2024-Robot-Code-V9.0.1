@@ -111,6 +111,7 @@ public class COTeleOp extends LinearOpMode {
 
             outputCommand.armToIdle();
             outputCommand.tiltToIdle();
+            outputCommand.droneToNotShoot();
 
             outputCommand.droneToNotShoot();
 
@@ -269,7 +270,7 @@ public class COTeleOp extends LinearOpMode {
                 intakeCommand.lowerIntake();
             }
             else if(gamepad2.right_trigger > 0.5){
-                intakeCommand.intakeIn(0.8);
+                intakeCommand.intakeIn(1);
             }
             else if(gamepad2.left_trigger > 0.5){
                 intakeCommand.intakeOut(0.5);
@@ -289,15 +290,10 @@ public class COTeleOp extends LinearOpMode {
                 outputCommand.hangArmUp(0);
             }
 
-//            if(gamepad1.left_bumper){
-//                shooterServo.setPosition(0.5);
-//                rightHang.setPosition(0);
-//
-//            }
-//            else{
-//                shooterServo.setPosition(0);
-//                rightHang.setPosition(0.28);
-//            }
+            if(gamepad2.left_bumper){
+                outputCommand.droneToShoot();
+
+            }
 
             //TODO: auto center/change zero
 //            updateTelemetry();

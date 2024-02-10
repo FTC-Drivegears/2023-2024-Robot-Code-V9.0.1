@@ -59,7 +59,7 @@ public class OutputCommand {
         droneShooter.setPosition(0);
     }
     public void droneToNotShoot(){
-        droneShooter.setPosition(0.165);
+        droneShooter.setPosition(0.2);
     }
 
     public void droneToIdle(){
