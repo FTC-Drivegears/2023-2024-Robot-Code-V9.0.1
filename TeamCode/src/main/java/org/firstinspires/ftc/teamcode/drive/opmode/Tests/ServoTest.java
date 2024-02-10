@@ -26,7 +26,7 @@ public class ServoTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 //        servo = hardwareMap.get(Servo.class, "pixelGate");
-        roller = hardwareMap.get(Servo.class, Specifications.RIGHT_OUTPUT_TILT);
+        roller = hardwareMap.get(Servo.class, "droneShooter");
         dash = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
         outputCommand = new OutputCommand(hardwareMap);
@@ -43,7 +43,7 @@ public class ServoTest extends LinearOpMode {
 //            roller.setPower(gamepad1.right_trigger);
 //            telemetry.addData("pos",servo.getPosition());
             telemetry.update();
-//            packet.put("servoPos", servo.getPosition());
+            packet.put("servoPos", servo.getPosition());
             dash.sendTelemetryPacket(packet);
         }
     }

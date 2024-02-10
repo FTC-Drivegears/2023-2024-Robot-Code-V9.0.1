@@ -241,7 +241,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         multiMotorSubsystem = new MultiMotorSubsystem(hardwareMap, true, MultiMotorSubsystem.MultiMotorType.dualMotor);
         multiMotorCommand = new MultiMotorCommand(multiMotorSubsystem);
         //webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
-        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
+//        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();

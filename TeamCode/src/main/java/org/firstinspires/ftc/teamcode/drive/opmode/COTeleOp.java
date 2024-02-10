@@ -103,8 +103,8 @@ public class COTeleOp extends LinearOpMode {
         double lowestLiftValue = Integer.MAX_VALUE;
 
         while(opModeInInit()) {
-            odometrySubsystem.reset();
-            imuSubsystem.resetAngle();
+//            odometrySubsystem.reset();
+//            imuSubsystem.resetAngle();
 
             intakeCommand.lowerIntake();
             outputCommand.closeGate();
