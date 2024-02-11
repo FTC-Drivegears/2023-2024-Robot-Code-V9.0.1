@@ -197,7 +197,7 @@ public class COTeleOp extends LinearOpMode {
 
             if(state == RUNNING_STATE.DROP){
                 raising = false;
-                if(!timerList.checkTimePassed("pixelDrop", 500)) {
+                if(!timerList.checkTimePassed("pixelDrop", 800)) {
                     if (timerList.checkTimePassed("pixelDrop", 250)) {
                         outputCommand.closeGate();
                         outputCommand.outputWheelIn();

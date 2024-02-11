@@ -91,8 +91,8 @@ public class OutputCommand {
     }
 
     public void armToBoard(){
-        leftArm.setPosition(0.47);
-        rightArm.setPosition(0.47);
+        leftArm.setPosition(0.455);
+        rightArm.setPosition(0.455);
     }
 
     public void tiltToIdle(){

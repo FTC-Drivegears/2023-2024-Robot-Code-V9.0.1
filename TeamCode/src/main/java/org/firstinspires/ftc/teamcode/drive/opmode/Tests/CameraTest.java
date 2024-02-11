@@ -18,7 +18,7 @@ public class CameraTest extends LinearOpMode {
         FtcDashboard dashboard = FtcDashboard.getInstance();
         webcamSubsystem = new WebcamSubsystem(
                 hardwareMap,
-                WebcamSubsystem.PipelineName.CONTOUR_BLUE,
+                WebcamSubsystem.PipelineName.CONTOUR_RED,
                 dashboard, gamepad1
         );
         dashboard.startCameraStream(webcamSubsystem.webcam, 24);
@@ -53,7 +53,7 @@ public class CameraTest extends LinearOpMode {
 
         // TODO: Tune numbers so we can find the position of the spike
         // For reference, the camera is 864 pixels wide
-        if(webcamSubsystem.getContourProcessor().largestContourArea() < 1300){
+        if(webcamSubsystem.getContourProcessor().largestContourArea() < 2500){
             return "right";
         }
         return center < 550 ? "left"

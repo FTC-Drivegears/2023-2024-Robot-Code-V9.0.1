@@ -65,6 +65,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     private boolean raising = false;
     private String currentState = "";
     private String status = "Uninitialized";
+    private ElapsedTime autotimer;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -85,20 +86,21 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         waitForStart();
         startThreads();
+        autotimer.reset();
 
 //        String position = "left";
 
       //  Spike Drop-off
         switch (position) {
             case "left":
-                moveTo(95, 12, 0);
+                moveTo(110, 12, 0);
                 break;
             case "middle":
                 moveTo(118, -12.48, 0);
                 break;
             case "right":
                 moveToCheckpoint(71.5, 0, 0);
-                moveTo(65, -19, 2.11);
+                moveTo(75, -19, 2.11);
                 break;
         }
         releaseIntakePixel();
@@ -109,31 +111,31 @@ public class AutonomousFrontBlue extends LinearOpMode {
         }
 
         // Pixel Board Drop-off
-        mecanumCommand.setFinalPosition(true, 30, 72, 70, Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 72,  70, Math.PI/2);
         raisingLift();
         switch (position) {
             case "left":
-                moveTo(66, 82, Math.PI / 2);
+                moveTo(62, 81, Math.PI / 2);
                 break;
             case "middle":
-                moveTo(76, 82, Math.PI / 2);
+                moveTo(76, 81, Math.PI / 2);
                 break;
             case "right":
-                moveTo(85, 82, Math.PI / 2);
+                moveTo(88, 81, Math.PI / 2);
                 break;
         }
         dropPixel();
-        mecanumCommand.setFinalPosition(true, 30, 76, 72, Math.PI/2);
+        mecanumCommand.setFinalPosition(true, 30, 22.5, 0, Math.PI/2);
         lowerLift();
 //        moveToCheckpoint(76, 72, Math.PI / 2);
-//
-//
-//        //Middle Back
-////        moveToCheckpoint(133, 31, Math.PI / 2);
-//
-//        //Middle Front
-////        moveToCheckpoint(80.5, 49, Math.PI / 2);
-//
+
+
+        //Middle Back
+//        moveToCheckpoint(133, 31, Math.PI / 2);
+
+        //Middle Front
+//        moveToCheckpoint(80.5, 49, Math.PI / 2);
+
 //        moveTo(22.5, 0, Math.PI / 2);
 //        moveTo(22.5, -40, Math.PI / 2);
 //        moveTo(22.5, -140, Math.PI / 2);
@@ -170,31 +172,35 @@ public class AutonomousFrontBlue extends LinearOpMode {
             moveToCheckpoint(9, 80, Math.PI / 2);
             // Park
             moveTo(9, 111, Math.PI / 2);
+            requestOpModeStop();
         } else {
             // Checkpoint
             moveToCheckpoint(133, 80, Math.PI / 2);
             // Park
             moveTo(133, 111, Math.PI / 2);
+            requestOpModeStop();
         }
-//        stop();
+        while(!isStopRequested()){
+            stop();
+        }
     }
 
     // Side Processes
     public void pidProcess(){
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested() && autotimer.seconds() < 25) {
             mecanumCommand.pidProcess();
         }
     }
 
     public void updateOdometry() {
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested() && autotimer.seconds() < 25) {
             imu.gyroProcess();
             gyroOdometry.process();
         }
     }
 
     public void updateTelemetry() {
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested() && autotimer.seconds() < 25) {
 //            packet.put("x", gyroOdometry.x);
 //            packet.put("y", gyroOdometry.y);
 //            packet.put("theta", gyroOdometry.theta);
@@ -232,7 +238,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
     }
 
     public void motorProcess(){
-        while (opModeIsActive() && !isStopRequested()) {
+        while (opModeIsActive() && !isStopRequested() && autotimer.seconds() < 25) {
             mecanumSubsystem.motorProcess();
         }
     }
@@ -252,6 +258,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         webcamSubsystem = new WebcamSubsystem(hardwareMap, WebcamSubsystem.PipelineName.CONTOUR_BLUE);
 ////        aprilCamSubsystem = new AprilCamSubsystem(hardwareMap);
         timer = new ElapsedTime();
+        autotimer = new ElapsedTime();
 //        dashboard = FtcDashboard.getInstance();
 //        packet = new TelemetryPacket();
     }
@@ -334,7 +341,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
         outputCommand.tiltToIdle();
         outputCommand.armToIdle();
         timer.reset();
-        while(timer.milliseconds() < 2500 && !isStopRequested()){
+        while(timer.milliseconds() < 1500 && !isStopRequested()){
             multiMotorCommand.LiftUpPositional(true, level);
         }
         //retract lift
@@ -354,7 +361,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
     private void moveTo(double x, double y, double theta) {
         mecanumCommand.setFinalPosition(true, 30, x, y, theta);
-        while (!mecanumCommand.isPositionReached(true, true) && !isStopRequested()) ;
+        while (!mecanumCommand.isPositionReached(true, true) && !isStopRequested() && autotimer.seconds() < 25) ;
     }
 
     private void moveToCheckpoint(double x, double y, double theta) {
@@ -390,7 +397,7 @@ public class AutonomousFrontBlue extends LinearOpMode {
 
         // TODO: Tune numbers so we can find the position of the spike
         // For reference, the camera is 864 pixels wide
-        if(webcamSubsystem.getContourProcessor().largestContourArea() < 1700){
+        if(webcamSubsystem.getContourProcessor().largestContourArea() < 2800){
             return "right";
         }
         return center < 550 ? "left"

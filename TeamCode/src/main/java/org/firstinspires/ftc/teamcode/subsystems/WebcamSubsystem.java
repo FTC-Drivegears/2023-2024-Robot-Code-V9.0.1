@@ -74,8 +74,8 @@ public class WebcamSubsystem extends Specifications {
             );
         } else {
             CONTOUR_PROCESSOR = new ContourProcessor(
-                    38, 255, 255,
-                    0, 227, 102
+                    20, 255, 255,
+                    0, 170, 102
             );
         }
 
